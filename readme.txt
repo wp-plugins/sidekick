@@ -1,5 +1,5 @@
 === Sidekick ===
-Contributors: bart@flowpress.ca,ben@flowpress.ca,bartdabek@gmail.com
+Contributors: bartdabek@gmail.com,ben@flowpress.ca
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, interactive help, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, chat, wpuniversity, helper, walkthrough,
 Requires at least: 3.5
@@ -8,7 +8,7 @@ Stable tag: 0.78
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Real-time, voice-guided WordPress support, help and lerning at the push of button, inside your Admin Dashboard.
+Real-time, voice-guided WordPress support, help and learning at the push of button, inside your Admin Dashboard.
 
 
 == Description ==
@@ -23,14 +23,15 @@ The Sidekick Plugin for WordPress bridges the gap between the Sidekick Platform 
 
 **WPUNIVERSITY**
 
-Sidekick for WordPress provides real-time, guided WordPress help right from your dashboard, whenever you need it. Core WordPress walkthrough modules are created and maintained by the team at wpuniversity.com. Third party plugin and theme walkthroughs are created and maintained by their respective creators.
+Sidekick for WordPress provides real-time, guided WordPress help right from your dashboard, whenever you need it. Core WordPress walkthrough modules are created and maintained by the team at [wpuniversity.com](http://www.wpuniversity.com/ "wpuniversity.com"). Third party plugin and theme walkthroughs are created and maintained by their respective creators.
 
-The Sidekick plugin for WordPress collects specific, anonymous data (with the user’s permission) which can include a user’s email address, domain name, installed plugins, installed theme(s) etc.. Basically, anything PressTrends captures.
+The Sidekick plugin for WordPress collects specific, anonymous data (with the user’s permission) which can include a user’s email address, domain name, installed plugins, installed theme(s) etc... Basically, anything PressTrends captures.
 
 With the click of a button, you’ll get a step-by-step answer to your question instantly. So you can stop waiting for your developer call you back.
 
 If you have any questions about the Sidekick plugin for WordPress, please contact [info@wpuniversity.com](mailto:info@wpuniveristy.com "Email WPUniversity").
 
+Try the [demo](demo.wpuniversity.com "demo").
 
 == Installation ==
 
@@ -112,7 +113,7 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
-= 0.77 =
+= 0.78 =
 * Plugin compatibility issues resolved.
 
 = 0.76 =
