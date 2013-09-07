@@ -31,7 +31,7 @@ With the click of a button, you’ll get a step-by-step answer to your question 
 
 If you have any questions about the Sidekick plugin for WordPress, please contact [info@wpuniversity.com](mailto:info@wpuniveristy.com "Email WPUniversity").
 
-Try the [demo](demo.wpuniversity.com "demo").
+Try the [demo](http://demo.wpuniversity.com "demo").
 
 == Installation ==
 
