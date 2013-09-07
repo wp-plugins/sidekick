@@ -283,26 +283,6 @@ if ( !function_exists('mlog')) {function mlog(){}}
 			<?php
 		}
 
-		function edd_sl_updater() {
-			if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
-				include( dirname( WPU_SL_PLUGIN_FILE ) . '/EDD_SL_Plugin_Updater.php' );
-			}
-
-			global $edd_options;
-
-			$wpu_license = get_option( "wpu_license_key" );
-
-			$wpu_license = isset( $wpu_license ) ? trim( $wpu_license ) : '';
-
-			$edd_updater = new EDD_SL_Plugin_Updater( WPU_STORE_URL, WPU_SL_PLUGIN_FILE, array(
-			'version' 	=> WPU_PLUGIN_VERSION, 			// current version number
-			'license' 	=> $wpu_license, // license key (used get_option above to retrieve from DB)
-			'item_name' => WPU_ITEM_NAME, // name of this plugin
-			'author' 	=> 'WPUnivesrity.com'  // author of this plugin
-			)
-			);
-		}
-
 		function footer(){
 			$current_user = wp_get_current_user();
 			$wpu_just_activated = get_option( 'wpu_just_activated' );
