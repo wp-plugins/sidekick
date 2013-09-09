@@ -61,10 +61,18 @@ if ( !function_exists('mlog')) {function mlog(){}}
 		function admin_page(){
 			$license    = get_option( 'wpu_license_key' );
 			$status     = get_option( 'wpu_license_status' );
-		// $status  	= 'valid';
+			// $status  	= 'valid';
 			$email      = get_option( 'wpu_email' );
 			$first_name = get_option( 'wpu_first_name' );
-		// mlog('$_POST',$_POST);
+
+
+			$current_user = wp_get_current_user();
+			if (!$first_name)
+				$first_name = $current_user->user_firstname;
+
+			if (!$email)
+				$email = $current_user->user_email;
+			// mlog('$_POST',$_POST);
 
 			if (isset($_POST['option_page']) && $_POST['option_page'] == 'wpu_license') {
 				if (isset($_POST['first_name'])) {
@@ -126,7 +134,7 @@ if ( !function_exists('mlog')) {function mlog(){}}
 			}
 
 			if (!$license) {
-				$warn = "You're using the <b>Demo</b> version of Sidekick, to gain full access to the walkthrough library please fill out your name and email address below.";
+				$warn = "Welcome to Sidekick. To access the <b>full library</b> of Core Walkthroughs, please click the \"<b>Activate Library</b>\" button below. ";
 			}
 
 			if(preg_match('/(?i)msie [1-8]/',$_SERVER['HTTP_USER_AGENT'])){
@@ -165,19 +173,11 @@ if ( !function_exists('mlog')) {function mlog(){}}
 					</div>
 				<?php endif ?>
 
-				<h2>Welcome to Sidekick for WordPress.</h2>
-				<p><b>WordPress is about to get a whole lot easier to learn and use!</b></p>
-				<p>The Sidekick for WordPress Walkthrough library was created and is maintained by the team at http://www.wpuniversity.com. There is currently no charge to access and use the library of walkthroughs. All we ask is that you enter your first name and email address here so we can keep you posted on what's new with the plugin and any upcoming changes that you should be aware of. (entering your email address is not a requirement to use the plugin).</p>
-				<p>Sidekick and our parent company FlowPress adhere strictly to CANSPAM rules and we promise never to lend, sell or otherwise divulge your personal data (including your name and email address) without your express consent.</p>
-				<p>From time to time we send out WordPress tips & tricks, WordPress community updates and the occasional special offer to our users. If you'd like to receive these emails as well, please <a href='http://wpuniversity.us4.list-manage.com/subscribe?u=59d2b3278da2364941b040f74&id=b1a91625c0'>click here</a>.</p>
-				<p>Sidekick for WordPress is still in BETA and there will be the occasional bug. If you have any questions, bug reports or feedback, please send them to <a href='mailto:info@wpuniversity.com'>info@wpuniversity.com</a>.</p>
-				<p>Thank you,</p><br/>
-
 				<?php if (!$error): ?>
 					<?php if ($status == 'valid'): ?>
-						<h2>Activated</h2>
+						<h2>Your Sidekick Account</h2>
 					<?php else: ?>
-						<h2>Activate</h2>
+						<h2>Activate <b>Full Library</b></h2>
 					<?php endif ?>
 
 					<form method="post">
@@ -232,11 +232,18 @@ if ( !function_exists('mlog')) {function mlog(){}}
 							</tbody>
 						</table>
 						<?php if ($status !== 'valid' || defined('WPU_PLUGIN_DEGBUG')): ?>
-							<?php submit_button('Activate License'); ?>
+							<?php submit_button('Activate Library'); ?>
 						<?php endif ?>
-						<br/><br/><br/><br/>
 					</form>
 				<?php endif ?>
+
+				<h2>About Sidekick</h2>
+				<p><b>WordPress is about to get a whole lot easier to learn and use!</b></p>
+				<p>The Sidekick for WordPress Walkthrough library was created and is maintained by the team at http://www.wpuniversity.com. There is currently no charge to access and use the library of walkthroughs. All we ask is that you enter your first name and email address here so we can keep you posted on what's new with the plugin and any upcoming changes that you should be aware of. (entering your email address is not a requirement to use the plugin).</p>
+				<p>Sidekick and our parent company FlowPress adhere strictly to CANSPAM rules and we promise never to lend, sell or otherwise divulge your personal data (including your name and email address) without your express consent.</p>
+				<p>From time to time we send out WordPress tips & tricks, WordPress community updates and the occasional special offer to our users. If you'd like to receive these emails as well, please <a href='http://wpuniversity.us4.list-manage.com/subscribe?u=59d2b3278da2364941b040f74&id=b1a91625c0'>click here</a>.</p>
+				<p>Sidekick for WordPress is still in BETA and there will be the occasional bug. If you have any questions, bug reports or feedback, please send them to <a href='mailto:info@wpuniversity.com'>info@wpuniversity.com</a>.</p>
+				<p>Thank you,</p><br/>
 			</div>
 			<?php
 		}
