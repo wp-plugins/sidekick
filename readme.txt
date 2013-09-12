@@ -3,8 +3,8 @@ Contributors: bartdabek@gmail.com,ben@flowpress.ca
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, interactive help, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, chat, wpuniversity, helper, walkthrough,
 Requires at least: 3.5
-Tested up to: 3.6
-Stable tag: 0.78
+Tested up to: 3.6.1
+Stable tag: 1.0
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,9 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 1.00 =
+* Added support for buckets.
 
 = 0.78 =
 * Plugin compatibility issues resolved.
