@@ -1,5 +1,5 @@
 === Sidekick ===
-Contributors: Bart Dabek,Ben Fox
+Contributors: raptor235,Ben Fox
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, interactive help, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, chat, wpuniversity, helper, walkthrough,
 Requires at least: 3.7.1
