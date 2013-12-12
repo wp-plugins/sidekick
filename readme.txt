@@ -8,7 +8,7 @@ Stable tag: 1.1
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Interactive help, support & training right inside your Dashboard. For Free.
+Interactive help, support & training right inside your Dashboard.
 
 
 == Description ==
@@ -19,11 +19,11 @@ The Sidekick Plugin for WordPress brings over 40 Walkthroughs for the WordPress 
 
 Sidekick will also detect the plugins and themes you have active and push any related walkthroughs in the library, right to your Dashboard.
 
-**Think [Clippy](http://en.wikipedia.org/wiki/Office_Assistant “Clippy”), but useful!**
+**Think [Clippy](http://en.wikipedia.org/wiki/Office_Assistant "Clippy"), but useful!**
 
 **HOW DOES IT WORK?**
 
-The [Sidekick](http://Sidekick.pro/ "Sidekick") platform provides **real-time, voice-guided support and learning** from within any html or PHP based web application or CMS. Support is provided through modules called “Walkthroughs” that guide users through everything from understanding simple aspects of an application to completing even complicated tasks.
+The [Sidekick](http://Sidekick.pro/ "Sidekick") platform provides **real-time, voice-guided support and learning** from within any html or PHP based web application or CMS. Support is provided through modules called "Walkthroughs”" that guide users through everything from understanding simple aspects of an application to completing even complicated tasks.
 
 Walkthroughs are served directly from the Sidekick library. With the user’s permission, an installed Sidekick module can automatically detect a user’s access level, installed 3rd party extensions and settings. That information is used to pull the appropriate walkthroughs from the Sidekick library. Sidekick also collects anonymous user data (with the user’s permission) to track, amongst other things, which walkthroughs are attempted and completed and how often.
 
