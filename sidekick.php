@@ -3,18 +3,18 @@
 /*
 Plugin Name: Sidekick
 Plugin URL: http://www.wpuniversity.com/plugin/
-Description: Adds a real-time WordPress training right into your Dashboard
-Requires at least: 3.5
-Tested up to: 3.6.1
-Version: 1.00
+Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
+Requires at least: 3.7
+Tested up to: 3.8
+Version: 1.1
 Author: WPUniversity.com
 Author URI: http://www.wpuniversity.com
 */
 
 define('SK_DOMAIN','http://www.wpuniversity.com');
-define('SK_PLUGIN_VERSION',1.00);
-define('SK_LIBRARY_VERSION',3);
-define('SK_PLATFORM_VERSION',3);
+define('SK_PLUGIN_VERSION',1.08);
+define('SK_LIBRARY_VERSION',4);
+define('SK_PLATFORM_VERSION',5);
 
 // this is the URL our updater / license checker pings. This should be the URL of the site with EDD installed
 define( 'SK_STORE_URL', 'http://www.wpuniversity.com' ); // you should use your own CONSTANT name, and be sure to replace it throughout this file
@@ -31,6 +31,8 @@ if ( !function_exists('mlog')) {
 
 class Sidekick{
 	function enqueue_required(){
+		mlog('PHP: enqueue_required');
+
 		wp_enqueue_script('jquery'                      , null );
 		wp_enqueue_script('underscore'                  , null, array('underscore'));
 		wp_enqueue_script('backbone'                    , null, array('jquery','underscore'));
@@ -43,17 +45,20 @@ class Sidekick{
 	}
 
 	function enqueue(){
-		// mlog('Sidekick Prod');
+		mlog('PHP: enqueue');
 		if ($license = get_option("sk_license_key")){
-			define('SK_LIBRARY_FILE', "http://library.sidekick.pro/library/v3/releases/{$license}/library.js");
+			define('SK_LIBRARY_FILE', "http://library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$license}/library.js?" . rand(1, 5000));
 		} else {
-			define('SK_LIBRARY_FILE', "http://library.sidekick.pro/library/v3/sources/wpuniversity-free_library.js");
+			define('SK_LIBRARY_FILE', "http://library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/sources/wpuniversity-free_library.js?" . rand(1, 5000));
 		}
 
-		wp_enqueue_script('sidekick'   ,'http://platform.sidekick.pro/v3/sidekick.min.js',				array('backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
+		wp_enqueue_script('sidekick'   ,'http://platform.sidekick.pro/v' . SK_PLATFORM_VERSION . '/sidekick.min.js',				array('backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
 		wp_enqueue_script('sk'         ,plugins_url( '/js/sk.source.js'		, __FILE__ ),				array('sidekick')	,SK_PLUGIN_VERSION);
-		wp_enqueue_script("sk_library" , SK_LIBRARY_FILE					,							array("sk")			,rand(1, 5000));
+		wp_enqueue_script("sk_library" , SK_LIBRARY_FILE					,							array("sk")			,null);
 		wp_enqueue_style('sk-style'    ,plugins_url( '/css/sidekick_wordpress.css' , __FILE__ ),		null 				,SK_PLUGIN_VERSION);
+
+		wp_enqueue_style('wp-pointer');
+		wp_enqueue_script('wp-pointer');
 	}
 
 	function setup_menu(){
@@ -80,25 +85,26 @@ class Sidekick{
 		}
 
 		if (isset($_POST['option_page']) && $_POST['option_page'] == 'sk_license') {
-			if (isset($_POST['first_name'])) {
-				update_option('sk_first_name',$_POST['first_name']);
-				update_option('sk_email',$_POST['email']);
-				if (isset($_POST['sk_track_data'])) {
-					update_option( 'sk_track_data', true );
-				} else {
-					delete_option('sk_track_data');
-				}
 
+			if (isset($_POST['first_name']) && $_POST['first_name'])
+				update_option('sk_first_name',$_POST['first_name']);
+
+			if (isset($_POST['email']) && $_POST['email'])
+				update_option('sk_email',$_POST['email']);
+
+			if (isset($_POST['sk_track_data'])) {
+				update_option( 'sk_track_data', true );
+			} else {
+				delete_option('sk_track_data');
+			}
+
+			if ($status !== 'valid') {
 				$first_name         = $_POST['first_name'];
 				$email              = $_POST['email'];
 				$track_data         = get_option( 'sk_track_data' );
 				$_POST['item_name'] = SK_ITEM_NAME;
 
-				if (defined('SK_PLUGIN_DEGBUG')) {
-					$url = 'http://dev.wpuniversity.com?action=remote_wpu_register';
-				} else {
-					$url = 'http://www.wpuniversity.com?action=remote_wpu_register';
-				}
+				$url = 'http://www.wpuniversity.com?action=remote_wpu_register';
 
 				$response = wp_remote_post( $url, array(
 					'method'      => 'POST',
@@ -114,7 +120,6 @@ class Sidekick{
 
 				if ( is_wp_error( $response ) ) {
 					$error_message = $response->get_error_message();
-					// echo "Something went wrong: $error_message";
 				} else {
 					$success = 'Successfully Activated';
 					update_option('sk_license_key',$response['body']);
@@ -126,6 +131,7 @@ class Sidekick{
 				}
 				update_option( 'sk_activated', true );
 				die('<script>window.open("' . get_site_url() . '/wp-admin/admin.php?page=sidekick&firstuse","_self")</script>');
+
 			}
 		}
 
@@ -139,8 +145,8 @@ class Sidekick{
 		$track_data = get_option( 'sk_track_data' );
 
 		global $wp_version;
-		if (version_compare($wp_version, '3.4', '<=')) {
-			$error = "Sorry, Sidekick requires WordPress 3.5 or higher to function.";
+		if (version_compare($wp_version, '3.7', '<=')) {
+			$error = "Sorry, Sidekick requires WordPress 3.7 or higher to function.";
 		}
 
 		if (!$license) {
@@ -184,9 +190,9 @@ class Sidekick{
 
 			<?php if (!$error): ?>
 				<?php if ($status == 'valid'): ?>
-					<h2>Your Sidekick Account</h2>
+					<h3>Your Sidekick Account</h3>
 				<?php else: ?>
-					<h2>Activate <b>Full Library</b></h2>
+					<h3>Activate <b>Full Library</b></h3>
 				<?php endif ?>
 
 				<form method="post">
@@ -197,7 +203,9 @@ class Sidekick{
 								<th scope="row" valign="top">First Name</th>
 								<td>
 									<input id="first_name" name="first_name" type="text" class="regular-text" <?php if ($status == 'valid'): ?>DISABLED<?php endif ?> value="<?php echo $first_name ?>" />
-									<label class="description" for="first_name"><?php _e('Enter your first name'); ?></label>
+									<?php if ($status !== 'valid'): ?>
+										<label class="description" for="first_name"><?php _e('Enter your first name'); ?></label>
+									<?php endif ?>
 								</td>
 							</tr>
 
@@ -205,7 +213,9 @@ class Sidekick{
 								<th scope="row" valign="top">E-Mail</th>
 								<td>
 									<input id="email" name="email" type="text" class="regular-text" <?php if ($status == 'valid'): ?>DISABLED<?php endif ?> value="<?php echo $email ?>" />
-									<label class="description" for="email"><?php _e('Enter your email address'); ?></label>
+									<?php if ($status !== 'valid'): ?>
+										<label class="description" for="email"><?php _e('Enter your email address'); ?></label>
+									<?php endif ?>
 								</td>
 							</tr>
 
@@ -238,33 +248,42 @@ class Sidekick{
 									</td>
 								</tr>
 							<?php endif ?>
-							<?php if ($status !== 'valid'): ?>
-								<tr valign="top">
-									<th scope="row" valign="top">
-										Data Tracking
-									</th>
-									<td>
-										<input id="sk_track_data" name="sk_track_data" type="checkbox" class="regular-text" <?php if ($track_data): ?>CHECKED<?php endif ?> />
-										<label class="description" for="sk_track_data">Help Sidekick by providing tracking data which will help us build better help tools.</label>
-									</td>
-								</tr>
-							<?php endif; ?>
+
+							<tr valign="top">
+								<th scope="row" valign="top">
+									Data Tracking
+								</th>
+								<td>
+									<input id="sk_track_data" name="sk_track_data" type="checkbox" <?php if ($track_data): ?>CHECKED<?php endif ?> />
+									<input type='hidden' name='status' value='<?php echo $status ?>'/>
+									<label class="description" for="sk_track_data">Help Sidekick by providing tracking data which will help us build better help tools.</label>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 					<?php if (defined('SK_PLUGIN_DEGBUG')): ?>
 						<?php submit_button('Activate Library (Debug)'); ?>
 					<?php elseif ($status !== 'valid'): ?>
 						<?php submit_button('Activate Library'); ?>
+					<?php else: ?>
+						<?php submit_button('Update'); ?>
 					<?php endif ?>
 				</form>
 			<?php endif ?>
 
-			<h2>About Sidekick</h2>
+			<h3>About Sidekick</h3>
 			<p><b>WordPress is about to get a whole lot easier to learn and use!</b></p>
-			<p>The Sidekick for WordPress Walkthrough library was created and is maintained by the team at http://www.wpuniversity.com. There is currently no charge to access and use the library of walkthroughs. All we ask is that you enter your first name and email address here so we can keep you posted on what's new with the plugin and any upcoming changes that you should be aware of. (entering your email address is not a requirement to use the plugin).</p>
-			<p>Sidekick and our parent company FlowPress adhere strictly to CANSPAM rules and we promise never to lend, sell or otherwise divulge your personal data (including your name and email address) without your express consent.</p>
-			<p>From time to time we send out WordPress tips & tricks, WordPress community updates and the occasional special offer to our users. If you'd like to receive these emails as well, please <a href='http://wpuniversity.us4.list-manage.com/subscribe?u=59d2b3278da2364941b040f74&id=b1a91625c0'>click here</a>.</p>
-			<p>Sidekick for WordPress is still in BETA and there will be the occasional bug. If you have any questions, bug reports or feedback, please send them to <a href='mailto:info@wpuniversity.com'>info@wpuniversity.com</a>.</p>
+			<p><b>We are very excited to introduce Sidekick for WordPress. Our team has been working ‘round the clock for months now preparing this latest iteration and we can’t wait to <a href='mailto:info@sidekick.pro'>hear</a> what you think! </b></p>
+			<p>Sidekick is currently avialable free of charge. To activate your free access, please enter your first name and email address here so we can keep you posted on what's new with the plugin and any upcoming changes that you should be aware of. </p>
+			<p><b>Here are a few other things you should know:</b></p>
+			<ul>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;1. Clicking the check-box above will allow us to link your email address to the stats we collect so we can contact you if we have a question or notice an issue. It’s not mandatory, but it would help us out. </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;2. Entering your email address is not a requirement to use the plugin, if you choose not to, you will have access to 5 WordPress core walkthroughs as well as any plugin or theme walkthroughs that are available for your install of WordPress. </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;3. The Sidekick team adheres strictly to <a href='http://www.business.ftc.gov/documents/bus61-can-spam-act-compliance-guide-business'>CANSPAM</a> </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;4. If you have any questions, bug reports or feedback, please send them to info@sidekick.pro</li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;5. <a href='http://www.wpuniversity.com'>WPUniversity</a> maintains our library of core WordPress Walkthroughs. 3rd party plugin and theme walkthroughs are created and maintained by their respective developers. </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;6. WPUniversity sends out daily WordPress tips & tricks, WordPress community updates and the occasional special offer. If you'd like to receive these emails as well, please click <a href='http://wpuniversity.us4.list-manage.com/subscribe?u=59d2b3278da2364941b040f74&id=b1a91625c0'>here</a>.</li>
+			</ul>
 			<p>Thank you,</p><br/>
 
 		</div>
@@ -297,32 +316,39 @@ class Sidekick{
 		<?php if (!$not_supported_ie): ?>
 
 			<script type="text/javascript">
-				var sk_library_file      = '<?php echo SK_LIBRARY_FILE ?>';
-				var sk_main_soft_version = '<?php echo get_bloginfo("version"); ?>';
-				var sk_installed_plugins = <?php echo $this->list_plugins() ?>;
-				var sk_installed_theme   = '<?php echo  $theme->Name ?>';
-				var sk_theme_version     = '<?php echo $theme->Version ?>';
-				var sk_domain            = '<?php echo SK_DOMAIN ?>';
-				var sk_license_status    = '<?php echo get_option( "sk_license_status" ) ?>';
+				var sk_library_file        = '<?php echo SK_LIBRARY_FILE ?>';
+				var sk_main_soft_name      = 'WordPress';
+				var sk_main_soft_version   = '<?php echo get_bloginfo("version"); ?>';
+				var sk_installed_plugins   = <?php echo $this->list_plugins() ?>;
+				var sk_installed_theme     = '<?php echo  $theme->Name ?>';
+				var sk_theme_version       = '<?php echo $theme->Version ?>';
+				var sk_domain              = '<?php echo SK_DOMAIN ?>';
+				var sk_license_status      = '<?php echo get_option( "sk_license_status" ) ?>';
+				var sk_plugin_version      = <?php echo SK_PLUGIN_VERSION ?>;
+				var sk_library_version     = <?php echo SK_LIBRARY_VERSION ?>;
+				var sk_platform_version    = <?php echo SK_PLATFORM_VERSION ?>;
+				var sk_track_data          = '<?php echo get_option( 'sk_track_data' ) ?>';
+				var sk_user_level          = '<?php echo $user_role ?>';
+				var sk_user_email          = '<?php echo $current_user->user_email ?>';
+				var sk_use_native_controls = false;
+				var sk_plugin_url          = '<?php echo admin_url("admin.php?page=sidekick") ?>';
+				var sk_domain 			   = '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>'
 				<?php if ($license_key = get_option( "sk_license_key" )): ?>
-					var sk_license_key       = '<?php echo $license_key ?>';
-				<?php else: ?>
-					var sk_license_key       = 'demo';
-				<?php endif ?>
-				var sk_plugin_version    = <?php echo SK_PLUGIN_VERSION ?>;
-				var sk_library_version   = <?php echo SK_LIBRARY_VERSION ?>;
-				var sk_platform_version  = <?php echo SK_PLATFORM_VERSION ?>;
-				var sk_track_data        = '<?php echo get_option( 'sk_track_data' ) ?>';
-				var sk_user_level        = '<?php echo $user_role ?>';
-				<?php if ($sk_just_activated): ?>var sk_just_activated = true;<?php endif; ?>
-			</script>
+				var sk_license_key       = '<?php echo $license_key ?>';
+			<?php else: ?>
+			var sk_license_key       = 'demo';
+		<?php endif ?>
+		<?php if ($sk_just_activated): ?>
+		var sk_just_activated = true;
+	<?php endif; ?>
+</script>
 
-			<?php if ($track_data): ?>
-				<script id="IntercomSettingsScriptTag">
-					window.intercomSettings = {
-						email: "<?php echo $current_user->user_email; ?>",
-						created_at: 1234567980,
-						app_id: "75fbe21e31b2881f775fba2ff3ff7928485478e8",
+<?php if ($track_data): ?>
+	<script id="IntercomSettingsScriptTag">
+		window.intercomSettings = {
+			email: "<?php echo $current_user->user_email; ?>",
+			created_at: 1234567980,
+			app_id: "75fbe21e31b2881f775fba2ff3ff7928485478e8",
 						// last_date_watched : 0,
 						// walkthroughs_watched: 0,
 						// number_of_plugins: 0,
@@ -389,7 +415,8 @@ class Sidekick{
 	function redirect(){
 		if (get_option('sk_do_activation_redirect', false)) {
 			delete_option('sk_do_activation_redirect');
-			wp_redirect("/wp-admin/admin.php?page=sidekick&firstuse");
+			$siteurl = get_site_url();
+			wp_redirect($siteurl . "/wp-admin/admin.php?page=sidekick&firstuse");
 			die();
 		}
 	}
@@ -423,7 +450,6 @@ class Sidekick{
 
 $sidekick = new Sidekick;
 if (!defined('SK_PLUGIN_DEGBUG')){
-	mlog('Setting up Activation Hooks');
 	register_activation_hook( __FILE__, array($sidekick,'activate_plugin') );
 	register_deactivation_hook( __FILE__, array($sidekick,'deactivate_plugin')  );
 }
