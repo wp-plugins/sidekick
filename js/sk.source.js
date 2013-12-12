@@ -18,334 +18,447 @@
 /* 15  */ 	if (!window.console.groupEnd) window.console.groupEnd = function(){};
 /* 16  */ 	if (!window.console.table) window.console.table = function(){};
 /* 17  */ 	if (!window.console.error) window.console.error = function(){};
-/* 18  */ 
-/* 19  */ 	if (window.console){
-/* 20  */ 		window.console.info = function(msg,o1,o2,o3){if (!o1) o1 = '';if (!o2) o2 = '';if (!o3) o3 = '';console.log('%c' + msg,'color: blue;font-weight: bold',o1,o2,o3);};
-/* 21  */ 		window.console.event = function(msg,o1,o2,o3){if (!o1) o1 = '';if (!o2) o2 = '';if (!o3) o3 = '';console.log('%c' + msg,'color: green;font-weight: bold',o1,o2,o3);};
-/* 22  */ 	}
-/* 23  */ 
-/* 24  */ 	SidekickWP.Models.App = Backbone.Model.extend({
-/* 25  */ 		defaults: {
-/* 26  */ 			full_library:      null,
-/* 27  */ 			my_library:        null,
-/* 28  */ 			wp_version:        null,
-/* 29  */ 			installed_plugins: null,
-/* 30  */ 			current_url:       null,
-/* 31  */ 			current_plugin:    null,
-/* 32  */ 			license_status:    null,
-/* 33  */ 			bucket_counts:     []
-/* 34  */ 		},
-/* 35  */ 
-/* 36  */ 		initialize: function(){
-/* 37  */ 			console.group('%cinitialize: App Model %o', 'color:#3b4580', this);
-/* 38  */ 
-/* 39  */ 			_.extend(this, Backbone.Events);
-/* 40  */ 			SidekickWP.Events = _.extend({}, Backbone.Events);
-/* 41  */ 
-/* 42  */ 			Sidekick.Events.on('loaded_walkthrough',this.loaded_walkthrough,this);
-/* 43  */ 			Sidekick.Events.on('stop',this.show_review,this);
-/* 44  */ 			SidekickWP.Events.on('show_msg',this.show_msg,this);
-/* 45  */ 
-/* 46  */ 			this.trackingModel = new SidekickWP.Models.Tracking();
+/* 18  */ 	if (!window.console.groupCollapsed) window.console.groupCollapsed = function(){};
+/* 19  */ 
+/* 20  */ 	if (window.console){
+/* 21  */ 		window.console.info = function(msg,o1,o2,o3){if (!o1) o1 = '';if (!o2) o2 = '';if (!o3) o3 = '';console.log('%c' + msg,'color: blue;font-weight: bold',o1,o2,o3);};
+/* 22  */ 		window.console.event = function(msg,o1,o2,o3){if (!o1) o1 = '';if (!o2) o2 = '';if (!o3) o3 = '';console.log('%c' + msg,'color: green;font-weight: bold',o1,o2,o3);};
+/* 23  */ 	}
+/* 24  */ 
+/* 25  */ 	SidekickWP.Models.App = Backbone.Model.extend({
+/* 26  */ 		defaults: {
+/* 27  */ 			full_library:                            null,
+/* 28  */ 			library_filtered_hotspots:               null,
+/* 29  */ 			library_filtered_walkthroughs:           null,
+/* 30  */ 			library_filtered_walkthroughs_by_id:     null,
+/* 31  */ 			library_filtered_walkthroughs_by_bucket: null,
+/* 32  */ 			library_filtered_buckets:                [],
+/* 33  */ 			library_filtered_sub_buckets:            null,
+/* 34  */ 			library_filtered_sub_buckets_by_id:      null,
+/* 35  */ 			my_library:                              null,
+/* 36  */ 			wp_version:                              null,
+/* 37  */ 			installed_plugins:                       null,
+/* 38  */ 			current_url:                             null,
+/* 39  */ 			current_plugin:                          null,
+/* 40  */ 			license_status:                          null,
+/* 41  */ 			show_toggle_feedback:                    true,
+/* 42  */ 			bucket_counts:                           []
+/* 43  */ 		},
+/* 44  */ 
+/* 45  */ 		initialize: function(){
+/* 46  */ 			console.group('%cinitialize: App Model %o', 'color:#3b4580', this);
 /* 47  */ 
-/* 48  */ 			if (typeof sk_library == 'undefined') {
-/* 49  */ 				var msg = 'No Library Found!';
-/* 50  */ 				SidekickWP.Events.trigger('track_error',{msg: msg});
+/* 48  */ 			if ( $.browser.msie  && $.browser.version < 9) {
+/* 49  */ 				console.error('This browser is not supported');
+/* 50  */ 				return false;
 
 /* appModel.js */
 
-/* 51  */ 
-/* 52  */ 				console.error('Sidekick Library Not Found!');
-/* 53  */ 				return;
-/* 54  */ 			}
-/* 55  */ 			console.info('Library -> ' + sk_library_file);
-/* 56  */ 			console.info('my wpu_library %o', sk_library);
-/* 57  */ 
-/* 58  */ 			if (typeof sk_just_activated != 'undefined')
-/* 59  */ 				SidekickWP.Events.trigger('window_activate');
-/* 60  */ 
-/* 61  */ 			if (typeof sk_main_soft_version === 'undefined') {
-/* 62  */ 				console.error('No WP Version?!?');
-/* 63  */ 				return false;
-/* 64  */ 			}
-/* 65  */ 
-/* 66  */ 			if (typeof sk_main_soft_version != 'undefined') this.set('sk_main_soft_version',sk_main_soft_version);
-/* 67  */ 			if (typeof sk_library           != 'undefined') this.set('full_library',sk_library);
-/* 68  */ 			if (typeof sk_installed_plugins != 'undefined') this.set('installed_plugins',sk_installed_plugins);
-/* 69  */ 
-/* 70  */ 			console.table(this.attributes);
-/* 71  */ 
-/* 72  */ 
-/* 73  */ 			// console.info('Full Library %o', this.get('full_library'));
-/* 74  */ 			this.set('current_url',window.location.toString());
-/* 75  */ 
-/* 76  */ 			this.Config = {
-/* 77  */ 				domain: 'http://www.wpuniversity.com'
-/* 78  */ 			};
-/* 79  */ 
-/* 80  */ 			this.check_library();
-/* 81  */ 			this.views     = {};
-/* 82  */ 			this.views.app = new SidekickWP.Views.App({model: this, el: $("body")});
-/* 83  */ 
-/* 84  */ 			// var my_library = this.get('my_library');
-/* 85  */ 			// console.log('my_library %o', my_library);
+/* 51  */ 			}
+/* 52  */ 
+/* 53  */ 			_.extend(this, Backbone.Events);
+/* 54  */ 			SidekickWP.Events = _.extend({}, Backbone.Events);
+/* 55  */ 
+/* 56  */ 			Sidekick.Events.on('loaded_walkthrough',this.loaded_walkthrough,this);
+/* 57  */ 			// Sidekick.Events.on('stop',this.show_review,this);
+/* 58  */ 			Sidekick.Events.on('stop',this.deactivate_controls,this);
+/* 59  */ 			Sidekick.Events.on('track_play',this.activate_controls,this);
+/* 60  */ 			SidekickWP.Events.on('show_msg',this.show_msg,this);
+/* 61  */ 
+/* 62  */ 			this.trackingModel = new SidekickWP.Models.Tracking();
+/* 63  */ 
+/* 64  */ 			if (typeof sk_library == 'undefined') {
+/* 65  */ 				var msg = 'No Library Found!';
+/* 66  */ 				SidekickWP.Events.trigger('track_error',{msg: msg});
+/* 67  */ 
+/* 68  */ 				console.error('Sidekick Library Not Found! -> %s',sk_library_file);
+/* 69  */ 				return;
+/* 70  */ 			} else {
+/* 71  */ 				console.info('Library -> ' + sk_library_file);
+/* 72  */ 				console.log('sk_library %o', sk_library);
+/* 73  */ 			}
+/* 74  */ 
+/* 75  */ 			if (typeof sk_just_activated != 'undefined')
+/* 76  */ 				SidekickWP.Events.trigger('window_activate');
+/* 77  */ 
+/* 78  */ 			if (typeof sk_main_soft_version === 'undefined') {
+/* 79  */ 				console.error('No WP Version?!?');
+/* 80  */ 				return false;
+/* 81  */ 			}
+/* 82  */ 
+/* 83  */ 			if (typeof sk_main_soft_version != 'undefined') this.set('sk_main_soft_version',sk_main_soft_version);
+/* 84  */ 			if (typeof sk_library           != 'undefined') this.set('full_library',sk_library);
+/* 85  */ 			if (typeof sk_installed_plugins != 'undefined') this.set('installed_plugins',sk_installed_plugins);
 /* 86  */ 
-/* 87  */ 			console.groupEnd();
-/* 88  */ 		},
-/* 89  */ 
-/* 90  */ 		check_library: function(){
-/* 91  */ 			if (!this.get('full_library')) {
-/* 92  */ 				console.error("WPU Library Not Found!");
-/* 93  */ 				return false;
-/* 94  */ 			}
-/* 95  */ 			if (!this.get('sk_main_soft_version')){
-/* 96  */ 				console.error("No WP Version Found!");
-/* 97  */ 				return false;
-/* 98  */ 			}
-/* 99  */ 			this.parse_my_library();
-/* 100 */ 		},
+/* 87  */ 			if (sk_track_data === true) console.log("Can't Track User Data!");
+/* 88  */ 
+/* 89  */ 			// console.table(this.attributes);
+/* 90  */ 
+/* 91  */ 			console.info('Full Library %o', this.get('full_library'));
+/* 92  */ 			this.set('current_url',window.location.toString());
+/* 93  */ 
+/* 94  */ 			this.Config = {
+/* 95  */ 				domain: 'http://www.wpuniversity.com'
+/* 96  */ 			};
+/* 97  */ 
+/* 98  */ 			this.views     = {};
+/* 99  */ 
+/* 100 */ 			this.check_library();
 
 /* appModel.js */
 
-/* 101 */ 
-/* 102 */ 		check_walkthrough_compatibility: function(bucket_data,walkthrough,bucket_key,type_key){
-/* 103 */ 			// console.group('check_walkthrough_compatibility %o, %o', bucket_data, walkthrough);
+/* 101 */ 			this.filter_walkthroughs();
+/* 102 */ 			this.filter_buckets();
+/* 103 */ 			// this.remove_empty_buckets();
 /* 104 */ 
-/* 105 */ 			var sk_main_soft_version   = this.get('sk_main_soft_version');
-/* 106 */ 			var pass_main_soft_version = false, pass_theme_version = false, pass_theme = false, pass_plugin = false, pass_plugin_version = false, pass_user_level = false;
-/* 107 */ 			var bucket_counts          = this.get('bucket_counts');
-/* 108 */ 			var installed_plugins      = this.get('installed_plugins') ;
+/* 105 */ 			this.views.app = new SidekickWP.Views.App({model: this, el: $("body")});
+/* 106 */ 
+/* 107 */ 			console.groupEnd();
+/* 108 */ 		},
 /* 109 */ 
-/* 110 */ 			pass_main_soft_version = _.find(walkthrough.main_soft_version,function(val){
-/* 111 */ 				if (val == sk_main_soft_version)
-/* 112 */ 					return true;
-/* 113 */ 			});
-/* 114 */ 
-/* 115 */ 			if (walkthrough.theme) {
-/* 116 */ 				if (walkthrough.theme === sk_installed_theme) {
-/* 117 */ 					pass_theme = true;
-/* 118 */ 					if (walkthrough.theme_version) {
-/* 119 */ 						pass_theme_version = _.find(walkthrough.theme_version,function(val){
-/* 120 */ 							if (val == sk_theme_version) {
-/* 121 */ 								return true;
-/* 122 */ 							}
-/* 123 */ 						});
-/* 124 */ 					} else {
-/* 125 */ 						pass_theme_version = true;
-/* 126 */ 					}
+/* 110 */ 		filter_walkthroughs: function(){
+/* 111 */ 			var library                                 = this.get('full_library');
+/* 112 */ 			var check_list                              = [];
+/* 113 */ 			var passed_list                             = [];
+/* 114 */ 			var library_filtered_walkthroughs_by_id     = [];
+/* 115 */ 			var library_filtered_walkthroughs_by_bucket = [];
+/* 116 */ 			var library_filtered_hotspots               = [];
+/* 117 */ 
+/* 118 */ 			console.groupCollapsed('%cCHECK_WALKTHROUGH_COMPATIBILITY %o', 'color:#3b4580', walkthrough);
+/* 119 */ 			// console.group('%cCHECK_WALKTHROUGH_COMPATIBILITY %o', 'color:#3b4580', walkthrough);
+/* 120 */ 			for(var type in library.walkthroughs){
+/* 121 */ 				for(var walkthrough_key in library.walkthroughs[type]){
+/* 122 */ 					var walkthrough = library.walkthroughs[type][walkthrough_key];
+/* 123 */ 					var check_walkthought = this.check_walkthrough_compatibility(walkthrough);
+/* 124 */ 
+/* 125 */ 					if (check_walkthought) {
+/* 126 */ 						library_filtered_walkthroughs_by_id[walkthrough.id] = walkthrough;
 /* 127 */ 
-/* 128 */ 				}
-/* 129 */ 			} else {
-/* 130 */ 				pass_theme         = true;
-/* 131 */ 				pass_theme_version = true;
-/* 132 */ 			}
-/* 133 */ 
-/* 134 */ 			if (walkthrough.plugin && sk_installed_plugins) {
-/* 135 */ 				console.log('sk_installed_plugins %o', sk_installed_plugins);
+/* 128 */ 						if (walkthrough.type == 'hotspot') {
+/* 129 */ 							_.each(walkthrough.hotspots,function(item){
+/* 130 */ 								library_filtered_hotspots.push({url:item.url,selector: item.selector,id:walkthrough.id});
+/* 131 */ 							});
+/* 132 */ 						} else {
+/* 133 */ 							for (var bucket in walkthrough.buckets){
+/* 134 */ 								var bucket_id = walkthrough.buckets[bucket];
+/* 135 */ 								this.assign_walkthrough(bucket_id,walkthrough);
 /* 136 */ 
-/* 137 */ 				pass_plugin = _.find(sk_installed_plugins,function(plugin_data){
-/* 138 */ 					for (var plugin in plugin_data) {
-/* 139 */ 						var version = plugin_data[plugin];
-/* 140 */ 
-/* 141 */ 						if (plugin == walkthrough.plugin) {
-/* 142 */ 							pass_plugin = true;
-/* 143 */ 
-/* 144 */ 							pass_plugin_version = _.find(walkthrough.plugin_version,function(version2){
-/* 145 */ 								console.log('version %o == %o ?', version,version2);
-/* 146 */ 
-/* 147 */ 								if (version == version2) {
-/* 148 */ 									pass_plugin_version = true;
-/* 149 */ 									return true;
-/* 150 */ 								}
+/* 137 */ 								if (typeof library_filtered_walkthroughs_by_bucket[bucket_id] === 'undefined') library_filtered_walkthroughs_by_bucket[bucket_id] = [];
+/* 138 */ 								if (typeof library_filtered_walkthroughs_by_bucket[bucket_id][type] === 'undefined') library_filtered_walkthroughs_by_bucket[bucket_id][type] = [];
+/* 139 */ 
+/* 140 */ 								library_filtered_walkthroughs_by_bucket[bucket_id][type].push(walkthrough);
+/* 141 */ 							}
+/* 142 */ 						}
+/* 143 */ 						if (!_.size(passed_list)) {
+/* 144 */ 							passed_list = [walkthrough.id];
+/* 145 */ 						} else {
+/* 146 */ 							passed_list = _.union(passed_list,walkthrough.id);
+/* 147 */ 						}
+/* 148 */ 					}
+/* 149 */ 				}
+/* 150 */ 			}
 
 /* appModel.js */
 
-/* 151 */ 							});
-/* 152 */ 							console.log('pass_plugin_version %o', pass_plugin_version);
+/* 151 */ 			console.log('passed_list %o', passed_list);
+/* 152 */ 			console.log('library_filtered_walkthroughs_by_bucket %o', library_filtered_walkthroughs_by_bucket);
 /* 153 */ 
-/* 154 */ 							return true;
-/* 155 */ 						}
-/* 156 */ 						break;
-/* 157 */ 					}
-/* 158 */ 				});
-/* 159 */ 			} else {
-/* 160 */ 				pass_plugin         = true;
-/* 161 */ 				pass_plugin_version = true;
-/* 162 */ 			}
-/* 163 */ 
-/* 164 */ 			if (walkthrough.role) {
-/* 165 */ 				pass_user_level = _.find(walkthrough.role,function(val){
-/* 166 */ 					if (val == sk_user_level) {
-/* 167 */ 						return true;
-/* 168 */ 					}
-/* 169 */ 				});
-/* 170 */ 			} else {
-/* 171 */ 				pass_user_level = true;
-/* 172 */ 			}
-/* 173 */ 
+/* 154 */ 			console.groupEnd();
+/* 155 */ 
+/* 156 */ 			this.set('library_filtered_hotspots',library_filtered_hotspots);
+/* 157 */ 			this.set('library_filtered_walkthroughs',passed_list);
+/* 158 */ 			this.set('library_filtered_walkthroughs_by_id',library_filtered_walkthroughs_by_id);
+/* 159 */ 			this.set('library_filtered_walkthroughs_by_bucket',library_filtered_walkthroughs_by_bucket);
+/* 160 */ 		},
+/* 161 */ 
+/* 162 */ 		assign_walkthrough: function(into_bucket_id,walkthrough){
+/* 163 */ 			console.group('%cassign_walkthrough (%s) -> bucket %s', 'color:#8fa2ff',walkthrough.title,into_bucket_id);
+/* 164 */ 
+/* 165 */ 			var full_library             = this.get('full_library');
+/* 166 */ 			var library_filtered_buckets = this.get('library_filtered_buckets');
+/* 167 */ 
+/* 168 */ 			for (var bucket in full_library.buckets){
+/* 169 */ 				var bucket_data = full_library.buckets[bucket];
+/* 170 */ 				if (typeof bucket_data.sub_buckets == 'object') {
+/* 171 */ 					var sub_buckets = bucket_data.sub_buckets;
+/* 172 */ 					for (var sub_bucket in sub_buckets){
+/* 173 */ 						var sub_bucket_data = sub_buckets[sub_bucket];
 /* 174 */ 
-/* 175 */ 			if (!pass_main_soft_version || !pass_theme || !pass_theme_version || !pass_plugin || !pass_plugin_version || !pass_user_level){
-/* 176 */ 				if (!pass_main_soft_version)
-/* 177 */ 					console.error('FAILED %o - Main %o != %o',walkthrough.title, pass_main_soft_version,walkthrough.main_soft_version);
-/* 178 */ 
-/* 179 */ 				if (!pass_theme)
-/* 180 */ 					console.error('FAILED %o - Theme %o != %o',walkthrough.title, walkthrough.theme, pass_theme);
-/* 181 */ 
-/* 182 */ 				if (!pass_theme_version)
-/* 183 */ 					console.error('FAILED %o - Theme Ver %o != %o',walkthrough.title, sk_theme_version, walkthrough.theme_version);
-/* 184 */ 
-/* 185 */ 				if (!pass_plugin)
-/* 186 */ 					console.error('FAILED %o - Plugin %o != %o',walkthrough.title, sk_installed_plugins, walkthrough.plugin);
-/* 187 */ 
-/* 188 */ 				if (!pass_plugin_version)
-/* 189 */ 					console.error('FAILED %o - Plugin Ver %o != %o',walkthrough.title, sk_installed_plugins, walkthrough.plugin_version);
-/* 190 */ 
-/* 191 */ 				if (!pass_user_level)
-/* 192 */ 					console.error('FAILED %o - User Level %o != %o',walkthrough.title, sk_user_level, walkthrough.role);
-/* 193 */ 
-/* 194 */ 				if (typeof bucket_data.walkthroughs !== 'undefined') {
-/* 195 */ 					bucket_data.walkthroughs[type_key] = _.without(bucket_data.walkthroughs[type_key], _.findWhere(bucket_data.walkthroughs[type_key], {id: walkthrough.id}));
-/* 196 */ 				} else {
-/* 197 */ 					bucket_data.sub_buckets[bucket_key].walkthroughs[type_key] = _.without(bucket_data.sub_buckets[bucket_key].walkthroughs[type_key], _.findWhere(bucket_data.sub_buckets[bucket_key].walkthroughs[type_key], {id: walkthrough.id}));
-/* 198 */ 				}
-/* 199 */ 			} else {
-/* 200 */ 				// console.log('PASSED! %o', walkthrough.title);
+/* 175 */ 						if (typeof sub_bucket_data.sub_buckets == 'object') {
+/* 176 */ 							var sub_sub_buckets = sub_bucket_data.sub_buckets;
+/* 177 */ 							for (var sub_sub_bucket in sub_sub_buckets){
+/* 178 */ 								var sub_sub_bucket_data = sub_sub_buckets[sub_sub_bucket];
+/* 179 */ 								if (sub_sub_bucket_data.id == into_bucket_id) {
+/* 180 */ 									// console.log('		Assigning (%s) -> (%s)',walkthrough.title,into_bucket_id);
+/* 181 */ 									(full_library.buckets[bucket].sub_buckets[sub_bucket].sub_buckets[sub_sub_bucket].walkthroughs = full_library.buckets[bucket].sub_buckets[sub_bucket].sub_buckets[sub_sub_bucket].walkthroughs || []).push(walkthrough);
+/* 182 */ 								}
+/* 183 */ 							}
+/* 184 */ 						} else {
+/* 185 */ 							if (sub_bucket_data.id == into_bucket_id) {
+/* 186 */ 								// console.log('	Assigning (%s) -> (%s)',walkthrough.title,into_bucket_id);
+/* 187 */ 								(full_library.buckets[bucket].sub_buckets[sub_bucket].walkthroughs = full_library.buckets[bucket].sub_buckets[sub_bucket].walkthroughs || []).push(walkthrough);
+/* 188 */ 							}
+/* 189 */ 						}
+/* 190 */ 					}
+/* 191 */ 				} else {
+/* 192 */ 					if (bucket_data.id == into_bucket_id) {
+/* 193 */ 						// console.log('Assigning (%s) -> (%s)',walkthrough.title,into_bucket_id);
+/* 194 */ 						(full_library.buckets[bucket].walkthroughs = full_library.buckets[bucket].walkthroughs || []).push(walkthrough);
+/* 195 */ 					}
+/* 196 */ 				}
+/* 197 */ 			}
+/* 198 */ 
+/* 199 */ 			this.set('library_filtered_buckets',library_filtered_buckets);
+/* 200 */ 			console.groupEnd();
 
 /* appModel.js */
 
-/* 201 */ 
-/* 202 */ 				if (typeof bucket_counts[bucket_data.title] == 'undefined' || typeof bucket_counts[bucket_data.title].count == 'undefined') {
-/* 203 */ 					bucket_counts[bucket_data.title] = {count: 1};
-/* 204 */ 				} else {
-/* 205 */ 					bucket_counts[bucket_data.title].count++;
-/* 206 */ 				}
-/* 207 */ 			}
-/* 208 */ 
-/* 209 */ 			if (typeof bucket_data.walkthroughs !== 'undefined') {
-/* 210 */ 				if (!_.size(bucket_data.walkthroughs[type_key])) {
-/* 211 */ 					// console.log('%cDeleteing Bucket Type %o','color: #d17919', type_key);
-/* 212 */ 					delete(bucket_data.walkthroughs[type_key]);
-/* 213 */ 				}
-/* 214 */ 			} else {
-/* 215 */ 				if (!_.size(bucket_data.sub_buckets[bucket_key].walkthroughs[type_key])) {
-/* 216 */ 					// console.log('%cDeleteing Bucket Type %o - %o', 'color: #d17919',bucket_key, type_key);
-/* 217 */ 					delete(bucket_data.sub_buckets[bucket_key].walkthroughs[type_key]);
-/* 218 */ 				}
-/* 219 */ 			}
-/* 220 */ 			this.set('bucket_counts',bucket_counts);
-/* 221 */ 			// console.groupEnd();
-/* 222 */ 		},
+/* 201 */ 		},
+/* 202 */ 
+/* 203 */ 		filter_buckets: function(){
+/* 204 */ 			console.groupCollapsed('%cFILTER_BUCKETS', 'color:#8fa2ff');
+/* 205 */ 
+/* 206 */ 			var full_library             = this.get('full_library');
+/* 207 */ 			var library_filtered_sub_buckets = {};
+/* 208 */ 			var bucket;
+/* 209 */ 			var bucket_data;
+/* 210 */ 			var sub_bucket;
+/* 211 */ 			var sub_buckets;
+/* 212 */ 			var sub_bucket_data;
+/* 213 */ 
+/* 214 */ 			console.log('LEVEL 3 full_library.buckets %o', full_library.buckets);
+/* 215 */ 
+/* 216 */ 
+/* 217 */ 			for (bucket in full_library.buckets){
+/* 218 */ 				console.log('bucket %o', bucket);
+/* 219 */ 
+/* 220 */ 				bucket_data = full_library.buckets[bucket];
+/* 221 */ 
+/* 222 */ 				library_filtered_sub_buckets[bucket] = {id:bucket_data.id,sub_buckets:[]};
 /* 223 */ 
-/* 224 */ 		filter_bucket_walkthroughs: function(bucket_data,bucket_key){
-/* 225 */ 			// console.group('%cFilter Bucket %o(%o) - %o', 'color:#3b4580',bucket_data.title, bucket_key,bucket_data);
-/* 226 */ 
-/* 227 */ 			if (bucket_data.sub_buckets) {
-/* 228 */ 				// console.group('%cFilter Sub Bucket %o', 'color:#3b4580');
-/* 229 */ 				_.each(bucket_data.sub_buckets, function(sub_bucket,sub_bucket_key){
-/* 230 */ 					_.each(sub_bucket.walkthroughs, function(type,type_key){
-/* 231 */ 						_.each(type, function(walkthrough,walkthrough_key){
-/* 232 */ 							this.check_walkthrough_compatibility(bucket_data,walkthrough,sub_bucket_key,type_key);
-/* 233 */ 						},this);
+/* 224 */ 
+/* 225 */ 				if (typeof bucket_data.sub_buckets == 'object') {
+/* 226 */ 					sub_buckets = bucket_data.sub_buckets;
+/* 227 */ 					for (sub_bucket in sub_buckets){
+/* 228 */ 						console.log('sub_bucket %o', sub_bucket);
+/* 229 */ 
+/* 230 */ 						sub_bucket_data = sub_buckets[sub_bucket];
+/* 231 */ 
+/* 232 */ 						library_filtered_sub_buckets[bucket].sub_buckets[sub_bucket] = {id:sub_bucket_data.id};
+/* 233 */ 						library_filtered_sub_buckets[sub_bucket] = {id:sub_bucket_data.id,sub_buckets:[]};
 /* 234 */ 
-/* 235 */ 						if (!_.size(bucket_data.sub_buckets[sub_bucket_key].walkthroughs)) {
-/* 236 */ 							delete(bucket_data.sub_buckets[sub_bucket_key]);
-/* 237 */ 						}
-/* 238 */ 					},this);
+/* 235 */ 
+/* 236 */ 						if (typeof sub_bucket_data.sub_buckets == 'object') {
+/* 237 */ 							var sub_sub_buckets = sub_bucket_data.sub_buckets;
+/* 238 */ 
 /* 239 */ 
-/* 240 */ 					if (!_.size(bucket_data.sub_buckets)) {
-/* 241 */ 						delete(bucket_data.sub_buckets);
-/* 242 */ 					}
-/* 243 */ 				},this);
-/* 244 */ 				// console.groupEnd();
-/* 245 */ 			} else if (bucket_data.walkthroughs){
-/* 246 */ 				// console.group('%cFilter Walkthroughs %o - %o', 'color:#3b4580',bucket_data.title,bucket_data);
-/* 247 */ 				_.each(bucket_data.walkthroughs, function(type,type_key){
-/* 248 */ 					_.each(type, function(walkthrough,walkthrough_key){
-/* 249 */ 						this.check_walkthrough_compatibility(bucket_data,walkthrough,bucket_key,type_key);
-/* 250 */ 					},this);
+/* 240 */ 							for (var sub_sub_bucket in sub_sub_buckets){
+/* 241 */ 								console.log('sub_sub_bucket %o', sub_sub_bucket);
+/* 242 */ 
+/* 243 */ 								var sub_sub_bucket_data = sub_sub_buckets[sub_sub_bucket];
+/* 244 */ 
+/* 245 */ 								library_filtered_sub_buckets[sub_sub_bucket] = {id:sub_sub_bucket_data.id,sub_buckets:[]};
+/* 246 */ 								library_filtered_sub_buckets[sub_bucket].sub_buckets[sub_sub_bucket] = {id:sub_sub_bucket_data.id,sub_buckets:[]};
+/* 247 */ 
+/* 248 */ 								// console.log('sub_sub_bucket %o - %o', sub_sub_bucket,sub_sub_bucket_data);
+/* 249 */ 
+/* 250 */ 								if (!sub_sub_bucket_data.walkthroughs && !sub_sub_bucket_data.sub_buckets) {
 
 /* appModel.js */
 
-/* 251 */ 
-/* 252 */ 					if (!_.size(bucket_data.walkthroughs)) {
-/* 253 */ 						bucket_data = null;
-/* 254 */ 					}
-/* 255 */ 				},this);
-/* 256 */ 				// console.groupEnd();
-/* 257 */ 			}
-/* 258 */ 
-/* 259 */ 			// console.groupEnd();
-/* 260 */ 			if (typeof bucket_data !== 'undefined' && bucket_data) {
-/* 261 */ 				if (typeof bucket_data.walkthroughs !== 'undefined' || typeof bucket_data.sub_buckets !== 'undefined')
-/* 262 */ 					return bucket_data;
-/* 263 */ 			}
-/* 264 */ 
-/* 265 */ 			return false;
-/* 266 */ 		},
-/* 267 */ 
-/* 268 */ 		parse_my_library: function(){
-/* 269 */ 			// console.log('parse_my_library');
-/* 270 */ 			console.group('%cParse Library %o', 'color:#3b4580');
-/* 271 */ 			var full_library = this.get('full_library');
-/* 272 */ 			console.log('Wpu: parse_full_library %o', full_library);
+/* 251 */ 									console.log('Deleteing -> %o',full_library.buckets[bucket].sub_buckets[sub_bucket].sub_buckets[sub_sub_bucket]);
+/* 252 */ 									delete(full_library.buckets[bucket].sub_buckets[sub_bucket].sub_buckets[sub_sub_bucket]);
+/* 253 */ 								}
+/* 254 */ 
+/* 255 */ 								if (typeof sub_sub_bucket_data.sub_buckets == 'object') {
+/* 256 */ 									var sub_sub_sub_buckets = sub_sub_bucket_data.sub_buckets;
+/* 257 */ 
+/* 258 */ 									for (var sub_sub_sub_bucket in sub_sub_sub_buckets){
+/* 259 */ 										console.log('sub_sub_sub_bucket %o', sub_sub_sub_bucket);
+/* 260 */ 										var sub_sub_sub_bucket_data = sub_sub_sub_buckets[sub_sub_sub_bucket];
+/* 261 */ 										library_filtered_sub_buckets[sub_sub_sub_bucket] = {id:sub_sub_sub_bucket_data.id,sub_buckets:[]};
+/* 262 */ 										library_filtered_sub_buckets[sub_sub_bucket].sub_buckets[sub_sub_sub_bucket] = {id:sub_sub_sub_bucket_data.id,sub_buckets:[]};
+/* 263 */ 									}
+/* 264 */ 								}
+/* 265 */ 
+/* 266 */ 							}
+/* 267 */ 						}
+/* 268 */ 					}
+/* 269 */ 				}
+/* 270 */ 			}
+/* 271 */ 
+/* 272 */ 			console.log('LEVEL 2 full_library.buckets %o', full_library.buckets);
 /* 273 */ 
-/* 274 */ 			var all_buckets = [];
-/* 275 */ 
-/* 276 */ 			for (var bucket in full_library){
-/* 277 */ 				if (typeof full_library[bucket] == 'object' && bucket !== 'all_walkthrough_ids') {
-/* 278 */ 					bucket_data = full_library[bucket];
-/* 279 */ 					var filtered_bucket_data = this.filter_bucket_walkthroughs(bucket_data,bucket);
+/* 274 */ 			for (bucket in full_library.buckets){
+/* 275 */ 				bucket_data = full_library.buckets[bucket];
+/* 276 */ 				if (typeof bucket_data.sub_buckets == 'object') {
+/* 277 */ 					sub_buckets = bucket_data.sub_buckets;
+/* 278 */ 					for (sub_bucket in sub_buckets){
+/* 279 */ 						sub_bucket_data = sub_buckets[sub_bucket];
 /* 280 */ 
-/* 281 */ 					if (filtered_bucket_data) {
-/* 282 */ 						// console.log('Adding to all_buckiets %o - %o', bucket, filtered_bucket_data);
-/* 283 */ 						all_buckets[bucket] = filtered_bucket_data;
-/* 284 */ 						if (bucket_data.sub_buckets){
-/* 285 */ 							for (var sub_bucket in bucket_data.sub_buckets){
-/* 286 */ 								if (this.filter_bucket_walkthroughs(bucket_data.sub_buckets[sub_bucket],sub_bucket)) {
-/* 287 */ 									// console.log('Adding to all_buckiets %o %o', sub_bucket, bucket_data.sub_buckets[sub_bucket]);
+/* 281 */ 						if (!sub_bucket_data.walkthroughs && !sub_bucket_data.sub_buckets) {
+/* 282 */ 							console.log('Deleteing -> %o',sub_bucket);
+/* 283 */ 							delete(full_library.buckets[bucket].sub_buckets[sub_bucket]);
+/* 284 */ 						}
+/* 285 */ 					}
+/* 286 */ 				}
+/* 287 */ 			}
 /* 288 */ 
-/* 289 */ 									all_buckets[sub_bucket] = bucket_data.sub_buckets[sub_bucket];
-/* 290 */ 								}
-/* 291 */ 							}
-/* 292 */ 						}
-/* 293 */ 					} else {
-/* 294 */ 						delete(full_library[bucket]);
-/* 295 */ 					}
+/* 289 */ 			console.log('LEVEL 1 full_library.buckets %o', full_library.buckets);
+/* 290 */ 
+/* 291 */ 			for (bucket in full_library.buckets){
+/* 292 */ 				bucket_data = full_library.buckets[bucket];
+/* 293 */ 				if (!bucket_data.walkthroughs && !bucket_data.sub_buckets) {
+/* 294 */ 					console.log('Deleteing -> %o',bucket);
+/* 295 */ 					delete(full_library.buckets[bucket]);
 /* 296 */ 				}
 /* 297 */ 			}
-/* 298 */ 			// console.info('all_buckets %o', all_buckets);
-/* 299 */ 
-/* 300 */ 			this.set('all_buckets',all_buckets);
+/* 298 */ 
+/* 299 */ 			this.set('library_filtered_sub_buckets',library_filtered_sub_buckets);
+/* 300 */ 			console.log('full_library.buckets %o', full_library.buckets);
 
 /* appModel.js */
 
 /* 301 */ 			console.groupEnd();
 /* 302 */ 		},
 /* 303 */ 
-/* 304 */ 		loaded_walkthrough: function(walkthrough_model){
-/* 305 */ 			// console.log('WPU:loaded_walkthrough');
-/* 306 */ 			this.set('last_loaded_walkthrough',walkthrough_model);
-/* 307 */ 		},
-/* 308 */ 
-/* 309 */ 		show_review: function(a,b){
-/* 310 */ 			console.log('show_review');
-/* 311 */ 			var last_loaded_walkthrough = this.get('last_loaded_walkthrough');
-/* 312 */ 			console.log('last_loaded_walkthrough %o', last_loaded_walkthrough);
-/* 313 */ 
-/* 314 */ 			var walkthrough_title = last_loaded_walkthrough.get('title');
-/* 315 */ 			console.log('walkthrough_title %o', walkthrough_title);
-/* 316 */ 
-/* 317 */ 			new SidekickWP.Models.Review({walkthrough_title: walkthrough_title});
-/* 318 */ 		},
+/* 304 */ 		check_walkthrough_compatibility: function(walkthrough){
+/* 305 */ 			var sk_main_soft_version   = this.get('sk_main_soft_version');
+/* 306 */ 			var pass_main_soft_version = false, pass_theme_version = false, pass_theme = false, pass_plugin = false, pass_plugin_version = false, pass_user_level = false;
+/* 307 */ 			var bucket_counts          = this.get('bucket_counts');
+/* 308 */ 			var installed_plugins      = this.get('installed_plugins') ;
+/* 309 */ 
+/* 310 */ 			// Checking Main Software Version Compatibility
+/* 311 */ 			pass_main_soft_version = _.find(walkthrough.main_soft_version,function(val){
+/* 312 */ 				if (val == sk_main_soft_version)
+/* 313 */ 					return true;
+/* 314 */ 			});
+/* 315 */ 
+/* 316 */ 			if (!pass_main_soft_version){
+/* 317 */ 				console.error('FAILED %o - Main %s != %s',walkthrough.title, pass_main_soft_version,walkthrough.main_soft_version);
+/* 318 */ 				console.log('sk_main_soft_version %o walkthrough.main_soft_version %o', sk_main_soft_version,walkthrough.main_soft_version);
 /* 319 */ 
-/* 320 */ 		show_msg: function(data,context){
-/* 321 */ 			console.log('show_msg %o',arguments);
-/* 322 */ 			console.log('this.models %o', this.models);
-/* 323 */ 			console.log('context %o', context);
-/* 324 */ 			new SidekickWP.Models.Message({title: data.title, message: data.msg});
-/* 325 */ 		}
-/* 326 */ 	});
-/* 327 */ }(jQuery));
+/* 320 */ 				return false;
+/* 321 */ 			}
+/* 322 */ 
+/* 323 */ 			// Checking Theme Compatibility
+/* 324 */ 			if (typeof walkthrough.theme !== 'undefined') {
+/* 325 */ 				if (walkthrough.theme === sk_installed_theme) {
+/* 326 */ 					pass_theme = true;
+/* 327 */ 					if (walkthrough.theme_version) {
+/* 328 */ 						pass_theme_version = _.find(walkthrough.theme_version,function(val){
+/* 329 */ 							if (val == sk_theme_version) {
+/* 330 */ 								return true;
+/* 331 */ 							}
+/* 332 */ 						});
+/* 333 */ 					} else {
+/* 334 */ 						pass_theme_version = true;
+/* 335 */ 					}
+/* 336 */ 				}
+/* 337 */ 				if (!pass_theme || !pass_theme_version){
+/* 338 */ 					console.error('FAILED %o - Theme %s (%o) != %s (%o)',walkthrough.title,walkthrough.theme_version, walkthrough.theme, pass_theme, sk_theme_version);
+/* 339 */ 					return false;
+/* 340 */ 				}
+/* 341 */ 			}
+/* 342 */ 
+/* 343 */ 			// Checking Plugin Compatibility
+/* 344 */ 			if (typeof walkthrough.plugin !== 'undefined') {
+/* 345 */ 				if (typeof sk_installed_plugins === 'undefined') return false;
+/* 346 */ 				pass_plugin = _.find(sk_installed_plugins,function(plugin_data){
+/* 347 */ 					for (var plugin in plugin_data) {
+/* 348 */ 						var version = plugin_data[plugin];
+/* 349 */ 
+/* 350 */ 						if (plugin == walkthrough.plugin) {
+
+/* appModel.js */
+
+/* 351 */ 							pass_plugin = true;
+/* 352 */ 
+/* 353 */ 							pass_plugin_version = _.find(walkthrough.plugin_version,function(version2){
+/* 354 */ 								// console.log('version %o == %o ?', version,version2);
+/* 355 */ 								if (version == version2) {
+/* 356 */ 									pass_plugin_version = true;
+/* 357 */ 									return true;
+/* 358 */ 								}
+/* 359 */ 							});
+/* 360 */ 							// console.log('pass_plugin_version %o', pass_plugin_version);
+/* 361 */ 							return true;
+/* 362 */ 						}
+/* 363 */ 						break;
+/* 364 */ 					}
+/* 365 */ 				});
+/* 366 */ 				if (!pass_plugin || !pass_plugin_version){
+/* 367 */ 					console.error('FAILED %o - Plugin %o (%o) != %s',walkthrough.title, sk_installed_plugins, walkthrough.plugin_version, walkthrough.plugin);
+/* 368 */ 					return false;
+/* 369 */ 				}
+/* 370 */ 			}
+/* 371 */ 
+/* 372 */ 			// Checking User Role/Level Compatibility
+/* 373 */ 			if (walkthrough.role) {
+/* 374 */ 				pass_user_level = _.find(walkthrough.role,function(val){
+/* 375 */ 					if (val == sk_user_level) {
+/* 376 */ 						return true;
+/* 377 */ 					}
+/* 378 */ 				});
+/* 379 */ 			}
+/* 380 */ 
+/* 381 */ 			if (!pass_user_level){
+/* 382 */ 				console.error('FAILED %o - User Level %s != %s',walkthrough.title, sk_user_level, walkthrough.role);
+/* 383 */ 				return false;
+/* 384 */ 			}
+/* 385 */ 
+/* 386 */ 			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.title);
+/* 387 */ 			return true;
+/* 388 */ 		},
+/* 389 */ 
+/* 390 */ 		check_library: function(){
+/* 391 */ 			if (!this.get('full_library')) {
+/* 392 */ 				console.error("WPU Library Not Found!");
+/* 393 */ 				return false;
+/* 394 */ 			}
+/* 395 */ 			if (!this.get('sk_main_soft_version')){
+/* 396 */ 				console.error("No WP Version Found!");
+/* 397 */ 				return false;
+/* 398 */ 			}
+/* 399 */ 			// this.parse_my_library();
+/* 400 */ 		},
+
+/* appModel.js */
+
+/* 401 */ 
+/* 402 */ 		loaded_walkthrough: function(walkthrough_model){
+/* 403 */ 			// console.log('WPU:loaded_walkthrough');
+/* 404 */ 			this.set('last_loaded_walkthrough',walkthrough_model);
+/* 405 */ 		},
+/* 406 */ 
+/* 407 */ 		activate_controls: function(){
+/* 408 */ 			console.log('activate_controls');
+/* 409 */ 			$('div#sidekick').addClass('playing');
+/* 410 */ 		},
+/* 411 */ 
+/* 412 */ 		deactivate_controls: function(){
+/* 413 */ 			$('div#sidekick').removeClass('playing');
+/* 414 */ 		},
+/* 415 */ 
+/* 416 */ 		// show_review: function(a,b){
+/* 417 */ 		// 	console.log('show_review');
+/* 418 */ 		// 	var last_loaded_walkthrough = this.get('last_loaded_walkthrough');
+/* 419 */ 		// 	console.log('last_loaded_walkthrough %o', last_loaded_walkthrough);
+/* 420 */ 
+/* 421 */ 		// 	var walkthrough_title = last_loaded_walkthrough.get('title');
+/* 422 */ 		// 	console.log('walkthrough_title %o', walkthrough_title);
+/* 423 */ 
+/* 424 */ 		// 	// new SidekickWP.Models.Review({walkthrough_title: walkthrough_title});
+/* 425 */ 		// },
+/* 426 */ 
+/* 427 */ 		show_msg: function(data,context){
+/* 428 */ 			// console.log('show_msg %o',arguments);
+/* 429 */ 			// console.log('this.models %o', this.models);
+/* 430 */ 			// console.log('context %o', context);
+/* 431 */ 			new SidekickWP.Models.Message({title: data.title, message: data.msg});
+/* 432 */ 		}
+/* 433 */ 	});
+/* 434 */ }(jQuery));
 
 ;
 /* bucketContainerModel.js */
@@ -354,18 +467,16 @@
 /* 2  */ 
 /* 3  */ 	SidekickWP.Models.BucketContainer = Backbone.Model.extend({
 /* 4  */ 		defaults: {
-/* 5  */ 			full_library:  null,
-/* 6  */ 			all_buckets:   null,
-/* 7  */ 			bucket_counts: null
-/* 8  */ 		},
-/* 9  */ 
-/* 10 */ 		initialize: function(){
-/* 11 */ 			this.view = new SidekickWP.Views.BucketContainer({model: this});
-/* 12 */ 			return this;
-/* 13 */ 		}
-/* 14 */ 	});
-/* 15 */ 
-/* 16 */ }(jQuery));
+/* 5  */ 			navigation_history: ['buckets']
+/* 6  */ 		},
+/* 7  */ 
+/* 8  */ 		initialize: function(){
+/* 9  */ 			this.view = new SidekickWP.Views.BucketContainer({model: this});
+/* 10 */ 			return this;
+/* 11 */ 		}
+/* 12 */ 	});
+/* 13 */ 
+/* 14 */ }(jQuery));
 
 ;
 /* bucketModel.js */
@@ -374,19 +485,20 @@
 /* 2  */ 
 /* 3  */ 	SidekickWP.Models.Bucket = Backbone.Model.extend({
 /* 4  */ 		defaults: {
-/* 5  */ 			bucket:        null,
-/* 6  */ 			title:         'What do you need help with?',
-/* 7  */ 			bucket_counts: null
-/* 8  */ 		},
-/* 9  */ 
-/* 10 */ 		initialize: function(){
-/* 11 */ 			console.log('initialize bucketModel %o', this.attributes);
-/* 12 */ 			this.view = new SidekickWP.Views.Bucket({model: this});
-/* 13 */ 			return this;
-/* 14 */ 		}
-/* 15 */ 	});
-/* 16 */ 
-/* 17 */ }(jQuery));
+/* 5  */ 			full_library:                  null,
+/* 6  */ 			library_filtered_walkthroughs: null,
+/* 7  */ 			library_filtered_buckets:      null,
+/* 8  */ 			library_filtered_sub_buckets:  null
+/* 9  */ 		},
+/* 10 */ 
+/* 11 */ 		initialize: function(){
+/* 12 */ 			console.log('initialize bucketModel %o', this.attributes);
+/* 13 */ 			this.view = new SidekickWP.Views.Bucket({model: this});
+/* 14 */ 			return this;
+/* 15 */ 		}
+/* 16 */ 	});
+/* 17 */ 
+/* 18 */ }(jQuery));
 
 ;
 /* helpers.js */
@@ -395,7 +507,7 @@
 /* 2  */ 
 /* 3  */ 	SidekickWP.Helpers = ({
 /* 4  */ 		preventScrolling: function(){
-/* 5  */ 			$('#sidekick .bucketContainer>div>ul').on('DOMMouseScroll mousewheel', function(ev) {
+/* 5  */ 			$('div#sidekick .bucketContainer>div>ul').on('DOMMouseScroll mousewheel', function(ev) {
 /* 6  */ 				console.log('asd');
 /* 7  */ 				var $this = $(this),
 /* 8  */ 				scrollTop = this.scrollTop,
@@ -428,26 +540,6 @@
 /* 35 */ }(jQuery));
 /* 36 */ 
 /* 37 */ 
-
-;
-/* listModel.js */
-
-/* 1  */ (function($) {
-/* 2  */ 
-/* 3  */ 	SidekickWP.Models.List = Backbone.Model.extend({
-/* 4  */ 		defaults: {
-/* 5  */ 			bucket: null,
-/* 6  */ 			title:  'List'
-/* 7  */ 		},
-/* 8  */ 
-/* 9  */ 		initialize: function(){
-/* 10 */ 			console.log('initialize bucketModel %o', this.attributes);
-/* 11 */ 			this.view = new SidekickWP.Views.List({model: this});
-/* 12 */ 			return this;
-/* 13 */ 		}
-/* 14 */ 	});
-/* 15 */ 
-/* 16 */ }(jQuery));
 
 ;
 /* messageModel.js */
@@ -518,45 +610,48 @@
 /* 29 */ 			data.source = 'plugin';
 /* 30 */ 			data.action = 'track';
 /* 31 */ 			data.data = JSON.stringify(model);
-/* 32 */ 			data.user = sk_license_key;
-/* 33 */ 			console.log('send tracking to WPU',data);
-/* 34 */ 			$.post("http://www.wpuniversity.com/wp-admin/admin-ajax.php", data);
-/* 35 */ 		},
-/* 36 */ 
-/* 37 */ 		track_explore: function(data){
-/* 38 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Explore', data.what, null, 0,true]);
-/* 39 */ 			this.send({type: 'explore', label: data.what});
-/* 40 */ 		},
-/* 41 */ 
-/* 42 */ 		track_open_sidekick_window: function(data){
-/* 43 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Window', 'Open', data.position, 0,true]);
-/* 44 */ 			this.send({type: 'open'});
-/* 45 */ 		},
-/* 46 */ 
-/* 47 */ 		window_activate: function(data){
-/* 48 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Activate', '', wpu_plugin_version, 0,true]);
-/* 49 */ 			this.send({type: 'activate'});
-/* 50 */ 		},
+/* 32 */ 			if (typeof sidekick !== 'undefined' && (typeof sk_track_data === 'undefined' || sk_track_data === true)) {
+/* 33 */ 				data.user = sk_license_key;
+/* 34 */ 			}
+/* 35 */ 
+/* 36 */ 			// console.log('send tracking to WPU',data);
+/* 37 */ 			$.post("http://www.wpuniversity.com/wp-admin/admin-ajax.php", data);
+/* 38 */ 		},
+/* 39 */ 
+/* 40 */ 		track_explore: function(data){
+/* 41 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Explore', data.what, null, 0,true]);
+/* 42 */ 			this.send({type: 'explore', label: data.what});
+/* 43 */ 		},
+/* 44 */ 
+/* 45 */ 		track_open_sidekick_window: function(data){
+/* 46 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Window', 'Open', null, 0,true]);
+/* 47 */ 			this.send({type: 'open'});
+/* 48 */ 		},
+/* 49 */ 
+/* 50 */ 		window_activate: function(data){
 
 /* trackingModel.js */
 
-/* 51 */ 
-/* 52 */ 		window_deactivate: function(data){
-/* 53 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Deactivate', '', wpu_plugin_version, 0,true]);
-/* 54 */ 			this.send({type: 'deactivate'});
-/* 55 */ 		},
-/* 56 */ 
-/* 57 */ 		track_error: function(data){
-/* 58 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin', 'Error', data.msg,null,true]);
-/* 59 */ 			this.send({type: 'error', label: data.msg});
-/* 60 */ 		}
-/* 61 */ 
-/* 62 */ 	});
-/* 63 */ 
-/* 64 */ }(jQuery));
-/* 65 */ 
+/* 51 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Activate', '', wpu_plugin_version, 0,true]);
+/* 52 */ 			this.send({type: 'activate'});
+/* 53 */ 		},
+/* 54 */ 
+/* 55 */ 		window_deactivate: function(data){
+/* 56 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Deactivate', '', wpu_plugin_version, 0,true]);
+/* 57 */ 			this.send({type: 'deactivate'});
+/* 58 */ 		},
+/* 59 */ 
+/* 60 */ 		track_error: function(data){
+/* 61 */ 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin', 'Error', data.msg,null,true]);
+/* 62 */ 			this.send({type: 'error', label: data.msg});
+/* 63 */ 		}
+/* 64 */ 
+/* 65 */ 	});
 /* 66 */ 
-/* 67 */ 
+/* 67 */ }(jQuery));
+/* 68 */ 
+/* 69 */ 
+/* 70 */ 
 
 ;
 /* appView.js */
@@ -564,282 +659,395 @@
 /* 1   */ (function($) {
 /* 2   */ 	SidekickWP.Views.App = Backbone.View.extend({
 /* 3   */ 		initialize: function(){
-/* 4   */ 			SidekickWP.Events.on('close_sidekick_window', this.close_sidekick_window, this);
-/* 5   */ 			SidekickWP.Events.on('show_main_pane', this.show_main_pane, this);
-/* 6   */ 			SidekickWP.Events.on('show_next_pane', this.show_next_pane, this);
-/* 7   */ 			SidekickWP.Events.on('show_prev_pane', this.show_prev_pane, this);
-/* 8   */ 
-/* 9   */ 			SidekickWP.Events.on('do_update_header', this.update_header, this);
-/* 10  */ 			SidekickWP.Events.on('show_next_pane', this.update_header, this);
-/* 11  */ 			SidekickWP.Events.on('show_prev_pane', this.update_header, this);
-/* 12  */ 
-/* 13  */ 			if (typeof Sidekick !== 'undefined')
-/* 14  */ 				Sidekick.Events.on('stop', this.open_sidekick_window, this);
+/* 4   */ 			SidekickWP.Events.on('toggle_sidekick_drawer', this.toggle_sidekick_drawer, this);
+/* 5   */ 			SidekickWP.Events.on('close_sidekick_drawer',  this.close_sidekick_drawer, this);
+/* 6   */ 			SidekickWP.Events.on('open_sidekick_drawer',   this.open_sidekick_drawer, this);
+/* 7   */ 			SidekickWP.Events.on('resize_sidekick_drawer', this.resize_sidekick_drawer, this);
+/* 8   */ 			SidekickWP.Events.on('toggle_hotspots',        this.toggle_hotspots, this);
+/* 9   */ 			SidekickWP.Events.on('toggle_preferences',     this.toggle_preferences, this);
+/* 10  */ 
+/* 11  */ 
+/* 12  */ 			Sidekick.Events.on('track_play',this.toggle_sidekick_drawer,'hide');
+/* 13  */ 			Sidekick.Events.on('track_stop',this.show_sidekick_drawer);
+/* 14  */ 
 /* 15  */ 			return this.render();
 /* 16  */ 		},
 /* 17  */ 
 /* 18  */ 		render: function(){
-/* 19  */ 			console.group('%crender: SidekickWP: appView %o', 'color:#8fa2ff', this);
+/* 19  */ 			console.groupEnd('%crender: SidekickWP: appView %o', 'color:#8fa2ff', this);
 /* 20  */ 
-/* 21  */ 			var all_buckets = this.model.get('all_buckets');
-/* 22  */ 
-/* 23  */ 			this.BucketContainer = new SidekickWP.Models.BucketContainer({
-/* 24  */ 				full_library:  this.model.get('full_library'),
-/* 25  */ 				all_buckets:   all_buckets,
-/* 26  */ 				bucket_counts: this.model.get('bucket_counts')
-/* 27  */ 			});
-/* 28  */ 
-/* 29  */ 			var variables = {
-/* 30  */ 				BucketContainer: this.BucketContainer.view.render().$el.html()
-/* 31  */ 			};
-/* 32  */ 
-/* 33  */ 			var template = _.template( SidekickWP.Templates.App, variables );
-/* 34  */ 			this.$el.append( template );
-/* 35  */ 
-/* 36  */ 			if (!all_buckets) {
-/* 37  */ 				SidekickWP.Events.trigger('show_msg',{title: "No Walkthroughs", msg: "We're sorry but it looks like there are no walkthroughs compatible with your version of software."},this.model);
-/* 38  */ 			}
-/* 39  */ 
-/* 40  */ 			SidekickWP.Events.trigger('rendered');
-/* 41  */ 
-/* 42  */ 			if (typeof window.sidekick !== 'undefined' && window.sidekick.get('playing')) {
-/* 43  */ 				this.close_sidekick_window();
-/* 44  */ 			} else {
-/* 45  */ 				this.open_sidekick_mini_window();
-/* 46  */ 			}
-/* 47  */ 			console.groupEnd();
-/* 48  */ 			return this;
-/* 49  */ 		},
+/* 21  */ 			this.BucketContainer = new SidekickWP.Models.BucketContainer({
+/* 22  */ 				full_library:                            this.model.get('full_library'),
+/* 23  */ 				library_filtered_walkthroughs:           this.model.get('library_filtered_walkthroughs'),
+/* 24  */ 				library_filtered_buckets:                this.model.get('library_filtered_buckets'),
+/* 25  */ 				library_filtered_sub_buckets:            this.model.get('library_filtered_sub_buckets'),
+/* 26  */ 				library_filtered_walkthroughs_by_bucket: this.model.get('library_filtered_walkthroughs_by_bucket'),
+/* 27  */ 				bucket_counts:                           this.model.get('bucket_counts')
+/* 28  */ 			});
+/* 29  */ 
+/* 30  */ 			if (_.size(this.model.get('library_filtered_walkthroughs')) > 0) {
+/* 31  */ 				BucketContainer = this.BucketContainer.view.render().$el.html();
+/* 32  */ 			} else {
+/* 33  */ 				BucketContainer = '<div class="warning">No walkthroughs found for ' + sk_main_soft_name + ' ' + sk_main_soft_version + '</div>';
+/* 34  */ 				SidekickWP.Events.trigger('show_msg',{title: "No Walkthroughs", msg: "We're sorry but it looks like there are no walkthroughs compatible with your version of software."},this.model);
+/* 35  */ 			}
+/* 36  */ 
+/* 37  */ 			var template = _.template( SidekickWP.Templates.App, {
+/* 38  */ 				BucketContainer: BucketContainer,
+/* 39  */ 				hotspots:        $.cookie('sidekick_hotspots')
+/* 40  */ 			});
+/* 41  */ 			this.$el.append( template );
+/* 42  */ 
+/* 43  */ 			// this.remove_empty_buckets();
+/* 44  */ 
+/* 45  */ 			if (!this.model.get('show_toggle_feedback'))
+/* 46  */ 				$('#sk_taskbar #toggle_feedback').hide();
+/* 47  */ 
+/* 48  */ 			SidekickWP.Events.trigger('rendered');
+/* 49  */ 			Sidekick.Events.trigger('bind_controls');
 /* 50  */ 
 
 /* appView.js */
 
-/* 51  */ 		events: {
-/* 52  */ 			"click #logo": "open_sidekick_window",
-/* 53  */ 			"click h2 button.close": "open_sidekick_mini_window",
-/* 54  */ 			"click h2 button.config": "goto_config",
-/* 55  */ 			"click h2 button.goback": "go_back"
-/* 56  */ 		},
+/* 51  */ 			// this.toggle_sidekick_window();
+/* 52  */ 			this.show_hotspots();
+/* 53  */ 
+/* 54  */ 			$(window).resize(_.debounce(function(){
+/* 55  */ 				SidekickWP.Events.trigger('resize_sidekick_drawer');
+/* 56  */ 			},500));
 /* 57  */ 
-/* 58  */ 		close_sidekick_window: function(){
-/* 59  */ 			// console.log('close_sidekick_window');
-/* 60  */ 			$('.sidekick_container').hide();
-/* 61  */ 		},
-/* 62  */ 
-/* 63  */ 		open_sidekick_mini_window: function(){
-/* 64  */ 			// console.log('open_sidekick_mini_window');
-/* 65  */ 			var width = '100px';
-/* 66  */ 			var height = '70px';
-/* 67  */ 
-/* 68  */ 			if ($('.sidekick_container').is(':visible')) {
-/* 69  */ 				$('.sidekick_container>*').fadeOut('fast',function(){
-/* 70  */ 					$('.sidekick_container').animate({
-/* 71  */ 						backgroundColor: 'transparent',
-/* 72  */ 						borderColor: 'transparent'
-/* 73  */ 					},200,function(){
-/* 74  */ 						$('.sidekick_container').removeClass('shadow');
-/* 75  */ 						$('.sidekick_container').animate({
-/* 76  */ 							width: width,
-/* 77  */ 							minHeight: height
-/* 78  */ 						},200,function(){
-/* 79  */ 							$('.sidekick_container #logo').fadeIn('slow');
-/* 80  */ 						});
-/* 81  */ 					});
-/* 82  */ 				});
-/* 83  */ 			} else {
-/* 84  */ 				$('.sidekick_container').css({
-/* 85  */ 					width: width,
-/* 86  */ 					minHeight: height
-/* 87  */ 				}).show();
-/* 88  */ 			}
-/* 89  */ 		},
-/* 90  */ 
-/* 91  */ 		goto_config: function(){
-/* 92  */ 			// console.log('goto_config');
-/* 93  */ 			window.open('/wp-admin/admin.php?page=sidekick','_self');
-/* 94  */ 		},
-/* 95  */ 
-/* 96  */ 		go_back: function(){
-/* 97  */ 			SidekickWP.Events.trigger('show_prev_pane');
-/* 98  */ 		},
-/* 99  */ 
-/* 100 */ 		open_sidekick_window: function(e){
+/* 58  */ 			console.groupEnd();
+/* 59  */ 			return this;
+/* 60  */ 		},
+/* 61  */ 
+/* 62  */ 		events: {
+/* 63  */ 			"click #logo,.sk_toggle":    "toggle_sidekick_window",
+/* 64  */ 			"click #toggle_drawer":      "toggle_sidekick_drawer",
+/* 65  */ 			"click #toggle_hotspots":    "toggle_hotspots",
+/* 66  */ 			"click #toggle_preferences": "toggle_preferences",
+/* 67  */ 			"click #toggle_feedback":    "show_feedback",
+/* 68  */ 			"click #close_sidekick":     "close_sidekick_window"
+/* 69  */ 		},
+/* 70  */ 
+/* 71  */ 		goto_config: function(){
+/* 72  */ 			// console.log('goto_config');
+/* 73  */ 			window.open('/wp-admin/admin.php?page=sidekick','_self');
+/* 74  */ 		},
+/* 75  */ 
+/* 76  */ 		show_feedback: function(){
+/* 77  */ 			console.log('show_feedback');
+/* 78  */ 			Sidekick.Events.trigger('show_modal',{title:'Feedback',message: 'Send us some feedback!',primary_button_message: 'Send',secondary_button_message:'Cancel',email:sk_user_email});
+/* 79  */ 		},
+/* 80  */ 
+/* 81  */ 		resize_sidekick_drawer: function(){
+/* 82  */ 			console.log('resize_sidekick_drawer %o', $('#sk_drawer').height());
+/* 83  */ 
+/* 84  */ 			if ($('#sidekick').hasClass('open')) {
+/* 85  */ 				if ($('#sk_drawer').height() > 0) {
+/* 86  */ 					$('div#sidekick #toggle_drawer').addClass('on');
+/* 87  */ 					$('#sk_drawer').css({
+/* 88  */ 						height: $('body').height() - 80,
+/* 89  */ 						transition: 'all 0.3s ease-in-out'
+/* 90  */ 					});
+/* 91  */ 					$('#sk_drawer .sk_bucketContainer').css({
+/* 92  */ 						height: $('body').height() - 56 - 40,
+/* 93  */ 						transition: 'all 0.3s ease-in-out'
+/* 94  */ 					});
+/* 95  */ 					$('#sk_drawer .sub_bucket').css({
+/* 96  */ 						maxHeight: $('body').height() - 137,
+/* 97  */ 						transition: 'all 0.3s ease-in-out'
+/* 98  */ 					});
+/* 99  */ 				}
+/* 100 */ 			} else {
 
 /* appView.js */
 
-/* 101 */ 			// console.log('open_sidekick_window %o', e);
-/* 102 */ 			var width = '300px';
-/* 103 */ 			var height = '300px';
+/* 101 */ 				$('#sk_drawer').height(0);
+/* 102 */ 			}
+/* 103 */ 		},
 /* 104 */ 
-/* 105 */ 			if (typeof e != 'undefined' && typeof e.currentTarget != 'undefined')
-/* 106 */ 				SidekickWP.Events.trigger('track_open_sidekick_window',{position: $(e.currentTarget).attr('id')});
-/* 107 */ 
-/* 108 */ 			$('.sidekick_container #logo').fadeOut('fast',function(){
-/* 109 */ 				$('.sidekick_container').show().animate({
-/* 110 */ 					backgroundColor: '#e8e8e8',
-/* 111 */ 					borderColor: '#d4d4d4',
-/* 112 */ 					width: width,
-/* 113 */ 					height: height
-/* 114 */ 				},200,function(){
-/* 115 */ 					$('.sidekick_container').addClass('shadow');
-/* 116 */ 					$('.sidekick_container>*').not('.sidekick_container #logo').fadeIn('fast');
-/* 117 */ 				});
-/* 118 */ 			});
-/* 119 */ 		},
-/* 120 */ 
-/* 121 */ 		update_header: function(){
-/* 122 */ 			console.log('update_header %o', $('#sidekick .bucketContainer ul').length);
+/* 105 */ 		show_sidekick_drawer: function(){
+/* 106 */ 			$('div#sidekick').addClass('open');
+/* 107 */ 			if ($('#sk_drawer').height() === 0) {
+/* 108 */ 				$('div#sidekick #toggle_drawer').addClass('on');
+/* 109 */ 				$('#sk_drawer').css({
+/* 110 */ 					height: $('body').height() - 80,
+/* 111 */ 					transition: 'all 0.3s ease-in-out'
+/* 112 */ 				});
+/* 113 */ 				$('#sk_drawer .sk_bucketContainer').css({
+/* 114 */ 					height: $('body').height() - 56 - 40,
+/* 115 */ 					transition: 'all 0.3s ease-in-out'
+/* 116 */ 				});
+/* 117 */ 				$('#sk_drawer .sub_bucket').css({
+/* 118 */ 					maxHeight: $('body').height() - 137,
+/* 119 */ 					transition: 'all 0.3s ease-in-out'
+/* 120 */ 				});
+/* 121 */ 			}
+/* 122 */ 		},
 /* 123 */ 
-/* 124 */ 			if ($('#sidekick ul.message').length){
-/* 125 */ 				$('#sidekick h2 button').addClass('goback hide');
-/* 126 */ 			} else if ($('#sidekick .bucketContainer ul').length > 1) {
-/* 127 */ 				$('#sidekick h2 button').addClass('goback').removeClass('config hide');
-/* 128 */ 			} else {
-/* 129 */ 				$('#sidekick h2 button').addClass('config').removeClass('goback hide');
-/* 130 */ 			}
-/* 131 */ 
-/* 132 */ 			var new_title = $('#sidekick .bucketContainer div>ul:last-child').data('title');
-/* 133 */ 
-/* 134 */ 			if (new_title)
-/* 135 */ 				$('#sidekick h2 span').html(new_title);
-/* 136 */ 
-/* 137 */ 			SidekickWP.Events.trigger('rendered');
-/* 138 */ 		},
-/* 139 */ 
-/* 140 */ 		show_next_pane: function(){
-/* 141 */ 			console.log('show_next_pane');
-/* 142 */ 			// $('#sidekick .bucketContainer').css({overflowY:'hidden',overflowX:'hidden'});
-/* 143 */ 			$('#sidekick .bucketContainer div>ul:last-child, #sidekick .bucketContainer div>ul:nth-last-child(2)').animate({
-/* 144 */ 				left: '-=300'
-/* 145 */ 			},200,function(){
-/* 146 */ 				// $('#sidekick .bucketContainer').css({overflowY:'auto'});
-/* 147 */ 			}).wait(100,function(e){
-/* 148 */ 				SidekickWP.Events.trigger('do_update_header');
-/* 149 */ 			});
-/* 150 */ 			SidekickWP.Helpers.preventScrolling();
+/* 124 */ 		toggle_preferences: function(){
+/* 125 */ 			window.open(sk_plugin_url,'_self');
+/* 126 */ 		},
+/* 127 */ 
+/* 128 */ 		toggle_sidekick_drawer: function(force){
+/* 129 */ 			console.log('toggle_sidekick_drawer %o | %o | %o', force,$('#sk_drawer').height(),$('#sidekick').hasClass('open'));
+/* 130 */ 
+/* 131 */ 			if ($('#sk_drawer').height() > 0 || force == 'hide' || !$('#sidekick').hasClass('open')) {
+/* 132 */ 				SidekickWP.Events.trigger('close_sidekick_drawer');
+/* 133 */ 			} else {
+/* 134 */ 				SidekickWP.Events.trigger('open_sidekick_drawer');
+/* 135 */ 			}
+/* 136 */ 		},
+/* 137 */ 
+/* 138 */ 		close_sidekick_drawer: function(){
+/* 139 */ 			console.log('Closing Drawer');
+/* 140 */ 			$('div#sidekick #toggle_drawer').removeClass('on');
+/* 141 */ 			$('#sk_drawer').css({
+/* 142 */ 				height: 0,
+/* 143 */ 				transition: 'height 0.3s ease-in-out'
+/* 144 */ 			});
+/* 145 */ 			$('#sk_drawer .sk_bucketContainer').css({
+/* 146 */ 				height: 0,
+/* 147 */ 				transition: 'height 0.3s ease-in-out'
+/* 148 */ 			});
+/* 149 */ 		},
+/* 150 */ 
 
 /* appView.js */
 
-/* 151 */ 		},
-/* 152 */ 
-/* 153 */ 		show_prev_pane: function(){
-/* 154 */ 			console.log('show_prev_pane');
-/* 155 */ 			if ($('#sidekick .review').length > 0) {
-/* 156 */ 				$('#sidekick .bucketContainer div>ul').not(':last-child,:first-child').remove();
-/* 157 */ 			}
-/* 158 */ 			$('#sidekick .bucketContainer div>ul:last-child, #sidekick .bucketContainer div>ul:nth-last-child(2)').animate({
-/* 159 */ 				left: '+=300'
-/* 160 */ 			},200).wait(200).filter(':last-child').remove().wait(0,function(e){
-/* 161 */ 				SidekickWP.Events.trigger('do_update_header');
-/* 162 */ 			});
-/* 163 */ 			SidekickWP.Helpers.preventScrolling();
-/* 164 */ 		},
-/* 165 */ 
-/* 166 */ 		show_main_pane: function(){
-/* 167 */ 			console.log('show_main_pane');
+/* 151 */ 		open_sidekick_drawer: function(){
+/* 152 */ 			console.log('Showing Drawer');
+/* 153 */ 			$('div#sidekick #toggle_drawer').addClass('on');
+/* 154 */ 			$('#sk_drawer').css({
+/* 155 */ 				height: $('body').height() - 80,
+/* 156 */ 				transition: 'height 0.3s ease-in-out'
+/* 157 */ 			});
+/* 158 */ 			$('#sk_drawer .sk_bucketContainer').css({
+/* 159 */ 				height: $('body').height() - 56 - 40,
+/* 160 */ 				transition: 'height 0.3s ease-in-out'
+/* 161 */ 			});
+/* 162 */ 		},
+/* 163 */ 
+/* 164 */ 		toggle_sidekick_window: function(e){
+/* 165 */ 			console.log('toggle_sidekick_window');
+/* 166 */ 
+/* 167 */ 			SidekickWP.Events.trigger('track_toggle_sidekick_window');
 /* 168 */ 
-/* 169 */ 			$('#sidekick .bucketContainer div>ul').not(':last-child,:first-child').remove();
-/* 170 */ 			$('#sidekick .bucketContainer div>ul:last-child, #sidekick .bucketContainer div>ul:first-child').animate({
-/* 171 */ 				left: '+=300'
-/* 172 */ 			},200).wait(200).filter(':last-child').remove().wait(0,function(e){
-/* 173 */ 				SidekickWP.Events.trigger('do_update_header');
-/* 174 */ 			});
-/* 175 */ 			SidekickWP.Helpers.preventScrolling();
-/* 176 */ 		}
-/* 177 */ 	});
-/* 178 */ 
-/* 179 */ }(jQuery));
+/* 169 */ 			if ($('div#sidekick').hasClass('open')) {
+/* 170 */ 				console.log('Closing Sidekick Window');
+/* 171 */ 				SidekickWP.Events.trigger('close_sidekick_drawer');
+/* 172 */ 				$('div#sidekick').wait(500).removeClass('open');
+/* 173 */ 			} else {
+/* 174 */ 				console.log('Showing Sidekick Window');
+/* 175 */ 				$('div#sidekick').addClass('open').wait(500,function(e){
+/* 176 */ 					SidekickWP.Events.trigger('open_sidekick_drawer');
+/* 177 */ 				});
+/* 178 */ 			}
+/* 179 */ 		},
 /* 180 */ 
-/* 181 */ 
-/* 182 */ 
-/* 183 */ 
+/* 181 */ 		close_sidekick_window: function(e){
+/* 182 */ 			console.log('close_sidekick_window');
+/* 183 */ 			if ($('div#sidekick').hasClass('open')) {
+/* 184 */ 				SidekickWP.Events.trigger('toggle_sidekick_drawer');
+/* 185 */ 				$('div#sidekick').wait(500).removeClass('open');
+/* 186 */ 			}
+/* 187 */ 		},
+/* 188 */ 
+/* 189 */ 		toggle_hotspots: function(){
+/* 190 */ 			console.log('toggle_hotspots');
+/* 191 */ 			if ($('#toggle_hotspots').hasClass('on')) {
+/* 192 */ 				console.log('Turning off hotspots');
+/* 193 */ 				$('#toggle_hotspots').removeClass('on');
+/* 194 */ 				$.cookie('sidekick_hotspots', 0, { expires: 365, path: '/' });
+/* 195 */ 				$('.sk_hotspot').parent().remove();
+/* 196 */ 			} else {
+/* 197 */ 				console.log('Turning on hotspots');
+/* 198 */ 				$('#toggle_hotspots').addClass('on');
+/* 199 */ 				$.cookie('sidekick_hotspots', 1, { expires: 365, path: '/' });
+/* 200 */ 				this.show_hotspots();
+
+/* appView.js */
+
+/* 201 */ 			}
+/* 202 */ 		},
+/* 203 */ 
+/* 204 */ 		show_hotspots: function(){
+/* 205 */ 			var hotspots = this.model.get('library_filtered_hotspots');
+/* 206 */ 			var url = window.location.toString();
+/* 207 */ 			var show_hotspots = $.cookie('sidekick_hotspots');
+/* 208 */ 			// console.log('show_hotspots %o', show_hotspots);
+/* 209 */ 			// console.log('show_hotspots === true %o', show_hotspots === true);
+/* 210 */ 
+/* 211 */ 			var count             = 0;
+/* 212 */ 			for(var hotspot in hotspots){
+/* 213 */ 				var hotspot_data = hotspots[hotspot];
+/* 214 */ 
+/* 215 */ 				if (url.indexOf(hotspot_data.url) > -1) {
+/* 216 */ 					var selectors = hotspot_data.selector;
+/* 217 */ 
+/* 218 */ 					if ($(selectors).length == 1 && $(selectors).is(':visible')) {
+/* 219 */ 						// console.log('hotspot selectors-1 %o', selectors);
+/* 220 */ 						count++;
+/* 221 */ 					} else if ($(selectors).length > 1){
+/* 222 */ 						_.each($(selectors),function(item,key){
+/* 223 */ 							if ($(item).length && $(item).is(':visible')) {
+/* 224 */ 								// console.log('hotspot selectors-2 %o', item);
+/* 225 */ 								count++;
+/* 226 */ 							}
+/* 227 */ 						});
+/* 228 */ 					}
+/* 229 */ 				}
+/* 230 */ 			}
+/* 231 */ 
+/* 232 */ 			if (count > 0) {
+/* 233 */ 				$('#sidekick #toggle_hotspots').html(count).show();
+/* 234 */ 			} else {
+/* 235 */ 				$('#sidekick #toggle_hotspots').html(count).hide();
+/* 236 */ 			}
+/* 237 */ 
+/* 238 */ 			if (show_hotspots === '1' || typeof show_hotspots === 'undefined') { // User unspecified default is on
+/* 239 */ 				var selector_x        = 'left';
+/* 240 */ 				var selector_y        = 'top';
+/* 241 */ 				var hotspot_x         = 'right';
+/* 242 */ 				var hotspot_y         = 'top';
+/* 243 */ 				var hotspot_y_padding = '0';
+/* 244 */ 				var hotspot_x_padding = '0';
+/* 245 */ 
+/* 246 */ 
+/* 247 */ 				for(var hotspot in hotspots){
+/* 248 */ 					var hotspot_data = hotspots[hotspot];
+/* 249 */ 
+/* 250 */ 					if (url.indexOf(hotspot_data.url) > -1) {
+
+/* appView.js */
+
+/* 251 */ 						var selectors = hotspot_data.selector;
+/* 252 */ 						if ($(selectors).length == 1) {
+/* 253 */ 							console.log('%cAttaching Single Hotspot %o -> (%o)','color: #64c541','sk_hotspot_' + hotspot, selectors);
+/* 254 */ 							$('body').append('<a href="javascript: sidekick.play(' + hotspot_data.id + ')"><div class="sk_hotspot sk_hotspot_' + hotspot + '" data-target="' + selectors + '"></div></a>');
+/* 255 */ 
+/* 256 */ 							console.log('selector_x + " " + selector_y %o', selector_x + " " + selector_y);
+/* 257 */ 							console.log('hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding %o', hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding);
+/* 258 */ 
+/* 259 */ 
+/* 260 */ 							$('.sk_hotspot_' + hotspot).position({
+/* 261 */ 								at: selector_x + " " + selector_y,
+/* 262 */ 								my: hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding,
+/* 263 */ 								of: $(selectors)
+/* 264 */ 							});
+/* 265 */ 							$('.sk_hotspot').wait(200*count).addClass('visible');
+/* 266 */ 						} else if ($(selectors).length > 1){
+/* 267 */ 							_.each($(selectors),function(item,key){
+/* 268 */ 								$('body').append('<a href="javascript: sidekick.play(' + hotspot_data.id + ')"><div class="sk_hotspot sk_hotspot_' + hotspot + '_' + key + '" data-target="' + item + '"></div></a>');
+/* 269 */ 								console.log('%cAttaching Hotspot #o %o (%o)','color: #64c541',key,'sk_hotspot_' + hotspot + '_' + key, $('.sk_hotspot_' + hotspot + '_' + key));
+/* 270 */ 
+/* 271 */ 								$('.sk_hotspot_' + hotspot + '_' + key).position({
+/* 272 */ 									at: selector_x + " " + selector_y,
+/* 273 */ 									my: hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding,
+/* 274 */ 								// my: hotspot_x + " " + hotspot_y,
+/* 275 */ 								of: item
+/* 276 */ 							});
+/* 277 */ 								$('.sk_hotspot').wait(200*count).addClass('visible');
+/* 278 */ 							});
+/* 279 */ 						} else {
+/* 280 */ 							msg = "Couldn't attach a hotspot to selector (" + selectors + ")";
+/* 281 */ 							Sidekick.Events.trigger('track_error',{model: this, msg: msg});
+/* 282 */ 							console.error(msg);
+/* 283 */ 						}
+/* 284 */ 					}
+/* 285 */ 				}
+/* 286 */ 
+/* 287 */ 			};
+/* 288 */ 
+/* 289 */ 
+/* 290 */ 		}
+/* 291 */ 	});
+/* 292 */ 
+/* 293 */ }(jQuery));
+/* 294 */ 
+/* 295 */ 
+/* 296 */ 
+/* 297 */ 
 
 ;
 /* bucketContainerView.js */
 
 /* 1  */ (function($) {
 /* 2  */ 	SidekickWP.Views.BucketContainer = Backbone.View.extend({
-/* 3  */ 		// el: $('.BucketContainer'),
-/* 4  */ 		// tagName: 'ul',
-/* 5  */ 
-/* 6  */ 		initialize: function(models,options){
-/* 7  */ 			console.group('%cinitialize: bucketContiainerView %o', 'color:#3b4580', arguments);
-/* 8  */ 			SidekickWP.Events.on('rendered', this.setup_events, this);
-/* 9  */ 			return this;
-/* 10 */ 		},
+/* 3  */ 
+/* 4  */ 		initialize: function(models,options){
+/* 5  */ 			SidekickWP.Events.on('rendered', this.setup_events, this);
+/* 6  */ 			return this;
+/* 7  */ 		},
+/* 8  */ 
+/* 9  */ 		render: function(){
+/* 10 */ 			console.group('%crender: render: bucketContainerView %o', 'color:#8fa2ff', this);
 /* 11 */ 
-/* 12 */ 		render: function(){
-/* 13 */ 			// console.log('render bucketContiainerView %o',this);
-/* 14 */ 			console.group('%crender: render: bucketContainerView %o', 'color:#8fa2ff', this);
-/* 15 */ 
-/* 16 */ 			SidekickWP.Events.trigger('track_explore',{what:'Bucket' });
-/* 17 */ 			this.bucket = new SidekickWP.Models.Bucket({
-/* 18 */ 				title:         this.model.get('title'),
-/* 19 */ 				bucket:        this.model.get('full_library'),
-/* 20 */ 				bucket_counts: this.model.get('bucket_counts')
-/* 21 */ 			});
-/* 22 */ 			this.$el.append(this.bucket.view.render().el);
-/* 23 */ 			this.$el.find('.buckets').show().removeClass('new_window').addClass('current_window');
-/* 24 */ 			return this;
-/* 25 */ 		},
-/* 26 */ 
-/* 27 */ 		events: {
-/* 28 */ 			"click .bucket": "clicked_bucket"
-/* 29 */ 		},
+/* 12 */ 			SidekickWP.Events.trigger('track_explore',{what:'Bucket - ' + this.model.get('title') });
+/* 13 */ 
+/* 14 */ 			this.bucket = new SidekickWP.Models.Bucket({
+/* 15 */ 				title:                                   this.model.get('title'),
+/* 16 */ 				full_library:                            this.model.get('full_library'),
+/* 17 */ 				library_filtered_walkthroughs:           this.model.get('library_filtered_walkthroughs'),
+/* 18 */ 				library_filtered_buckets:                this.model.get('library_filtered_buckets'),
+/* 19 */ 				library_filtered_sub_buckets:            this.model.get('library_filtered_sub_buckets'),
+/* 20 */ 				library_filtered_walkthroughs_by_bucket: this.model.get('library_filtered_walkthroughs_by_bucket'),
+/* 21 */ 				bucket_counts:                           this.model.get('bucket_counts')
+/* 22 */ 			});
+/* 23 */ 			this.$el.append(this.bucket.view.render().el);
+/* 24 */ 			console.groupEnd();
+/* 25 */ 			return this;
+/* 26 */ 		},
+/* 27 */ 
+/* 28 */ 		clicked_bucket: function(e){
+/* 29 */ 			console.log('clicked_bucket',e);
 /* 30 */ 
-/* 31 */ 		clicked_bucket: function(e){
-/* 32 */ 			// console.log('clicked_bucket');
-/* 33 */ 			var bucket_to_open = $(e).data('bucket');
-/* 34 */ 			// console.log('bucket_to_open %o', bucket_to_open);
-/* 35 */ 
-/* 36 */ 			var all_buckets = this.model.get('all_buckets');
-/* 37 */ 			// console.log('all_buckets %o', all_buckets);
-/* 38 */ 
-/* 39 */ 			bucket_to_open = all_buckets[bucket_to_open];
-/* 40 */ 			// console.log('bucket_to_open %o', bucket_to_open);
-/* 41 */ 
-/* 42 */ 			if (bucket_to_open.walkthroughs) {
-/* 43 */ 				this.list = new SidekickWP.Models.List({
-/* 44 */ 					bucket: bucket_to_open.walkthroughs,
-/* 45 */ 					title:  bucket_to_open.title
-/* 46 */ 				});
-/* 47 */ 				$('.bucketContainer>div').append( this.list.view.render().$el.html() );
-/* 48 */ 				SidekickWP.Events.trigger('show_next_pane');
-/* 49 */ 			} else {
-/* 50 */ 				this.bucket = new SidekickWP.Models.Bucket({
+/* 31 */ 			var navigation_history = this.model.get('navigation_history');
+/* 32 */ 
+/* 33 */ 			if ($(e).hasClass('goprev')) {
+/* 34 */ 				$('.show').removeClass('show');
+/* 35 */ 				navigation_history.pop();
+/* 36 */ 				var goto_bucket = navigation_history[navigation_history.length-1];
+/* 37 */ 				if (goto_bucket == 'buckets') {
+/* 38 */ 					$('[data-bucket_id="' + goto_bucket + '"]').removeClass('hide').addClass('show');
+/* 39 */ 				} else {
+/* 40 */ 					$('ul.sub_bucket[data-bucket_id="' + goto_bucket + '"]').removeClass('hide').addClass('show');
+/* 41 */ 				}
+/* 42 */ 
+/* 43 */ 			} else if ($(e).data('open_bucket')){
+/* 44 */ 				console.log('Showing Bucket %o',$(e).data('open_bucket'));
+/* 45 */ 				$(e).parent().removeClass('show').addClass('hide');
+/* 46 */ 				$('ul.sub_bucket[data-bucket_id="' + $(e).data('open_bucket') + '"]').addClass('show');
+/* 47 */ 				navigation_history.push($(e).data('open_bucket'));
+/* 48 */ 			} else {
+/* 49 */ 				console.log('Showing Walkthroughs %o',$(e).data('open_walkthroughs'));
+/* 50 */ 				$(e).parent().removeClass('show').addClass('hide');
 
 /* bucketContainerView.js */
 
-/* 51 */ 					bucket:        bucket_to_open.sub_buckets,
-/* 52 */ 					bucket_counts: this.model.get('bucket_counts'),
-/* 53 */ 					title:         bucket_to_open.title
-/* 54 */ 				});
-/* 55 */ 				$('.bucketContainer>div').append( this.bucket.view.render().$el.html() );
-/* 56 */ 				SidekickWP.Events.trigger('show_next_pane');
-/* 57 */ 			}
-/* 58 */ 		},
-/* 59 */ 
-/* 60 */ 		setup_events: function(){
-/* 61 */ 			console.log('setup_events');
-/* 62 */ 			var group_id = this.model.get('id');
+/* 51 */ 				$('ul.walkthrough[data-bucket_id="' + $(e).data('open_walkthroughs') + '"]').addClass('show');
+/* 52 */ 				navigation_history.push($(e).data('open_bucket'));
+/* 53 */ 			}
+/* 54 */ 			console.log('navigation_history %o', navigation_history);
+/* 55 */ 			this.model.set('navigation_history',navigation_history);
+/* 56 */ 		},
+/* 57 */ 
+/* 58 */ 		setup_events: function(){
+/* 59 */ 			$('.heading').unbind('click').click({context:this},function(e){
+/* 60 */ 				console.log('click');
+/* 61 */ 				e.data.context.clicked_bucket(this);
+/* 62 */ 			});
 /* 63 */ 
-/* 64 */ 			$('.bucket').unbind('click').click({context:this},function(e){
-/* 65 */ 				// console.log('click',e);
-/* 66 */ 				e.data.context.clicked_bucket(this);
-/* 67 */ 			});
-/* 68 */ 
-/* 69 */ 			$('a.sidekick_play_walkthrough').unbind('click').click({context:this},function(e){
-/* 70 */ 				// console.log('click aa',e);
-/* 71 */ 				SidekickWP.Events.trigger('close_sidekick_window');
-/* 72 */ 			});
+/* 64 */ 			$('a.sidekick_play_walkthrough').unbind('click').click({context:this},function(e){
+/* 65 */ 				SidekickWP.Events.trigger('close_sidekick_window');
+/* 66 */ 			});
+/* 67 */ 			// SidekickWP.Helpers.preventScrolling();
+/* 68 */ 		}
+/* 69 */ 	});
+/* 70 */ 
+/* 71 */ }(jQuery));
+/* 72 */ 
 /* 73 */ 
-/* 74 */ 			// SidekickWP.Helpers.preventScrolling();
-/* 75 */ 		}
-/* 76 */ 	});
-/* 77 */ 
-/* 78 */ }(jQuery));
-/* 79 */ 
-/* 80 */ 
 
 ;
 /* bucketView.js */
@@ -857,52 +1065,25 @@
 /* 11 */ 			SidekickWP.Events.trigger('track_explore',{what:'Bucket' });
 /* 12 */ 
 /* 13 */ 			var variables = {
-/* 14 */ 				title:         this.model.get('title'),
-/* 15 */ 				bucket:        this.model.get('bucket'),
-/* 16 */ 				bucket_counts: this.model.get('bucket_counts')
-/* 17 */ 			};
-/* 18 */ 			console.log('variables %o', variables);
-/* 19 */ 
-/* 20 */ 			var template = _.template( SidekickWP.Templates.Bucket, variables );
-/* 21 */ 			this.$el.append(template);
-/* 22 */ 			console.groupEnd();
-/* 23 */ 			return this;
-/* 24 */ 		}
-/* 25 */ 	});
-/* 26 */ 
-/* 27 */ }(jQuery));
-
-;
-/* listView.js */
-
-/* 1  */ (function($) {
-/* 2  */ 	SidekickWP.Views.List = Backbone.View.extend({
-/* 3  */ 
-/* 4  */ 		initialize: function(models,options){
-/* 5  */ 			return this;
-/* 6  */ 		},
-/* 7  */ 
-/* 8  */ 		render: function(){
-/* 9  */ 			console.group('%crender: render: listView %o', 'color:#8fa2ff', this);
-/* 10 */ 
-/* 11 */ 			SidekickWP.Events.trigger('track_explore',{what:'List' });
-/* 12 */ 
-/* 13 */ 			var variables = {
-/* 14 */ 				bucket: this.model.get('bucket'),
-/* 15 */ 				title:  this.model.get('title')
-/* 16 */ 			};
-/* 17 */ 			console.log('variables %o', variables);
-/* 18 */ 
-/* 19 */ 			var template = _.template( SidekickWP.Templates.List, variables );
-/* 20 */ 			console.log('template %o', template);
-/* 21 */ 
-/* 22 */ 			// SidekickWP.Helpers.preventScrolling();
-/* 23 */ 			this.$el.append(template);
-/* 24 */ 			console.groupEnd();
-/* 25 */ 			return this;
-/* 26 */ 		}
-/* 27 */ 	});
-/* 28 */ }(jQuery));
+/* 14 */ 				full_library:                            this.model.get('full_library'),
+/* 15 */ 				library_filtered_buckets:                this.model.get('library_filtered_buckets'),
+/* 16 */ 				library_filtered_walkthroughs:           this.model.get('library_filtered_walkthroughs'),
+/* 17 */ 				library_filtered_sub_buckets:            this.model.get('library_filtered_sub_buckets'),
+/* 18 */ 				library_filtered_walkthroughs_by_bucket: this.model.get('library_filtered_walkthroughs_by_bucket'),
+/* 19 */ 				bucket_counts:                           this.model.get('bucket_counts'),
+/* 20 */ 				sk_plugin_url:                           sk_plugin_url
+/* 21 */ 			};
+/* 22 */ 
+/* 23 */ 			console.log('variables %o', variables);
+/* 24 */ 
+/* 25 */ 			var template = _.template( SidekickWP.Templates.Bucket, variables );
+/* 26 */ 			this.$el.append(template);
+/* 27 */ 			console.groupEnd();
+/* 28 */ 			return this;
+/* 29 */ 		}
+/* 30 */ 	});
+/* 31 */ 
+/* 32 */ }(jQuery));
 
 ;
 /* messageView.js */
@@ -927,12 +1108,12 @@
 /* 18 */ 			var template = _.template( SidekickWP.Templates.Message, variables );
 /* 19 */ 
 /* 20 */ 			this.$el.append( template );
-/* 21 */ 			SidekickWP.Helpers.preventScrolling();
-/* 22 */ 			SidekickWP.Events.trigger('show_next_pane');
+/* 21 */ 			// SidekickWP.Helpers.preventScrolling();
+/* 22 */ 			// SidekickWP.Events.trigger('show_next_pane');
 /* 23 */ 
-/* 24 */ 			// $('#sidekick .prev_window').removeClass('prev_window');
-/* 25 */ 			// $('#sidekick #main_menu').addClass('prev_window');
-/* 26 */ 			// $('#sidekick ul.main>li').not('#main_menu,#review').remove();
+/* 24 */ 			// $('div#sidekick .prev_window').removeClass('prev_window');
+/* 25 */ 			// $('div#sidekick #main_menu').addClass('prev_window');
+/* 26 */ 			// $('div#sidekick ul.main>li').not('#main_menu,#review').remove();
 /* 27 */ 
 /* 28 */ 			return this;
 /* 29 */ 		}
@@ -967,12 +1148,12 @@
 /* 21  */ 			console.log('template %o', template);
 /* 22  */ 
 /* 23  */ 			this.$el.append( template );
-/* 24  */ 			SidekickWP.Helpers.preventScrolling();
-/* 25  */ 			SidekickWP.Events.trigger('show_next_pane');
+/* 24  */ 			// SidekickWP.Helpers.preventScrolling();
+/* 25  */ 			// SidekickWP.Events.trigger('show_next_pane');
 /* 26  */ 
-/* 27  */ 			// $('#sidekick .prev_window').removeClass('prev_window');
-/* 28  */ 			// $('#sidekick #main_menu').addClass('prev_window');
-/* 29  */ 			// $('#sidekick ul.main>li').not('#main_menu,#review').remove();
+/* 27  */ 			// $('div#sidekick .prev_window').removeClass('prev_window');
+/* 28  */ 			// $('div#sidekick #main_menu').addClass('prev_window');
+/* 29  */ 			// $('div#sidekick ul.main>li').not('#main_menu,#review').remove();
 /* 30  */ 
 /* 31  */ 			return this;
 /* 32  */ 		},
@@ -985,24 +1166,24 @@
 /* 39  */ 		setup_events: function(){
 /* 40  */ 			var group_id = this.model.get('id');
 /* 41  */ 
-/* 42  */ 			$('#sidekick .review h2 button.goback, #sidekick .review input[type="button"]').unbind('click').click({context:this},function(e){
+/* 42  */ 			$('div#sidekick .review h2 button.goback, #sidekick .review input[type="button"]').unbind('click').click({context:this},function(e){
 /* 43  */ 				console.log('click goback/button');
 /* 44  */ 				SidekickWP.Events.trigger('show_main_pane');
 /* 45  */ 			});
 /* 46  */ 
-/* 47  */ 			$('#sidekick .review .rate span').unbind('hover').hover(function(){
+/* 47  */ 			$('div#sidekick .review .rate span').unbind('hover').hover(function(){
 /* 48  */ 				$(this).addClass('hover')
 /* 49  */ 				.prevAll().addClass('hover');
 /* 50  */ 			},function(){
 
 /* reviewView.js */
 
-/* 51  */ 				$('#sidekick .review .rate span').removeClass('hover');
+/* 51  */ 				$('div#sidekick .review .rate span').removeClass('hover');
 /* 52  */ 			});
 /* 53  */ 
-/* 54  */ 			$('#sidekick .review .rate span').unbind('click').click = this.rate;
+/* 54  */ 			$('div#sidekick .review .rate span').unbind('click').click = this.rate;
 /* 55  */ 
-/* 56  */ 			$('#sidekick .review textarea').unbind('click').click(function(){
+/* 56  */ 			$('div#sidekick .review textarea').unbind('click').click(function(){
 /* 57  */ 				if(!$(this).hasClass('clicked')){
 /* 58  */ 					$(this).addClass('clicked')
 /* 59  */ 					.val('');
@@ -1013,7 +1194,7 @@
 /* 64  */ 		submit: function(){
 /* 65  */ 			var data = {
 /* 66  */ 				walkthrough_title: this.model.get('walkthrough_title'),
-/* 67  */ 				value:             $('#sidekick textarea[name="comment"]').val(),
+/* 67  */ 				value:             $('div#sidekick textarea[name="comment"]').val(),
 /* 68  */ 				license:           sk_license_key
 /* 69  */ 			};
 /* 70  */ 
@@ -1024,8 +1205,8 @@
 /* 75  */ 				dataType: 'json'
 /* 76  */ 			}).done(function(data,e){
 /* 77  */ 				console.log('Saved Comment');
-/* 78  */ 				$('#sidekick textarea').html('Thank You!');
-/* 79  */ 				$('#sidekick .review input[type="submit"]').val('Sent!');
+/* 78  */ 				$('div#sidekick textarea').html('Thank You!');
+/* 79  */ 				$('div#sidekick .review input[type="submit"]').val('Sent!');
 /* 80  */ 				setTimeout(SidekickWP.Events.trigger('show_main_pane'),3000);
 /* 81  */ 			}).error(function(e){
 /* 82  */ 				console.error('Comment Save error (%o)',e);
@@ -1042,7 +1223,7 @@
 /* 93  */ 			$(e.currentTarget).addClass('saved')
 /* 94  */ 			.prevAll().addClass('saved');
 /* 95  */ 
-/* 96  */ 			$('#sidekick .rate span').unbind('mouseenter mouseleave click').css({cursor: 'default'});
+/* 96  */ 			$('div#sidekick .rate span').unbind('mouseenter mouseleave click').css({cursor: 'default'});
 /* 97  */ 
 /* 98  */ 			$.ajax({
 /* 99  */ 				url:      'http://www.wpuniversity.com/wp-admin/admin-ajax.php?action=wpu_add_rating',
@@ -1054,7 +1235,7 @@
 /* 102 */ 				dataType: 'json'
 /* 103 */ 			}).done(function(data,e){
 /* 104 */ 				console.log('Saved Rating');
-/* 105 */ 				$('#sidekick .hover').addClass('saved');
+/* 105 */ 				$('div#sidekick .hover').addClass('saved');
 /* 106 */ 
 /* 107 */ 			}).error(function(e){
 /* 108 */ 				console.error('Rating Save error (%o)',e);
@@ -1069,80 +1250,141 @@
 ;
 /* templates.js */
 
-/* 1  */ _.templateSettings.interpolate = /\{\{(.*?)\}\}/;
-/* 2  */ 
-/* 3  */ SidekickWP.Templates.App = [
-/* 4  */ 	"<div id='sidekick' class='sidekick_container'>",
-/* 5  */ 		"<h2><button class='config'></button><span>What do you need help with?</span><button class='close'></button></h2>",
-/* 6  */ 		"<div class='search'><!--<input type='text' value='Search'></input>--></div>",
-/* 7  */ 		"<ul class='bucketContainer'><% print(BucketContainer) %></ul>",
-/* 8  */ 		"<div id='logo'></div><a href='http://www.wpuniversity.com'><div id='logo_full'></div></a>	",
-/* 9  */ 	"</div>"
-/* 10 */ ].join("");
-/* 11 */ 
-/* 12 */ 
-/* 13 */ SidekickWP.Templates.Bucket = [
-/* 14 */ 	"<ul class='big buckets new_window' data-title='<% print(title) %>'>",
-/* 15 */ 		"<% _.each(bucket, function(bucket_data, key){ %>",
-/* 16 */ 			"<% if (bucket_data.walkthroughs || bucket_data.sub_buckets) { %>",
-/* 17 */ 				"<li data-bucket='<% print(key) %>' class='group_section bucket <% if (bucket_data.sub_buckets) { %>sub_buckets_exist<% } %>'><div><% print(bucket_data.title) %> <span><% print(bucket_counts[bucket_data.title].count) %></span></div></li>",
-/* 18 */ 			"<% } %>",
-/* 19 */ 		"<% }); %>",
-/* 20 */ 	"</ul>"
-/* 21 */ ].join("");
-/* 22 */ 
-/* 23 */ SidekickWP.Templates.List = [
-/* 24 */ 	"<ul class='list small buckets new_window' data-title='<% print(title) %>'>",
-/* 25 */ 		"<% if (bucket.overview) { %>",
-/* 26 */ 			"<li class='heading'><div>Overviews</div></li>",
-/* 27 */ 			"<li>",
-/* 28 */ 				"<ul class='walkthroughs'>",
-/* 29 */ 					"<% _.each(bucket.overview, function(walkthrough){ %>            ",
-/* 30 */ 						"<% console.log(walkthrough) %><a class='sidekick_play_walkthrough' href='javascript: sidekick.play_walkthrough(\"<% print(walkthrough.id) %>\")'>",
-/* 31 */ 							"<li><div><% print(walkthrough.title) %></div></li>",
-/* 32 */ 						"</a>",
-/* 33 */ 					"<% }); %>",
-/* 34 */ 				"</ul>",
-/* 35 */ 			"</li>",
-/* 36 */ 		"<% } %>",
-/* 37 */ 		"<% if (bucket.how) { %>",
-/* 38 */ 			"<li class='heading'><div>How Tos</div></li>",
-/* 39 */ 			"<li>",
-/* 40 */ 				"<ul class='walkthroughs'>",
-/* 41 */ 					"<% _.each(bucket.how, function(walkthrough){ %>",
-/* 42 */ 						"<a class='sidekick_play_walkthrough' href='javascript: sidekick.play_walkthrough(\"<% print(walkthrough.id) %>\")'>",
-/* 43 */ 							"<li><div><% print(walkthrough.title) %></div></li>",
-/* 44 */ 						"</a>",
-/* 45 */ 					"<% }); %>",
-/* 46 */ 				"</ul>",
-/* 47 */ 			"</li>",
-/* 48 */ 		"<% } %>",
-/* 49 */ 	"</ul>"
-/* 50 */ ].join("");
+/* 1   */ _.templateSettings.interpolate = /\{\{(.*?)\}\}/;
+/* 2   */ 
+/* 3   */ SidekickWP.Templates.App = [
+/* 4   */ 	"<div id='sidekick' class='sidekick_player'>",
+/* 5   */ 		"<div id='sk_taskbar'>",
+/* 6   */ 			"<div id='logo'></div>",
+/* 7   */ 			"<button class='sk_toggle'></button>",
+/* 8   */ 			"<div class='sk_controls'>",
+/* 9   */ 				"<button class='sidekick_restart'></button>",
+/* 10  */ 				"<button class='sidekick_play_pause'></button>",
+/* 11  */ 				"<button class='sidekick_stop'></button>",
+/* 12  */ 			"</div>",
+/* 13  */ 			"<div class='sk_toggles'>",
+/* 14  */ 				// "<% console.log('hotspots %o',hotspots);%>",
+/* 15  */ 				"<button id='toggle_hotspots' <% if (hotspots === '1' || typeof hotspots === 'undefined'){%>class='on'<% } %> alt='Number of hotspots'>0</button>",
+/* 16  */ 				"<button id='toggle_feedback'></button>",
+/* 17  */ 				"<button id='toggle_preferences'></button>",
+/* 18  */ 				"<button id='toggle_drawer'><i></i></button>",
+/* 19  */ 			"</div>",
+/* 20  */ 			"<div class='sk_info'>",
+/* 21  */ 				"<div class='sk_time'>0:00/0:00</div>",
+/* 22  */ 				"<div class='sk_title'><label>Now Playing</label><span class='sk_walkthrough_title'></span></div>",
+/* 23  */ 			"</div>",
+/* 24  */ 		"</div>",
+/* 25  */ 		"<div id='sk_drawer'>",
+/* 26  */ 			"<h2>Walkthroughs<button id='close_sidekick'></button></h2>",
+/* 27  */ 			"<ul class='sk_bucketContainer'>",
+/* 28  */ 				"<% print(BucketContainer) %>",
+/* 29  */ 			"</ul>",
+/* 30  */ 		"</div>",
+/* 31  */ 	"</div>"
+/* 32  */ ].join("");
+/* 33  */ 
+/* 34  */ SidekickWP.Templates.Bucket = [
+/* 35  */ 	"<ul class='buckets' data-bucket_id='buckets'>",
+/* 36  */ 		"<% _.each(full_library.buckets, function(bucket_data, bucket_title){ %>",
+/* 37  */ 			// "<% console.log('primary bucket %o(%o) %o',bucket_title,bucket_data.id,bucket_data);%>",
+/* 38  */ 			"<li class='heading bucket_heading' <% if (bucket_data.sub_buckets){ %> data-open_bucket='<% print(bucket_data.id) %>' <% } else { %> data-open_walkthroughs='<% print(bucket_data.id) %>' <% } %> ><span><% print(bucket_title) %></span><i></i></li>",
+/* 39  */ 		"<% }); %>",
+/* 40  */ 	"</ul>",
+/* 41  */ 
+/* 42  */ 	"<% var already_done = []; %>",
+/* 43  */ 
+/* 44  */ 	"<ul class='sub_buckets'>",
+/* 45  */ 		"<% _.each(full_library.buckets, function(bucket_data,bucket_title){ %>",
+/* 46  */ 			// "<% console.log('level-1(%s) %o %o',bucket_data.id,bucket_title,bucket_data);%>",
+/* 47  */ 			"<ul class='sub_bucket' data-bucket_id='<% print(bucket_data.id) %>'>",
+/* 48  */ 				"<% already_done[bucket_data.id] = true; %>",
+/* 49  */ 				"<li class='heading goprev'><span><% print(bucket_title) %></span><i></i></li>",
+/* 50  */ 				"<% _.each(bucket_data.sub_buckets, function(sub_bucket_data){ %>",
 
 /* templates.js */
 
-/* 51 */ 
-/* 52 */ SidekickWP.Templates.Review = [
-/* 53 */ 	"<ul class='new_window review' data-title='<% print(title) %>'>",
-/* 54 */ 		"<li>",
-/* 55 */ 			"<div><div class='rate'><span data-val='1' class='rate1'></span><span data-val='2' class='rate2'></span><span data-val='3' class='rate3'></span><span data-val='4' class='rate4'></span><span data-val='5' class='rate5'></span></div>",
-/* 56 */ 			"<textarea name='comment'>Let us know if you found the Walkthrough helpful or if we can improve something.</textarea>",
-/* 57 */ 			"<br/><input type='button' value='Skip'></input><input type='submit' value='Submit'></input>",
-/* 58 */ 		"</li>",
-/* 59 */ 	"</ul>"
-/* 60 */ ].join("");
-/* 61 */ 
-/* 62 */ 
-/* 63 */ SidekickWP.Templates.Message = [
-/* 64 */ 	"<ul class='new_window message' data-title='<% print(title) %>'>",
-/* 65 */ 		"<li>",
-/* 66 */ 			"<div><% print(message) %></div>",
-/* 67 */ 		"</li>",
-/* 68 */ 	"</ul>"
-/* 69 */ ].join("");
-/* 70 */ 
-/* 71 */ 
+/* 51  */ 					// "<% console.log('sub-bucket(%s) %o %o',sub_bucket_data.id,full_library.all_buckets_by_id[sub_bucket_data.id],sub_bucket_data);%>",
+/* 52  */ 					"<li class='heading sub_bucket_heading level1a' <% if (sub_bucket_data.sub_buckets){ %> data-open_bucket='<% print(sub_bucket_data.id) %>' <% } else { %> data-open_walkthroughs='<% print(sub_bucket_data.id) %>' <% } %>><span><% print(full_library.all_buckets_by_id[sub_bucket_data.id]) %></span><i></i></li>",
+/* 53  */ 				"<% }); %>",
+/* 54  */ 			"</ul>",
+/* 55  */ 		"<% }); %>",
+/* 56  */ 
+/* 57  */ 		"<% _.each(full_library.buckets, function(bucket_data,bucket_title){ %>",
+/* 58  */ 			"<% _.each(bucket_data.sub_buckets, function(sub_bucket_data){ %>",
+/* 59  */ 				"<% if (sub_bucket_data.sub_buckets && !already_done[sub_bucket_data.id]) { %>",
+/* 60  */ 					// "<% console.log('level-2(%s) %o %o',sub_bucket_data.id,full_library.all_buckets_by_id[sub_bucket_data.id],sub_bucket_data);%>",
+/* 61  */ 					"<% already_done[sub_bucket_data.id] = true; %>",
+/* 62  */ 					"<ul class='sub_bucket sub_sub_bucket' data-bucket_id='<% print(sub_bucket_data.id) %>'>",
+/* 63  */ 						"<li class='heading goprev'><span><% print(full_library.all_buckets_by_id[sub_bucket_data.id]) %></span><i></i></li>",
+/* 64  */ 						"<% _.each(sub_bucket_data.sub_buckets, function(sub_sub_bucket_data){ %>",
+/* 65  */ 							// "<% console.log('sub-bucket-2(%s) %o %o',sub_sub_bucket_data.id,full_library.all_buckets_by_id[sub_sub_bucket_data.id],sub_sub_bucket_data);%>",
+/* 66  */ 							"<li class='heading sub_bucket_heading level1b' <% if (sub_sub_bucket_data.sub_buckets){ %> data-open_bucket='<% print(sub_sub_bucket_data.id) %>' <% } else { %> data-open_walkthroughs='<% print(sub_sub_bucket_data.id) %>' <% } %> ><span><% print(full_library.all_buckets_by_id[sub_sub_bucket_data.id]) %></span><i></i></li>",
+/* 67  */ 						"<% }); %>",
+/* 68  */ 					"</ul>",
+/* 69  */ 				"<% } %>",
+/* 70  */ 			"<% }); %>",
+/* 71  */ 		"<% }); %>",
+/* 72  */ 
+/* 73  */ 		"<% _.each(full_library.buckets, function(bucket_data,bucket_title){ %>",
+/* 74  */ 			"<% _.each(bucket_data.sub_buckets, function(sub_bucket_data){ %>",
+/* 75  */ 				"<% _.each(sub_bucket_data.sub_buckets, function(sub_sub_bucket_data){ %>",
+/* 76  */ 					"<% if (sub_sub_bucket_data.sub_buckets && !already_done[sub_sub_bucket_data.id]) { %>",
+/* 77  */ 						// "<% console.log('level-3(%s) %o %o',sub_sub_bucket_data.id,full_library.all_buckets_by_id[sub_sub_bucket_data.id],sub_sub_bucket_data);%>",
+/* 78  */ 						"<ul class='sub_bucket sub_sub_bucket' data-bucket_id='<% print(sub_sub_bucket_data.id) %>'>",
+/* 79  */ 							"<li class='heading goprev'><span><% print(full_library.all_buckets_by_id[sub_sub_bucket_data.id]) %></span><i></i></li>",
+/* 80  */ 							"<% _.each(sub_sub_bucket_data.sub_buckets, function(sub_sub_sub_bucket_data){ %>",
+/* 81  */ 								// "<% console.log('sub-bucket-3(%s) %o %o',sub_sub_sub_bucket_data.id,full_library.all_buckets_by_id[sub_sub_sub_bucket_data.id],sub_sub_sub_bucket_data);%>",
+/* 82  */ 								"<li class='heading sub_bucket_heading level1b' <% if (sub_sub_sub_bucket_data.sub_buckets){ %> data-open_bucket='<% print(sub_sub_sub_bucket_data.id) %>' <% } else { %> data-open_walkthroughs='<% print(sub_sub_sub_bucket_data.id) %>' <% } %> ><span><% print(full_library.all_buckets_by_id[sub_sub_sub_bucket_data.id]) %></span><i></i></li>",
+/* 83  */ 							"<% }); %>",
+/* 84  */ 						"</ul>",
+/* 85  */ 					"<% } %>",
+/* 86  */ 				"<% }); %>",
+/* 87  */ 			"<% }); %>",
+/* 88  */ 		"<% }); %>",
+/* 89  */ 	"</ul>",
+/* 90  */ 
+/* 91  */ 	"<ul class='walkthroughs'>",
+/* 92  */ 		"<% _.each(library_filtered_walkthroughs_by_bucket, function(bucket_data, bucket_id){ %>",
+/* 93  */ 			// "<% console.log('bucket_data %o',bucket_data);%>",
+/* 94  */ 			// "<% console.log('bucket_id %o',bucket_id);%>",
+/* 95  */ 			"<ul class='walkthrough' data-bucket_id='<% print(bucket_id) %>'>",
+/* 96  */ 				"<li class='heading goprev'><span><% print(full_library.all_buckets_by_id[bucket_id]) %></span><i></i></li>",
+/* 97  */ 				"<ul class='walkthroughs_inner' data-bucket_id='<% print(bucket_id) %>'>",
+/* 98  */ 					"<% _.each(bucket_data.overview, function(walkthrough, walkthrough_key){ %>",
+/* 99  */ 						"<a href='javascript: sidekick.play(<% print(walkthrough.id) %>)'><li class='overview'><% print(walkthrough.title) %></li></a>",
+/* 100 */ 					"<% }); %>",
+
+/* templates.js */
+
+/* 101 */ 					"<% _.each(bucket_data.how, function(walkthrough, walkthrough_key){ %>",
+/* 102 */ 						"<a href='javascript: sidekick.play(<% print(walkthrough.id) %>)'><li class='how'><% print(walkthrough.title) %></li></a>",
+/* 103 */ 					"<% }); %>",
+/* 104 */ 				"</ul>",
+/* 105 */ 			"</ul>",
+/* 106 */ 		"<% }); %>",
+/* 107 */ 	"</ul>"
+/* 108 */ ].join("");
+/* 109 */ 
+/* 110 */ SidekickWP.Templates.Review = [
+/* 111 */ 	"<ul class='new_window review' data-title='<% print(title) %>'>",
+/* 112 */ 		"<li>",
+/* 113 */ 			"<div><div class='rate'><span data-val='1' class='rate1'></span><span data-val='2' class='rate2'></span><span data-val='3' class='rate3'></span><span data-val='4' class='rate4'></span><span data-val='5' class='rate5'></span></div>",
+/* 114 */ 			"<textarea name='comment'>Let us know if you found the Walkthrough helpful or if we can improve something.</textarea>",
+/* 115 */ 			"<br/><input type='button' value='Skip'></input><input type='submit' value='Submit'></input>",
+/* 116 */ 		"</li>",
+/* 117 */ 	"</ul>"
+/* 118 */ ].join("");
+/* 119 */ 
+/* 120 */ 
+/* 121 */ SidekickWP.Templates.Message = [
+/* 122 */ 	"<ul class='new_window message' data-title='<% print(title) %>'>",
+/* 123 */ 		"<li>",
+/* 124 */ 			"<div><% print(message) %></div>",
+/* 125 */ 		"</li>",
+/* 126 */ 	"</ul>"
+/* 127 */ ].join("");
+/* 128 */ 
+/* 129 */ 
 
 ;
 /* jquery.lightbox_me.js */
@@ -2540,12 +2782,30 @@
 /* 849 */ })(jQuery, window);
 
 ;
+/* jquery-center.js */
+
+/* 1  */ (function(jQuery, window){
+/* 2  */ 
+/* 3  */ jQuery.fn.center = function () {
+/* 4  */ 	this.css("position","absolute");
+/* 5  */ 	this.css("top", Math.max(0, ((jQuery(window).height() - jQuery(this).outerHeight()) / 2) +
+/* 6  */ 		jQuery(window).scrollTop()) + "px");
+/* 7  */ 	this.css("left", Math.max(0, ((jQuery(window).width() - jQuery(this).outerWidth()) / 2) +
+/* 8  */ 		jQuery(window).scrollLeft()) + "px");
+/* 9  */ 	return this;
+/* 10 */ }
+/* 11 */ 
+/* 12 */ })(jQuery, window);
+
+;
 /* sk_wp.js */
 
 /* 1 */ 
 /* 2 */ jQuery(document).ready(function($) {
-/* 3 */ 	window.sidekickWP = new SidekickWP.Models.App();
-/* 4 */ 	console.log('window.sidekickWP %o', window.sidekickWP);
-/* 5 */ 	// jQuery('#logo').trigger('click');
-/* 6 */ });
-/* 7 */ 
+/* 3 */ 	window.sidekickWP = new SidekickWP.Models.App({
+/* 4 */ 		show_toggle_feedback: true
+/* 5 */ 	});
+/* 6 */ 	console.log('window.sidekickWP %o', window.sidekickWP);
+/* 7 */ 	// jQuery('#logo').trigger('click');
+/* 8 */ });
+/* 9 */ 

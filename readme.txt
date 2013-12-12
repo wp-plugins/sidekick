@@ -1,37 +1,31 @@
 === Sidekick ===
-Contributors: bartdabek@gmail.com,ben@flowpress.ca
+Contributors: raptor235,Ben Fox
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, interactive help, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, chat, wpuniversity, helper, walkthrough,
-Requires at least: 3.5
-Tested up to: 3.6.1
-Stable tag: 1.0
+Requires at least: 3.7.1
+Tested up to: 3.8
+Stable tag: 1.1
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Real-time, voice-guided WordPress support, help and learning at the push of button, inside your Admin Dashboard.
+Interactive help, support & training right inside your Dashboard. For Free.
 
 
 == Description ==
 
 **SIDEKICK**
 
-The [Sidekick](http://Sidekick.pro/ "Sidekick") platform provides **real-time, voice-guided support and learning** from within any html or PHP based web application or CMS. Support is provided through modules called “Walkthroughs” that guide users through everything from understanding simple aspects of an application to completing even complicated tasks.
+The Sidekick Plugin for WordPress brings over 40 Walkthroughs for the WordPress Core right to your Dashboard. Each Walkthrough will guide you step-by-step through a task like creating a post or installing a new plugin!
 
-Walkthroughs are served directly from the Sidekick library. With the users permission, an installed Sidekick module can automatically detect a user’s access level, installed 3rd party extensions and settings. That information is used to pull the appropriate walkthroughs from the Sidekick library. Sidekick also collects anonymous user data (with the user’s permission) to track, amongst other things, which walkthroughs are attempted and completed and how often.
+Sidekick will also detect the plugins and themes you have active and push any related walkthroughs in the library, right to your Dashboard.
 
-The Sidekick Plugin for WordPress bridges the gap between the Sidekick Platform and user’s WordPress Dashboard.
+**Think [Clippy](http://en.wikipedia.org/wiki/Office_Assistant “Clippy”), but useful!**
 
-**WPUNIVERSITY**
+**HOW DOES IT WORK?**
 
-Sidekick for WordPress provides real-time, guided WordPress help right from your dashboard, whenever you need it. Core WordPress walkthrough modules are created and maintained by the team at [wpuniversity.com](http://www.wpuniversity.com/ "wpuniversity.com"). Third party plugin and theme walkthroughs are created and maintained by their respective creators.
+The [Sidekick](http://Sidekick.pro/ "Sidekick") platform provides **real-time, voice-guided support and learning** from within any html or PHP based web application or CMS. Support is provided through modules called “Walkthroughs” that guide users through everything from understanding simple aspects of an application to completing even complicated tasks.
 
-The Sidekick plugin for WordPress collects specific, anonymous data (with the user’s permission) which can include a user’s email address, domain name, installed plugins, installed theme(s) etc... Basically, anything PressTrends captures.
-
-With the click of a button, you’ll get a step-by-step answer to your question instantly. So you can stop waiting for your developer call you back.
-
-If you have any questions about the Sidekick plugin for WordPress, please contact [info@wpuniversity.com](mailto:info@wpuniveristy.com "Email WPUniversity").
-
-Try the [demo](http://demo.wpuniversity.com "demo").
+Walkthroughs are served directly from the Sidekick library. With the user’s permission, an installed Sidekick module can automatically detect a user’s access level, installed 3rd party extensions and settings. That information is used to pull the appropriate walkthroughs from the Sidekick library. Sidekick also collects anonymous user data (with the user’s permission) to track, amongst other things, which walkthroughs are attempted and completed and how often.
 
 == Installation ==
 
@@ -49,7 +43,7 @@ Upgrade Notice
 
 After installation, you will have access to at least 5 Core WordPress Walkthroughs and all third party walkthroughs that are applicable to your WordPress Dashboard.
 
-If you choose to register an account by providing your name and email address, you will receive a free upgrade to access all 40+ of our WordPress Core Walkthroughs until at least the end of October 2013 (subject to change). Following the free period, there will be a monthly charge to access the entire library of Core Walkthroughs.
+If you choose to register an account by providing your name and email address, you will receive a free upgrade to access all 40+ of our WordPress Core Walkthroughs until the end of December 2013 (subject to change). Following the free period, there will be a monthly charge to access the entire library of Core Walkthroughs.
 
 **Access to at least 5 Core Walkthroughs and all third party walkthroughs will remain free forever.**
 
@@ -59,7 +53,7 @@ Need more information? Want a clear understanding of the difference between a Co
 
 = What is Sidekick for WordPress? =
 
-The Sidekick platform provides real-time, guided support and learning from within any html or PHP based web application or CMS. Support is provided through modules called “Walkthroughs” that guide users through everything from understanding simple aspects of an application to completing complicated tasks.
+The Sidekick platform provides real-time, guided support and learning from within any html or PHP based web application or CMS. Support is provided through modules called “Walkthroughs” that guide users through everything from understanding simple aspects of an application to completing complicated tasks.
 The Sidekick plugin for WordPress connects the Sidekick platform with any WordPress Dashboard allowing real-time guided walkthroughs of core and 3rd party WordPress features and functions.
 
 If you’d like to learn more about Sidekick, go to [Sidekick.pro](http://Sidekick.pro/ "Sidekick")
@@ -76,24 +70,24 @@ A Sidekick for WordPress Walkthrough is a real-time, guided tutorial that walks 
 
 = What are Core and 3rd Party WordPress Walkthroughs? =
 
-When we say “Core Walkthroughs” for WordPress, we are referring to any support and learning that has to do with features and functions provided by a fresh, default install of WordPress, downloaded from WordPress.org. Basically, if a walkthrough is helpng you complete a standard WordPress function like creating a post, it’s a Core Walkthrough and WPUniversity created it.
+When we say “Core Walkthroughs” for WordPress, we are referring to any support and learning that has to do with features and functions provided by a fresh, default install of WordPress, downloaded from WordPress.org. Basically, if a walkthrough is helping you complete a standard WordPress function like creating a post, it’s a Core Walkthrough and WPUniversity created it.
 
 Plugin and theme specific Walkthroughs are called Third Party Walkthroughs and are created and maintained by the plugin or theme creator, unless otherwise mentioned.
 
 = How do I create Walkthroughs for my Plugin(s) or Theme(s)? =
 
-At the moment Sidekick Composer, the tool we use to create Walkthroughs, is for in-house use only but we plan for that to change by the end of October 2013. If you’re interested in getting a head start, send us an email at info@wpuniversity.com and we’ll let you know how you can get started.
+At the moment Sidekick Composer, the tool we use to create Walkthroughs, is for in-house use only but we plan for that to change by the end of December 2013. If you’re interested in getting a head start, send us an email at info@wpuniversity.com and we’ll let you know how you can get started.
 
 = What does Sidekick for WordPress cost? =
 
 The Sidekick plugin for WordPress is and always will be free to download and use. Installing the plugin gives you instant and unlimited access to at least 5 Core WordPress Walkthroughs as well as Walkthroughs created for any plugins or themes that are installed and active on your WordPress site.
 If you would like access to the full library of Core WordPress Walkthroughs (40+) the cost is $20 per month per user. Price discounts start at just two licenses and go up from there.
 
-Until the end of October 2013, access to all 40+ Core Walkthroughs is FREE of charge!
+For now, access to all 40+ Core Walkthroughs is FREE of charge!
 
 = Ok, the plugin is installed and activated. How do I use it? =
 
-Click on the little icon in the bottom right of your screen to open the Walkthrough menu. (Think Clippy from Office ’95, only useful.)
+Click on the little icon in the bottom right of your screen to open the Walkthrough menu. (Think Clippy, only useful.)
 You will be presented with the Walkthrough menu. Select your category then your walkthrough and away you go.
 
 = Can I suggest a Walkthrough that I’d like to see or give you feedback on the Sidekick WordPress Plugin? =
@@ -112,6 +106,14 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 1.1 =
+* Brand New User Interface.
+* Hotspot Support Added
+* 3.8 Support Added
+* Deeper sub-category support
+* Sidekick Platform Upgraded
+* Known bug exists with HTTPs protocols
 
 = 1.00 =
 * Added support for buckets.
