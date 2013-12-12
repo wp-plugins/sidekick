@@ -108,7 +108,7 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 == Changelog ==
 
 = 1.1 =
-* Brand New User Interface.
+* Brand New User Interface
 * Hotspot Support Added
 * 3.8 Support Added
 * Deeper sub-category support
