@@ -1,5 +1,5 @@
 === Sidekick ===
-Contributors: bart@flowpress.ca,ben@flowpress.ca,andy@flowpress.ca
+Contributors: raptor235,benfox,andymci
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.5
