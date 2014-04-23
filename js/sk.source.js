@@ -1,4 +1,4 @@
-/*! sidekick - v0.1.2 - 2014-04-22 */(function(jQuery, window){
+/*! sidekick - v0.1.2 - 2014-04-23 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
@@ -2374,7 +2374,7 @@ jQuery.extend( jQuery.easing,
 
 		track_explore: function(data){
 			window._gaq.push(['sidekickWP._trackEvent', 'Plugin - Explore', data.what, null, 0,true]);
-			this.send({type: 'explore', label: data.what});
+			this.send({type: 'explore', label: data.what, data: data.id});
 		},
 
 		track_open_sidekick_window: function(data){
@@ -2871,7 +2871,7 @@ jQuery.extend( jQuery.easing,
 		clicked_bucket: function(e){
 			// console.log('clicked_bucket',e);
 
-			// SidekickWP.Events.trigger('track_explore',{what:'Bucket - ' + $('span',e).html() });
+
 			var navigation_history = this.model.get('navigation_history');
 			$('#sk_drawer>h2 span').html('Walkthroughs');
 
@@ -2890,10 +2890,9 @@ jQuery.extend( jQuery.easing,
 				// console.log('Showing Bucket %o',$(e).data('open_bucket'));
 				// console.log('$(e).closest(.show) %o', $(e).closest('.show'));
 
+				SidekickWP.Events.trigger('track_explore',{what:'Bucket - ' + $('span',e).html(), id: $(e).data('open_bucket') });
+
 				$(e).closest('.show').removeClass('show').addClass('hide');
-
-				// console.log('$(#sk_drawer .sub_bucket_inner) %o', $('#sk_drawer .sub_bucket_inner'));
-
 
 
 				this.draw_bucket($(e).data('open_bucket'));
@@ -2908,6 +2907,8 @@ jQuery.extend( jQuery.easing,
 			} else {
 				// console.log('Showing Walkthroughs %o',$(e).data('open_walkthroughs'));
 				// console.log('$(e).parent() %o', $(e).parent());
+
+				SidekickWP.Events.trigger('track_explore',{what:'Bucket - ' + $('span',e).html(), id: $(e).data('open_walkthroughs') });
 
 				$('#sk_drawer>h2 span').html('How Do I...');
 
@@ -3012,8 +3013,6 @@ jQuery.extend( jQuery.easing,
 
 		render: function(){
 			// console.group('%crender: render: bucketView %o', 'color:#8fa2ff', this);
-
-			SidekickWP.Events.trigger('track_explore',{what:'Bucket' });
 
 			var variables = {
 				full_library: this.model.get('full_library')
