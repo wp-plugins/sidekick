@@ -70,6 +70,8 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 
 				if (isset($_POST['activation_id']) && $_POST['activation_id']){
 					$result = $this->activate(true);
+				} else {
+					delete_option('sk_activation_id');
 				}
 
 				if (isset($_POST['sk_track_data'])) {
@@ -91,7 +93,6 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 			if (SK_PAID_LIBRARY_FILE && $activation_id) {
 				$_POST['activation_id'] = $activation_id;
 				$check_activation       = $this->activate(true);
-				mlog('$check_activation',$check_activation);
 				if ($check_activation) {
 					$library = file_get_contents(SK_PAID_LIBRARY_FILE);
 					if (strlen($library) > 30) {
