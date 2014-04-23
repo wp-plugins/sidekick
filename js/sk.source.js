@@ -2654,13 +2654,12 @@ jQuery.extend( jQuery.easing,
 		toggle_sidekick_window: function(e){
 			console.log('toggle_sidekick_window');
 
-			SidekickWP.Events.trigger('track_toggle_sidekick_window');
-
 			if ($('div#sidekick').hasClass('open')) {
 				// console.log('Closing Sidekick Window');
 				SidekickWP.Events.trigger('close_sidekick_drawer');
 				$('div#sidekick').wait(500).removeClass('open');
 			} else {
+				SidekickWP.Events.trigger('track_explore',{what:'Sidekick - Open'});
 				// console.log('Showing Sidekick Window');
 				$('div#sidekick').addClass('open').wait(500,function(e){
 					SidekickWP.Events.trigger('open_sidekick_drawer');
