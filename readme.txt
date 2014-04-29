@@ -130,6 +130,9 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
+= 1.2.1 =
+* Activation Bug Fix
+
 = 1.2 =
 * 3.9 Support Added
 * Suppport for Module Marketplace

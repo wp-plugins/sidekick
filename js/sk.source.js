@@ -1,4 +1,4 @@
-/*! sidekick - v1.2 - 2014-04-23 */(function(jQuery, window){
+/*! sidekick - v1.2 - 2014-04-29 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
@@ -1931,10 +1931,11 @@ jQuery.extend( jQuery.easing,
 					if (paid_library_domain.indexOf(',') > -1) {
 						var paid_library_domains = paid_library_domain.split(',');
 						_.each(paid_library_domains,function(item){
-							console.log('%cCHECK DOMAIN %o == %o', 'background-color: #c12029;color: white',sk_config.site_url,item);
-
 							if (sk_config.site_url == item.trim()) {
 								matched_domain = item;
+								console.log('%cCHECK DOMAIN %o == %o', 'background-color: #51fa3d;color: white',sk_config.site_url,item);
+							} else {
+								console.log('%cCHECK DOMAIN %o == %o', 'background-color: #c12029;color: white',sk_config.site_url,item);
 							}
 						});
 					} else {
