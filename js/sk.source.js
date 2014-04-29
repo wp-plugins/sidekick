@@ -2050,7 +2050,7 @@ jQuery.extend( jQuery.easing,
 		},
 
 		filter_sub_bucket_recursive: function(sub_bucket){
-			console.group('%cfilter_sub_bucket_recursive %s (%o)', 'color: orange',sub_bucket.post_title, sub_bucket);
+			console.group('%cfilter_sub_bucket_recursive - %c %s (%o)', 'color: #ff6f29','color: white;background-color: black',sub_bucket.post_title, sub_bucket);
 
 			if (_.size(sub_bucket.sub_buckets) > 0) {
 				console.log('AAA sub_bucket.sub_buckets %o', sub_bucket.sub_buckets);
@@ -2065,7 +2065,7 @@ jQuery.extend( jQuery.easing,
 				while (key--) {
 					var walkthrough = sub_bucket.walkthroughs[key];
 					if (!this.check_walkthrough_compatibility(walkthrough)) {
-						console.error('DELETE sub_bucket.walkthroughs[key] %o', sub_bucket.walkthroughs[key]);
+						console.log('%cDELETE sub_bucket.walkthroughs[key] %o','color: red', sub_bucket.walkthroughs[key]);
 						sub_bucket.walkthroughs.splice(key, 1);
 						continue;
 					}
@@ -2081,7 +2081,7 @@ jQuery.extend( jQuery.easing,
 						});
 						this.set('library_filtered_hotspots',library_filtered_hotspots);
 					},this);
-					console.error('DELETE2 sub_bucket.walkthroughs[key] %o %o', key,sub_bucket.walkthroughs[key]);
+					console.log('	%cDELETE2 sub_bucket.walkthroughs[key] %o %o','color: red', key,sub_bucket.walkthroughs[key]);
 					sub_bucket.walkthroughs.splice(key, 1);
 					continue;
 				}
@@ -2113,7 +2113,7 @@ jQuery.extend( jQuery.easing,
 
 
 		if (!pass_main_soft_version){
-			console.error('FAILED %o - SOFT_VER %o != %O',walkthrough.title, main_soft_version,walkthrough.main_soft_version);
+			console.log('%cFAILED %o - SOFT_VER %o != %O','color: red',walkthrough.title, main_soft_version,walkthrough.main_soft_version);
 			return false;
 		}
 
@@ -2132,7 +2132,7 @@ jQuery.extend( jQuery.easing,
 				}
 			}
 			if (!pass_theme || !pass_theme_version){
-				console.error('FAILED %o - THEME %s (%o) != %s (%o)',walkthrough.title,walkthrough.theme_version, walkthrough.theme, pass_theme, sk_config.theme_version);
+				console.log('%cFAILED %o - THEME %s (%o) != %s (%o)','color: red',walkthrough.title,walkthrough.theme_version, walkthrough.theme, pass_theme, sk_config.theme_version);
 				return false;
 			}
 		}
@@ -2160,11 +2160,11 @@ jQuery.extend( jQuery.easing,
 			});
 
 			if (!pass_plugin) {
-				console.error('FAILED %o (%o) - PLUGIN %s (%o)',walkthrough.title, walkthrough, walkthrough.plugin, sk_config.installed_plugins);
+				console.log('%cFAILED %o (%o) - PLUGIN %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, sk_config.installed_plugins);
 				return false;
 			}
 			if (!pass_plugin_version){
-				console.error('FAILED %o (%o) - PLUGIN %s VER %s (%o)',walkthrough.title, walkthrough, walkthrough.plugin, walkthrough.plugin_version, sk_config.installed_plugins);
+				console.log('%cFAILED %o (%o) - PLUGIN %s VER %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, walkthrough.plugin_version, sk_config.installed_plugins);
 				return false;
 			}
 		}
@@ -2182,7 +2182,7 @@ jQuery.extend( jQuery.easing,
 		}
 
 		if (!pass_user_level){
-			console.error('FAILED %o - User Level %s != %s',walkthrough.title, sk_config.user_level, walkthrough.role);
+			console.log('%cFAILED %o - User Level %s != %s','color: red',walkthrough.title, sk_config.user_level, walkthrough.role);
 			return false;
 		}
 
@@ -2191,9 +2191,9 @@ jQuery.extend( jQuery.easing,
 		this.set('passed_walkthroughs',passed_walkthroughs);
 
 		if (walkthrough.plugin) {
-			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.plugin + ': ' + walkthrough.title);
+			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.plugin + ': ' + walkthrough.title + '(' + walkthrough.id + ')');
 		} else {
-			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.title);
+			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.title + '(' + walkthrough.id + ')');
 		}
 
 		return true;
