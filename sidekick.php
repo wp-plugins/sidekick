@@ -96,7 +96,12 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 				if ($check_activation) {
 					$library = file_get_contents(SK_PAID_LIBRARY_FILE);
 					if (strlen($library) > 30) {
-						$status = 'Active';
+						$site_url = $this->get_domain();
+						if (strpos($library, $site_url) !== false) {
+							$status = 'Active';
+						} else {
+							$status = 'Domain not authorized.';
+						}
 					} else {
 						$status = 'Expired';
 					}
@@ -229,6 +234,15 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 			<?php
 		}
 
+		function get_domain(){
+			$site_url = get_site_url();
+			if(substr($site_url, -1) == '/') {
+				$site_url = substr($site_url, 0, -1);
+			}
+			$site_url = str_replace(array("http://","https://"),array(""),$site_url);
+			return $site_url;
+		}
+
 		function footer(){
 			global $current_user, $wp_roles;
 
@@ -250,11 +264,7 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 				$not_supported_ie = true;
 			}
 
-			$site_url = get_site_url();
-			if(substr($site_url, -1) == '/') {
-				$site_url = substr($site_url, 0, -1);
-			}
-			$site_url = str_replace(array("http://","https://"),array(""),$site_url);
+			$site_url = $this->get_domain();
 
 			?>
 
