@@ -1,4 +1,4 @@
-/*! sidekick - v1.2 - 2014-04-29 */(function(jQuery, window){
+/*! sidekick - v1.2 - 2014-04-30 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
@@ -2624,6 +2624,9 @@ jQuery.extend( jQuery.easing,
 
 		size_drawer: function(){
 			var window_height = $(window).height();
+			if (window_height > 900) {
+				window_height = 900;
+			}
 			var sk_drawer_height          = window_height - 80;
 			var sk_bucketContainer_height = sk_drawer_height - 56;
 			if ($('#sk_upgrade').length > 0) {
@@ -2873,7 +2876,7 @@ jQuery.extend( jQuery.easing,
 
 
 			var navigation_history = this.model.get('navigation_history');
-			$('#sk_drawer>h2 span').html('Walkthroughs');
+			// $('#sk_drawer>h2 span').html('Walkthroughs');
 
 			if ($(e).hasClass('goprev')) {
 				// console.log('Go Back');
@@ -2910,7 +2913,7 @@ jQuery.extend( jQuery.easing,
 
 				SidekickWP.Events.trigger('track_explore',{what:'Bucket - ' + $('span',e).html(), id: $(e).data('open_walkthroughs') });
 
-				$('#sk_drawer>h2 span').html('How Do I...');
+				// $('#sk_drawer>h2 span').html('How Do I...');
 
 				$(e).closest('.show').removeClass('show').addClass('hide');
 
@@ -3356,9 +3359,9 @@ SidekickWP.Templates.Walkthroughs = [
 					"<% if (walkthrough.type == 'how'){ %>",
 						"<% if (!first_drawn){ %>",
 							"<% if (_.size(bucket_data.walkthroughs) > 1){ %>",
-								"<li class='sub_heading'><span>How-Tos</span></li>",
+								"<li class='sub_heading'><span>How Do I...</span></li>",
 							"<% } else{ %>",
-								"<li class='sub_heading'><span>How-To</span></li>",
+								"<li class='sub_heading'><span>How Do I...</span></li>",
 							"<% } %>",
 							"<% first_drawn = true %>",
 						"<% } %>",

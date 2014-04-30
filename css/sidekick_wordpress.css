@@ -38,7 +38,7 @@ div.sk_hotspot {
   height: 25px;
   position: absolute;
   cursor: pointer;
-  background: url('../images/sprides_v11.png') -3px -796px;
+  background: url('../images/sprides_v12.png') -3px -796px;
   opacity: 0.0;
   margin-left: -20px;
   margin-top: -10px;
@@ -141,7 +141,7 @@ div#sidekick.open {
   transition: all 0.5s ease-out;
 }
 div#sidekick.open div#sk_taskbar button.sk_toggle {
-  background: url('../images/sprides_v11.png') -6px -394px;
+  background: url('../images/sprides_v12.png') -6px -394px;
 }
 div#sidekick.open div#sk_taskbar div.sk_controls {
   display: block;
@@ -187,7 +187,7 @@ div#sidekick.playing div#sk_taskbar div.sk_info div.sk_title {
   display: block;
 }
 div#sidekick.playing div#sk_taskbar button.sk_toggle {
-  background: url('../images/sprides_v11.png') -6px -394px;
+  background: url('../images/sprides_v12.png') -6px -394px;
 }
 div#sidekick.playing div#sk_taskbar div.sk_toggles {
   display: block;
@@ -245,7 +245,7 @@ div#sidekick div#sk_taskbar div#logo {
   height: 100%;
   width: 125px;
   /*width:  124px; wp 3.8+ */
-  background: url('../images/sprides_v11.png') 5px 0px no-repeat;
+  background: url('../images/sprides_v12.png') 5px 0px no-repeat;
   cursor: pointer;
 }
 div#sidekick div#sk_taskbar button.sk_toggle {
@@ -253,7 +253,7 @@ div#sidekick div#sk_taskbar button.sk_toggle {
   height: 100%;
   width: 32px;
   margin-left: 3px;
-  background: url('../images/sprides_v11.png') 0px -358px;
+  background: url('../images/sprides_v12.png') 0px -358px;
   border: none;
 }
 div#sidekick div#sk_taskbar div.sk_debug {
@@ -341,29 +341,29 @@ div#sidekick div#sk_taskbar div.sk_controls button {
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart {
   left: 0px;
-  background: url('../images/sprides_v11.png') 17px -140px;
+  background: url('../images/sprides_v12.png') 17px -140px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart:hover {
-  background: #d9763b url('../images/sprides_v11.png') 17px -140px;
+  background: #d9763b url('../images/sprides_v12.png') 17px -140px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause {
-  background: url('../images/sprides_v11.png') 17px -178px;
+  background: url('../images/sprides_v12.png') 17px -178px;
   left: 70px;
   border-right: solid 1px white;
   border-left: solid 1px white;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause.playing {
-  background: url('../images/sprides_v11.png') 17px -718px;
+  background: url('../images/sprides_v12.png') 17px -718px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover {
-  background: #d9763b url('../images/sprides_v11.png') 17px -178px;
+  background: #d9763b url('../images/sprides_v12.png') 17px -178px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop {
-  background: url('../images/sprides_v11.png') 17px -210px;
+  background: url('../images/sprides_v12.png') 17px -210px;
   left: 140px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop:hover {
-  background: #d9763b url('../images/sprides_v11.png') 17px -210px;
+  background: #d9763b url('../images/sprides_v12.png') 17px -210px;
 }
 div#sidekick div#sk_taskbar div.sk_caption {
   position: absolute;
@@ -453,16 +453,16 @@ div#sidekick div#sk_taskbar div.sk_toggles button {
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots {
   /*display:   none;*/
   border-left: solid 1px white;
-  background: #f1631d url('../images/sprides_v11.png') 10px -248px;
+  background: #f1631d url('../images/sprides_v12.png') 10px -248px;
   padding-left: 24px;
   font-size: 18px;
   color: white;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on {
-  background: #fa8c00 url('../images/sprides_v11.png') 10px -248px;
+  background: #fa8c00 url('../images/sprides_v12.png') 10px -248px;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover {
-  background: #fa8c00 url('../images/sprides_v11.png') 10px -248px;
+  background: #fa8c00 url('../images/sprides_v12.png') 10px -248px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -474,13 +474,13 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback {
-  background: #f1631d url('../images/sprides_v11.png') 17px -287px;
+  background: #f1631d url('../images/sprides_v12.png') 17px -287px;
   /*border-right: solid 1px white;*/
   border-left: solid 1px white;
   width: 74px;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback:hover {
-  background: #fa8c00 url('../images/sprides_v11.png') 17px -287px;
+  background: #fa8c00 url('../images/sprides_v12.png') 17px -287px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -492,13 +492,13 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences {
-  background: #f1631d url('../images/sprides_v11.png') 17px -33px;
+  background: #f1631d url('../images/sprides_v12.png') 17px -33px;
   border-right: solid 1px white;
   border-left: solid 1px white;
   width: 74px;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences:hover {
-  background: #fa8c00 url('../images/sprides_v11.png') 17px -33px;
+  background: #fa8c00 url('../images/sprides_v12.png') 17px -33px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -510,11 +510,11 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer {
-  background: #f1631d url('../images/sprides_v11.png') 17px -431px;
+  background: #f1631d url('../images/sprides_v12.png') 17px -431px;
   position: relative;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer:hover {
-  background: #fa8c00 url('../images/sprides_v11.png') 17px -431px;
+  background: #fa8c00 url('../images/sprides_v12.png') 17px -431px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -534,10 +534,10 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on i {
   top: -10px;
   width: 20px;
   height: 20px;
-  background: url('../images/sprides_v11.png') -9px -696px;
+  background: url('../images/sprides_v12.png') -9px -696px;
 }
 div#sidekick #sk_drawer {
-  background-color: #dddddd;
+  background-color: #fff;
   -webkit-box-shadow: 0px 0px 15px 0px rgba(83, 83, 83, 0.6);
   box-shadow: 0px 0px 15px 0px rgba(83, 83, 83, 0.6);
   border: solid 1px #c6c6c6;
@@ -556,7 +556,7 @@ div#sidekick #sk_drawer h2 {
   margin: 0px;
 }
 div#sidekick #sk_drawer h2 button {
-  background: url('../images/sprides_v11.png') -8px -656px no-repeat;
+  background: url('../images/sprides_v12.png') -8px -656px no-repeat;
   width: 20px;
   height: 20px;
   border: none;
@@ -778,10 +778,10 @@ div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits 
   margin: 0px;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#more {
-  background: #f6f6f6 url('../images/sprides_v11.png') -294px -107px;
+  background: #f6f6f6 url('../images/sprides_v12.png') -294px -107px;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#types {
-  background: #f6f6f6 url('../images/sprides_v11.png') -294px -177px;
+  background: #f6f6f6 url('../images/sprides_v12.png') -294px -177px;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer input[type='text'],
 div#sidekick #sk_drawer ul.sk_bucketContainer input[type='password'] {

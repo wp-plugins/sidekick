@@ -6,12 +6,12 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9
-Version: 1.21
+Version: 1.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION',1.2);
+define('SK_PLUGIN_VERSION',1.3);
 define('SK_LIBRARY_VERSION',5);
 define('SK_PLATFORM_VERSION',6);
 
@@ -90,7 +90,7 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 			$sk_track_data    = get_option( 'sk_track_data' );
 			$error         = null;
 
-			if (SK_PAID_LIBRARY_FILE && $activation_id) {
+			if (defined('SK_PAID_LIBRARY_FILE') && $activation_id) {
 				$_POST['activation_id'] = $activation_id;
 				$check_activation       = $this->activate(true);
 				if ($check_activation) {
@@ -243,6 +243,32 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 			return $site_url;
 		}
 
+		function list_post_types(){
+			global $wpdb;
+			$query = "SELECT post_type, count(distinct ID) as count from wp_posts group by post_type";
+			$counts = $wpdb->get_results($query);
+			foreach ($counts as $key => $type) {
+				$type->post_type = str_replace('-', '_', $type->post_type);
+				echo "\n 						post_type_{$type->post_type} : $type->count,";
+			}
+		}
+
+		function list_comments(){
+			global $wpdb;
+			$query = "SELECT count(distinct comment_ID) as count from wp_comments";
+			$counts = $wpdb->get_var($query);
+			echo "\n 						comment_count : $counts,";
+		}
+
+		function get_user_data(){
+			global $current_user;
+			$data = get_userdata($current_user->ID);
+			foreach ($data->allcaps as $cap => $val) {
+				$cap = str_replace('-', '_', $cap);
+				echo "\n 						cap_{$cap} : $val,";
+			}
+		}
+
 		function footer(){
 			global $current_user, $wp_roles;
 
@@ -268,6 +294,8 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 
 			?>
 
+
+
 			<?php if (!$not_supported_ie): ?>
 
 				<script type="text/javascript">
@@ -276,19 +304,22 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 						domain:              	'<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
 						installed_plugins:   	<?php echo $this->list_plugins() ?>,
 						installed_theme:     	'<?php echo $theme->Name ?>',
-						library_free_file:   	'<?php echo SK_FREE_LIBRARY_FILE ?>',
-						library_paid_file:   	'<?php echo SK_PAID_LIBRARY_FILE ?>',
-						library_version:     	<?php echo SK_LIBRARY_VERSION ?>,
+						library_free_file:   	'<?php echo (defined("SK_FREE_LIBRARY_FILE") ? SK_FREE_LIBRARY_FILE : '') ?>',
+						library_paid_file:   	'<?php echo (defined("SK_PAID_LIBRARY_FILE") ? SK_PAID_LIBRARY_FILE : '') ?>',
+						library_version:   		'<?php echo (defined("SK_LIBRARY_VERSION") ? SK_LIBRARY_VERSION : '') ?>',
+						plugin_version:   		'<?php echo (defined("SK_PLUGIN_VERSION") ? SK_PLUGIN_VERSION : '') ?>',
+						platform_version:   	'<?php echo (defined("SK_PLATFORM_VERSION") ? SK_PLATFORM_VERSION : '') ?>',
 						main_soft_name:      	'WordPress',
 						main_soft_version:   	'<?php echo get_bloginfo("version") ?>',
-						plugin_version:      	<?php echo SK_PLUGIN_VERSION ?>,
-						platform_version:    	<?php echo SK_PLATFORM_VERSION ?>,
 						plugin_url:          	'<?php echo admin_url("admin.php?page=sidekick") ?>',
 						theme_version:       	'<?php echo $theme->Version ?>',
 						site_url: 				'<?php echo $site_url ?>',
 						track_data:          	'<?php echo get_option( "track_data" ) ?>',
 						user_level:          	'<?php echo $user_role ?>',
 						user_email:          	'<?php echo $current_user->user_email ?>',
+						<?php $this->list_post_types() ?>
+						<?php $this->get_user_data() ?>
+						<?php $this->list_comments() ?>
 						use_native_controls: 	false,
 						// open_bucket: 476
 					}
