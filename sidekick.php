@@ -6,173 +6,182 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9
-Version: 1.3.1
+Version: 1.3.2
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION','1.3.1');
+define('SK_PLUGIN_VERSION','1.3.2');
 define('SK_LIBRARY_VERSION',5);
 define('SK_PLATFORM_VERSION',6);
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_FILE' ) ) define( 'SK_SL_PLUGIN_FILE', __FILE__ );
-if ( ! function_exists('mlog')) {function mlog(){}}
+if ( ! function_exists('mlog')) {
+	function mlog(){}
+}
 
-	class Sidekick{
-		function enqueue_required(){
-			mlog('PHP: enqueue_required');
+class Sidekick{
+	function enqueue_required(){
+		wp_enqueue_script('jquery'                      , null );
+		wp_enqueue_script('underscore'                  , null, array('underscore'));
+		wp_enqueue_script('backbone'                    , null, array('jquery','underscore'));
+		wp_enqueue_script('jquery-ui-core'				, null, array('jquery') );
+		wp_enqueue_script('jquery-ui-position'			, null, array('jquery-ui-core') );
+		wp_enqueue_script('jquery-ui-draggable'			, null, array('jquery-ui-core') );
+		wp_enqueue_script('jquery-ui-droppable'			, null, array('jquery-ui-core') );
+		wp_enqueue_script('jquery-effects-scale'		, null, array('jquery-ui-core') );
+		wp_enqueue_script('jquery-effects-highlight'	, null, array('jquery-ui-core') );
+	}
 
-			wp_enqueue_script('jquery'                      , null );
-			wp_enqueue_script('underscore'                  , null, array('underscore'));
-			wp_enqueue_script('backbone'                    , null, array('jquery','underscore'));
-			wp_enqueue_script('jquery-ui-core'				, null, array('jquery') );
-			wp_enqueue_script('jquery-ui-position'			, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-ui-draggable'			, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-ui-droppable'			, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-effects-scale'		, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-effects-highlight'	, null, array('jquery-ui-core') );
+	function protocol() {
+		if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
+			return 'https://';
+		} else {
+			return 'http://';
+		}
+	}
+
+	function enqueue(){
+		$activation_id = get_option("sk_activation_id");
+
+		$protocol = $this->protocol();
+
+		define('SK_FREE_LIBRARY_FILE', "{$protocol}library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?" . date('m-d-y-G'));
+		if ($activation_id) {
+			define('SK_PAID_LIBRARY_FILE', "{$protocol}library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?" . date('m-d-y-G'));
+			wp_enqueue_script("sk_paid_library" , SK_PAID_LIBRARY_FILE					,							null			,null);
+			wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array('sk_paid_library')			,null);
+		} else {
+			wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array()			,null);
 		}
 
-		function enqueue(){
-			mlog('PHP: enqueue');
-			$activation_id = get_option("sk_activation_id");
+		wp_enqueue_script('sidekick'   		,"{$protocol}platform.sidekick.pro/v" . SK_PLATFORM_VERSION . '/sidekick.min.js',				array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
+		wp_enqueue_script('player'         	,plugins_url( '/js/sk.source.js'		, __FILE__ ),				array('sidekick')	,SK_PLUGIN_VERSION);
 
-			define('SK_FREE_LIBRARY_FILE', "//library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?" . date('m-d-y-G'));
-			if ($activation_id) {
-				define('SK_PAID_LIBRARY_FILE', "//library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?" . date('m-d-y-G'));
-				wp_enqueue_script("sk_paid_library" , SK_PAID_LIBRARY_FILE					,							null			,null);
-				wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array('sk_paid_library')			,null);
+		wp_enqueue_style('sk-style'    		,plugins_url( '/css/sidekick_wordpress.css' , __FILE__ ),		null 				,SK_PLUGIN_VERSION);
+
+		wp_enqueue_style('wp-pointer');
+		wp_enqueue_script('wp-pointer');
+	}
+
+	function setup_menu(){
+		add_submenu_page( 'options-general.php', 'Sidekick', 'Sidekick', 'activate_plugins','sidekick', array(&$this,'admin_page'));
+	}
+
+	function admin_page(){
+		if (isset($_POST['option_page']) && $_POST['option_page'] == 'sk_license') {
+
+			if (isset($_POST['first_name']) && $_POST['first_name'])
+				update_option('sk_first_name',$_POST['first_name']);
+
+			if (isset($_POST['email']) && $_POST['email'])
+				update_option('sk_email',$_POST['email']);
+
+			if (isset($_POST['activation_id']) && $_POST['activation_id']){
+				$result = $this->activate(true);
 			} else {
-				wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array()			,null);
+				delete_option('sk_activation_id');
 			}
 
-			wp_enqueue_script('sidekick'   		,'//platform.sidekick.pro/v' . SK_PLATFORM_VERSION . '/sidekick.min.js',				array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
-			wp_enqueue_script('player'         	,plugins_url( '/js/sk.source.js'		, __FILE__ ),				array('sidekick')	,SK_PLUGIN_VERSION);
-
-			wp_enqueue_style('sk-style'    		,plugins_url( '/css/sidekick_wordpress.css' , __FILE__ ),		null 				,SK_PLUGIN_VERSION);
-
-			wp_enqueue_style('wp-pointer');
-			wp_enqueue_script('wp-pointer');
-		}
-
-		function setup_menu(){
-			add_submenu_page( 'options-general.php', 'Sidekick', 'Sidekick', 'activate_plugins','sidekick', array(&$this,'admin_page'));
-		}
-
-		function admin_page(){
-			if (isset($_POST['option_page']) && $_POST['option_page'] == 'sk_license') {
-
-				if (isset($_POST['first_name']) && $_POST['first_name'])
-					update_option('sk_first_name',$_POST['first_name']);
-
-				if (isset($_POST['email']) && $_POST['email'])
-					update_option('sk_email',$_POST['email']);
-
-				if (isset($_POST['activation_id']) && $_POST['activation_id']){
-					$result = $this->activate(true);
-				} else {
-					delete_option('sk_activation_id');
-				}
-
-				if (isset($_POST['sk_track_data'])) {
-					update_option( 'sk_track_data', true );
-				} else {
-					delete_option('sk_track_data');
-				}
-
-				update_option( 'sk_activated', true );
-				die('<script>window.open("' . get_site_url() . '/wp-admin/options-general.php?page=sidekick&firstuse","_self")</script>');
+			if (isset($_POST['sk_track_data'])) {
+				update_option( 'sk_track_data', true );
+			} else {
+				delete_option('sk_track_data');
 			}
 
-			$activation_id = get_option( 'sk_activation_id' );
-			$email         = get_option( 'sk_email' );
-			$first_name    = get_option( 'sk_first_name' );
-			$sk_track_data    = get_option( 'sk_track_data' );
-			$error         = null;
+			update_option( 'sk_activated', true );
+			die('<script>window.open("' . get_site_url() . '/wp-admin/options-general.php?page=sidekick&firstuse","_self")</script>');
+		}
 
-			if (defined('SK_PAID_LIBRARY_FILE') && $activation_id) {
-				$_POST['activation_id'] = $activation_id;
-				$check_activation       = $this->activate(true);
-				if ($check_activation) {
-					$library = file_get_contents(SK_PAID_LIBRARY_FILE);
-					if (strlen($library) > 30) {
-						$site_url = $this->get_domain();
-						if (strpos($library, $site_url) !== false) {
-							$status = 'Active';
-						} else {
-							$status = 'Domain not authorized.';
-						}
+		$activation_id = get_option( 'sk_activation_id' );
+		$email         = get_option( 'sk_email' );
+		$first_name    = get_option( 'sk_first_name' );
+		$sk_track_data    = get_option( 'sk_track_data' );
+		$error         = null;
+
+		if (defined('SK_PAID_LIBRARY_FILE') && $activation_id) {
+			$_POST['activation_id'] = $activation_id;
+			$check_activation       = $this->activate(true);
+			if ($check_activation) {
+				$library = file_get_contents(SK_PAID_LIBRARY_FILE);
+				if (strlen($library) > 30) {
+					$site_url = $this->get_domain();
+					if (strpos($library, $site_url) !== false) {
+						$status = 'Active';
 					} else {
-						$status = 'Expired';
+						$status = 'Domain not authorized.';
 					}
 				} else {
-					$status = 'Invalid';
+					$status = 'Expired';
 				}
 			} else {
-				$status = 'Free';
+				$status = 'Invalid';
 			}
+		} else {
+			$status = 'Free';
+		}
 
-			$current_user = wp_get_current_user();
-			if (!$first_name)
-				$first_name = $current_user->user_firstname;
+		$current_user = wp_get_current_user();
+		if (!$first_name)
+			$first_name = $current_user->user_firstname;
 
-			if (!$email)
-				$email = $current_user->user_email;
+		if (!$email)
+			$email = $current_user->user_email;
 
-			$sk_track_data = get_option( 'sk_track_data' );
+		$sk_track_data = get_option( 'sk_track_data' );
 
-			global $wp_version;
-			if (version_compare($wp_version, '3.7', '<=')) {
-				$error = "Sorry, Sidekick requires WordPress 3.7 or higher to function.";
-			}
+		global $wp_version;
+		if (version_compare($wp_version, '3.7', '<=')) {
+			$error = "Sorry, Sidekick requires WordPress 3.7 or higher to function.";
+		}
 
-			if (!$activation_id) {
-				$warn = "You're using the <b>Demo</b> version of Sidekick, to gain full access to the walkthrough library please fill out your name and email address below.";
-			}
+		if (!$activation_id) {
+			$warn = "You're using the <b>Demo</b> version of Sidekick, to gain full access to the walkthrough library please fill out your name and email address below.";
+		}
 
-			if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
-				$error = "Sorry, Sidekick requires Internet Explorer 9 or higher to function.";
-			}
+		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
+			$error = "Sorry, Sidekick requires Internet Explorer 9 or higher to function.";
+		}
 
-			?>
+		?>
 
-			<?php if ($_SERVER['QUERY_STRING'] == 'page=sidekick&firstuse'): ?>
-				<script type="text/javascript">
-					jQuery(document).ready(function($) {
-						jQuery('#sidekick #logo').trigger('click');
-					});
-				</script>
+		<?php if ($_SERVER['QUERY_STRING'] == 'page=sidekick&firstuse'): ?>
+			<script type="text/javascript">
+				jQuery(document).ready(function($) {
+					jQuery('#sidekick #logo').trigger('click');
+				});
+			</script>
+		<?php endif ?>
+
+		<div class="wrap">
+			<div class="icon32" id="icon-tools"><br></div><h2>Sidekick</h2>
+
+			<?php if (isset($error_message)): ?>
+				<div class="error" style="padding:15px; position:relative;" id="gf_dashboard_message">
+					There was a problem activating your license. The following error occured <?php echo $error_message ?>
+				</div>
+			<?php elseif (isset($error)): ?>
+				<div class="error" style="padding:15px; position:relative;" id="gf_dashboard_message">
+					<?php echo $error ?>
+				</div>
+			<?php elseif (isset($warn)): ?>
+				<div class="updated" style="padding:15px; position:relative;" id="gf_dashboard_message">
+					<?php echo $warn ?>
+				</div>
+			<?php elseif (isset($success)): ?>
+				<div class="updated" style="padding:15px; position:relative;" id="gf_dashboard_message">
+					<?php echo $success ?>
+				</div>
 			<?php endif ?>
 
-			<div class="wrap">
-				<div class="icon32" id="icon-tools"><br></div><h2>Sidekick</h2>
-
-				<?php if (isset($error_message)): ?>
-					<div class="error" style="padding:15px; position:relative;" id="gf_dashboard_message">
-						There was a problem activating your license. The following error occured <?php echo $error_message ?>
-					</div>
-				<?php elseif (isset($error)): ?>
-					<div class="error" style="padding:15px; position:relative;" id="gf_dashboard_message">
-						<?php echo $error ?>
-					</div>
-				<?php elseif (isset($warn)): ?>
-					<div class="updated" style="padding:15px; position:relative;" id="gf_dashboard_message">
-						<?php echo $warn ?>
-					</div>
-				<?php elseif (isset($success)): ?>
-					<div class="updated" style="padding:15px; position:relative;" id="gf_dashboard_message">
-						<?php echo $success ?>
-					</div>
-				<?php endif ?>
-
-				<?php if (!$error): ?>
-					<h3>Your Sidekick Account</h3>
-					<form method="post">
-						<?php settings_fields('sk_license'); ?>
-						<table class="form-table">
-							<tbody>
+			<?php if (!$error): ?>
+				<h3>Your Sidekick Account</h3>
+				<form method="post">
+					<?php settings_fields('sk_license'); ?>
+					<table class="form-table">
+						<tbody>
 								<!-- <tr valign="top">
 									<th scope="row" valign="top">First Name</th>
 									<td>
@@ -370,7 +379,9 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 		}
 
 		function track($data){
-			$response = wp_remote_post( "http://www.wpuniversity.com/wp-admin/admin-ajax.php", array(
+			$protocol = $this->protocol();
+
+			$response = wp_remote_post( "{$protocol}library.sidekick.pro/wp-admin/admin-ajax.php", array(
 				'method' => 'POST',
 				'timeout' => 45,
 				'redirection' => 5,
@@ -384,14 +395,15 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 		}
 
 		function activate($return = false){
-			mlog("activate");
 			if ($_POST['activation_id']) {
-				$library_file = "http://library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
+
+				$protocol = $this->protocol();
+
+				$library_file = "{$protocol}library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
 				$ch = curl_init($library_file);
 				curl_setopt($ch, CURLOPT_NOBODY, true);
 				curl_exec($ch);
 				$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				mlog('$retcode',$retcode);
 				curl_close($ch);
 				if ($retcode == 200) {
 					update_option('sk_activation_id',$_POST['activation_id']);

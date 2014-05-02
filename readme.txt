@@ -130,6 +130,9 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
+= 1.3.2 =
+* HTTPs Protocol Adjustments
+
 = 1.3.1 =
 * Library loading bug fixed
 
