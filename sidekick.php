@@ -305,8 +305,6 @@ class Sidekick{
 
 			?>
 
-
-
 			<?php if (!$not_supported_ie): ?>
 
 				<script type="text/javascript">
