@@ -152,7 +152,7 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 = 1.00 =
 * Added support for buckets
 
-=0.78=
+= 0.78 =
 * plugin Compatibility issues resolved
 
 = 0.76 =

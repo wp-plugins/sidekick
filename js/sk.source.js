@@ -1,4 +1,4 @@
-/*! sidekick - v1.2 - 2014-04-30 */(function(jQuery, window){
+/*! sidekick - v1.2.2 - 2014-05-01 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
@@ -1915,11 +1915,29 @@ jQuery.extend( jQuery.easing,
 				this.set('qa_mode',true);
 			}
 
-			if ((typeof sk_free_library == 'undefined' || !sk_config.library_free_file) && typeof sk_paid_library == 'undefined' || !sk_config.library_paid_file) {
+			if ((typeof sk_free_library == 'undefined' || !sk_config.library_free_file) && (typeof sk_paid_library == 'undefined' || !sk_config.library_paid_file)) {
 				var msg = 'No Library Found!';
 				SidekickWP.Events.trigger('track_error',{msg: msg});
 
-				console.error('Sidekick Library Not Found! -> %s',sk_config.library_file);
+				console.error('Sidekick Library Not Found! -> %o',sk_config);
+
+				if (typeof sk_free_library == 'undefined') {
+					console.log('sk_free_library %o', typeof sk_free_library);
+				} else {
+					console.log('sk_free_library %o', sk_free_library);
+				}
+
+				if (typeof sk_paid_library == 'undefined') {
+					console.log('sk_paid_library %o', typeof sk_paid_library);
+				} else {
+					console.log('sk_paid_library %o', sk_paid_library);
+				}
+
+				console.log('typeof sk_free_library %o', typeof sk_free_library);
+				console.log('sk_config.library_free_file %o', !sk_config.library_free_file);
+				console.log('typeof sk_paid_library %o', typeof sk_paid_library);
+				console.log('sk_config.library_paid_file %o', !sk_config.library_paid_file);
+
 				return;
 			} else {
 				if(typeof sk_paid_library !== 'undefined' && _.size(sk_paid_library.buckets) > 0){
@@ -1933,7 +1951,7 @@ jQuery.extend( jQuery.easing,
 						_.each(paid_library_domains,function(item){
 							if (sk_config.site_url == item.trim()) {
 								matched_domain = item;
-								console.log('%cCHECK DOMAIN %o == %o', 'background-color: #51fa3d;color: white',sk_config.site_url,item);
+								console.log('%cMATCHED DOMAIN %o == %o', 'background-color: #51fa3d;color: white',sk_config.site_url,item);
 							} else {
 								console.log('%cCHECK DOMAIN %o == %o', 'background-color: #c12029;color: white',sk_config.site_url,item);
 							}
@@ -3488,6 +3506,9 @@ SidekickWP.Templates.Message = [
 	});
 }(jQuery));;
 jQuery(document).ready(function($) {
+	console.log('sk plr rdy');
+	console.log('sk_free_library %o', sk_free_library);
+
 	window.sidekickWP = new SidekickWP.Models.App({
 		show_toggle_feedback: true
 	});

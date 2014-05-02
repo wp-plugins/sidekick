@@ -39,15 +39,17 @@ if ( ! function_exists('mlog')) {function mlog(){}}
 			mlog('PHP: enqueue');
 			$activation_id = get_option("sk_activation_id");
 
-			define('SK_FREE_LIBRARY_FILE', "http://library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?" . date('m-d-y-G'));
+			define('SK_FREE_LIBRARY_FILE', "//library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?" . date('m-d-y-G'));
 			if ($activation_id) {
-				define('SK_PAID_LIBRARY_FILE', "http://library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?" . date('m-d-y-G'));
-				wp_enqueue_script("sk_paid_library" , SK_PAID_LIBRARY_FILE					,							array("sk")			,null);
+				define('SK_PAID_LIBRARY_FILE', "//library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?" . date('m-d-y-G'));
+				wp_enqueue_script("sk_paid_library" , SK_PAID_LIBRARY_FILE					,							null			,null);
+				wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array('sk_paid_library')			,null);
+			} else {
+				wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array()			,null);
 			}
 
-			wp_enqueue_script('sidekick'   		,'http://platform.sidekick.pro/v' . SK_PLATFORM_VERSION . '/sidekick.min.js',				array('backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
-			wp_enqueue_script('sk'         		,plugins_url( '/js/sk.source.js'		, __FILE__ ),				array('sidekick')	,SK_PLUGIN_VERSION);
-			wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array("sk")			,null);
+			wp_enqueue_script('sidekick'   		,'//platform.sidekick.pro/v' . SK_PLATFORM_VERSION . '/sidekick.min.js',				array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
+			wp_enqueue_script('player'         	,plugins_url( '/js/sk.source.js'		, __FILE__ ),				array('sidekick')	,SK_PLUGIN_VERSION);
 
 			wp_enqueue_style('sk-style'    		,plugins_url( '/css/sidekick_wordpress.css' , __FILE__ ),		null 				,SK_PLUGIN_VERSION);
 
