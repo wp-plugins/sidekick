@@ -6,12 +6,12 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9
-Version: 1.3.2
+Version: 1.3.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION','1.3.2');
+define('SK_PLUGIN_VERSION','1.3.3');
 define('SK_LIBRARY_VERSION',5);
 define('SK_PLATFORM_VERSION',6);
 
@@ -138,7 +138,7 @@ class Sidekick{
 		}
 
 		if (!$activation_id) {
-			$warn = "You're using the <b>Demo</b> version of Sidekick, to gain full access to the walkthrough library please fill out your name and email address below.";
+			$warn = "You're using the <b>free</b> version of Sidekick, to gain full access to the walkthrough library please <a target='_blank' href='http://www.sidekick.pro/wordpress/modules/'>upgrade</a> to the full module.";
 		}
 
 		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
@@ -256,7 +256,7 @@ class Sidekick{
 
 		function list_post_types(){
 			global $wpdb;
-			$query = "SELECT post_type, count(distinct ID) as count from wp_posts group by post_type";
+			$query = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
 			$counts = $wpdb->get_results($query);
 			foreach ($counts as $key => $type) {
 				$type->post_type = str_replace('-', '_', $type->post_type);
@@ -264,11 +264,31 @@ class Sidekick{
 			}
 		}
 
+		function list_taxonomies(){
+			global $wpdb;
+			$query = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+			$counts = $wpdb->get_results($query);
+			foreach ($counts as $key => $taxonomy) {
+				$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
+				echo "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
+			}
+		}
+
 		function list_comments(){
 			global $wpdb;
-			$query = "SELECT count(distinct comment_ID) as count from wp_comments";
+			$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
 			$counts = $wpdb->get_var($query);
 			echo "\n 						comment_count : $counts,";
+		}
+
+		function list_post_statuses(){
+			global $wpdb;
+			$query = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
+			$counts = $wpdb->get_results($query);
+			foreach ($counts as $key => $type) {
+				$type->post_status = str_replace('-', '_', $type->post_status);
+				echo "\n 						post_status_{$type->post_status} : $type->count,";
+			}
 		}
 
 		function get_user_data(){
@@ -327,9 +347,12 @@ class Sidekick{
 						user_level:          	'<?php echo $user_role ?>',
 						user_email:          	'<?php echo $current_user->user_email ?>',
 						<?php $this->list_post_types() ?>
+						<?php $this->list_taxonomies() ?>
 						<?php $this->get_user_data() ?>
 						<?php $this->list_comments() ?>
-						use_native_controls: 	false,
+						<?php $this->list_post_statuses() ?>
+						comment_count: 3,
+						use_native_controls: 	false
 						// open_bucket: 476
 					}
 					<?php if ($activation_id = get_option( "sk_activation_id" )){ ?>

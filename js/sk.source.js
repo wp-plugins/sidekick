@@ -1,4 +1,4 @@
-/*! sidekick - v1.3.2 - 2014-05-02 */(function(jQuery, window){
+/*! sidekick - v1.3.3 - 2014-05-06 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
@@ -2029,7 +2029,8 @@ jQuery.extend( jQuery.easing,
 		},
 
 		filter_walkthroughs: function(){
-			console.groupCollapsed('%cFilter Walkthroughs','color: orange');
+			// console.group('%cFilter Walkthroughs','color: #8526ff');
+			console.groupCollapsed('%cFilter Walkthroughs','color: #8526ff');
 			var library = this.get('full_library');
 			_.each(library.buckets,function(item,key){
 				this.filter_sub_bucket_recursive(item);
@@ -2071,40 +2072,38 @@ jQuery.extend( jQuery.easing,
 			console.group('%cfilter_sub_bucket_recursive - %c %s (%o)', 'color: #ff6f29','color: white;background-color: black',sub_bucket.post_title, sub_bucket);
 
 			if (_.size(sub_bucket.sub_buckets) > 0) {
-				console.log('AAA sub_bucket.sub_buckets %o', sub_bucket.sub_buckets);
 				_.each(sub_bucket.sub_buckets,function(item,key){
 					return this.filter_sub_bucket_recursive(item);
 				},this);
 			} else if (_.size(sub_bucket.walkthroughs)) {
-				console.log('BBB Filter walkthrough %o', sub_bucket.walkthroughs);
 				// Filter walkthrough
 				sub_bucket.walkthroughs.reverse();
 				var key = sub_bucket.walkthroughs.length;
 				while (key--) {
 					var walkthrough = sub_bucket.walkthroughs[key];
 					if (!this.check_walkthrough_compatibility(walkthrough)) {
-						console.log('%cDELETE sub_bucket.walkthroughs[key] %o','color: red', sub_bucket.walkthroughs[key]);
+						// console.log('	%cDELETE %s %o','color: red', sub_bucket.walkthroughs[key].title, sub_bucket.walkthroughs[key]);
 						sub_bucket.walkthroughs.splice(key, 1);
 						continue;
 					}
 
-				// Check if Hotspot, if so move out
-				if (walkthrough.type == 'hotspot') {
-					_.each(walkthrough.hotspots,function(item){
-						console.info('	HOTSPOT %o', item);
-						var library_filtered_hotspots = this.get('library_filtered_hotspots');
-						library_filtered_hotspots.push({
-							url:item.url,selector:
-							item.selector,id:walkthrough.id
-						});
-						this.set('library_filtered_hotspots',library_filtered_hotspots);
-					},this);
-					console.log('	%cDELETE2 sub_bucket.walkthroughs[key] %o %o','color: red', key,sub_bucket.walkthroughs[key]);
-					sub_bucket.walkthroughs.splice(key, 1);
-					continue;
+					// Check if Hotspot, if so move out
+					if (walkthrough.type == 'hotspot') {
+						_.each(walkthrough.hotspots,function(item){
+							// console.info('HOTSPOT %o', walkthrough.title);
+							var library_filtered_hotspots = this.get('library_filtered_hotspots');
+							library_filtered_hotspots.push({
+								url:item.url,selector:
+								item.selector,id:walkthrough.id
+							});
+							this.set('library_filtered_hotspots',library_filtered_hotspots);
+						},this);
+						// console.log('%cDELETE2 sub_bucket.walkthroughs[key] %o %o','color: red', key,sub_bucket.walkthroughs[key]);
+						sub_bucket.walkthroughs.splice(key, 1);
+						continue;
+					}
 				}
-			}
-		} else {
+			} else {
 			// Sub_bucket has no walkthroughs
 			console.log('CCC Sub_bucket has no walkthroughs');
 		}
@@ -2131,7 +2130,7 @@ jQuery.extend( jQuery.easing,
 
 
 		if (!pass_main_soft_version){
-			console.log('%cFAILED %o - SOFT_VER %o != %O','color: red',walkthrough.title, main_soft_version,walkthrough.main_soft_version);
+			console.log('%cFAILED %s - SOFT_VER %o != %O','color: red',walkthrough.title, main_soft_version,walkthrough.main_soft_version);
 			return false;
 		}
 
@@ -2150,7 +2149,7 @@ jQuery.extend( jQuery.easing,
 				}
 			}
 			if (!pass_theme || !pass_theme_version){
-				console.log('%cFAILED %o - THEME %s (%o) != %s (%o)','color: red',walkthrough.title,walkthrough.theme_version, walkthrough.theme, pass_theme, sk_config.theme_version);
+				console.log('%cFAILED %s - THEME %s (%o) != %s (%o)','color: red',walkthrough.title,walkthrough.theme_version, walkthrough.theme, pass_theme, sk_config.theme_version);
 				return false;
 			}
 		}
@@ -2178,11 +2177,11 @@ jQuery.extend( jQuery.easing,
 			});
 
 			if (!pass_plugin) {
-				console.log('%cFAILED %o (%o) - PLUGIN %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, sk_config.installed_plugins);
+				console.log('%cFAILED %s (%o) - PLUGIN %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, sk_config.installed_plugins);
 				return false;
 			}
 			if (!pass_plugin_version){
-				console.log('%cFAILED %o (%o) - PLUGIN %s VER %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, walkthrough.plugin_version, sk_config.installed_plugins);
+				console.log('%cFAILED %s (%o) - PLUGIN %s VER %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, walkthrough.plugin_version, sk_config.installed_plugins);
 				return false;
 			}
 		}
@@ -2200,8 +2199,75 @@ jQuery.extend( jQuery.easing,
 		}
 
 		if (!pass_user_level){
-			console.log('%cFAILED %o - User Level %s != %s','color: red',walkthrough.title, sk_config.user_level, walkthrough.role);
+			console.log('%cFAILED %s - User Level %s != %s','color: red',walkthrough.title, sk_config.user_level, walkthrough.role);
 			return false;
+		}
+
+		// Check display rules
+		if (walkthrough.display_rules) {
+			console.log('walkthrough.display_rules %o', walkthrough.display_rules);
+			for ( var rule in walkthrough.display_rules){
+				var rule_data = walkthrough.display_rules[rule];
+
+				if (!isNaN(rule_data.value)) {
+					rule_data.value = parseInt(rule_data.value,10);
+				}
+
+				if (!isNaN(sk_config[rule_data.variable])) {
+					sk_config[rule_data.variable] = parseInt(sk_config[rule_data.variable],10);
+				}
+
+				if (rule_data.operator.toLowerCase() === 'equals') {
+					if (!(sk_config[rule_data.variable] === rule_data.value)) {
+						console.log('%cFAILED Custom Rule [%s] %s === %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
+						console.log('rule_data.value %o', rule_data.value);
+						console.log('sk_config[rule_data.variable] !== rule_data.value %o', sk_config[rule_data.variable] !== rule_data.value);
+						console.groupEnd();
+						return false;
+					}
+				} else if (rule_data.operator.toLowerCase() === 'not equal to') {
+					if (!(sk_config[rule_data.variable] !== rule_data.value)) {
+						console.log('%cFAILED Custom Rule [%s] %s !== %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
+						console.log('rule_data.value %o', rule_data.value);
+						console.log('sk_config[rule_data.variable] === rule_data.value %o', sk_config[rule_data.variable] === rule_data.value);
+						console.groupEnd();
+						return false;
+					}
+				} else if (rule_data.operator.toLowerCase() === 'greater then') {
+					if (isNaN(sk_config[rule_data.variable]) || isNaN(rule_data.value)) {
+						console.log('%cFAILED Custom Rule [%s] Can\'t compare non integers %s > %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						return false;
+					}
+					if (!(sk_config[rule_data.variable] > rule_data.value)) {
+						console.group('%cFAILED Custom Rule [%s] %s > %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
+						console.log('rule_data.value %o', rule_data.value);
+						console.log('sk_config[rule_data.variable] > rule_data.value %o', sk_config[rule_data.variable] > rule_data.value);
+						console.groupEnd();
+						return false;
+					}
+				} else if (rule_data.operator.toLowerCase() === 'less then') {
+					if (isNaN(sk_config[rule_data.variable]) || isNaN(rule_data.value)) {
+						console.log('%cFAILED Custom Rule [%s] Can\'t compare non integers %s > %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						return false;
+					}
+					if (!(sk_config[rule_data.variable] < rule_data.value)) {
+						console.log('%cFAILED Custom Rule [%s] %s < %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
+						console.log('rule_data.value %o', rule_data.value);
+						console.log('sk_config[rule_data.variable] < rule_data.value %o', sk_config[rule_data.variable] < rule_data.value);
+						console.groupEnd();
+						return false;
+					}
+				}
+				console.group('%cPASSED Custom Rule %s %s %s','color: #3ab00b',rule_data.variable, sk_config[rule_data.variable], rule_data.operator.toLowerCase(), rule_data.value);
+				console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
+				console.log('rule_data.value %o', rule_data.value);
+				console.log('sk_config[rule_data.variable] %s rule_data.value %o', rule_data.operator, sk_config[rule_data.variable] < rule_data.value);
+				console.groupEnd();
+			}
 		}
 
 		var passed_walkthroughs = this.get('passed_walkthroughs');
@@ -2209,9 +2275,9 @@ jQuery.extend( jQuery.easing,
 		this.set('passed_walkthroughs',passed_walkthroughs);
 
 		if (walkthrough.plugin) {
-			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.plugin + ': ' + walkthrough.title + '(' + walkthrough.id + ')');
+			console.log('%cPASSED %s', 'color: #3ab00b',walkthrough.plugin + ': ' + walkthrough.title + '(' + walkthrough.id + ')');
 		} else {
-			console.log('%cPASSED! %o', 'color: #3ab00b',walkthrough.title + '(' + walkthrough.id + ')');
+			console.log('%cPASSED %s', 'color: #3ab00b',walkthrough.title + '(' + walkthrough.id + ')');
 		}
 
 		return true;
