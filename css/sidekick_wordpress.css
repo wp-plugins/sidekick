@@ -38,7 +38,7 @@ div.sk_hotspot {
   height: 25px;
   position: absolute;
   cursor: pointer;
-  background: url('../images/sprides_v12.png') -3px -796px;
+  background: url('../images/sprides_v13.png') -3px -796px;
   opacity: 0.0;
   margin-left: -20px;
   margin-top: -10px;
@@ -141,7 +141,10 @@ div#sidekick.open {
   transition: all 0.5s ease-out;
 }
 div#sidekick.open div#sk_taskbar button.sk_toggle {
-  background: url('../images/sprides_v12.png') -6px -394px;
+  background: url('../images/sprides_v13.png') -1px -359px;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
 }
 div#sidekick.open div#sk_taskbar div.sk_controls {
   display: block;
@@ -186,8 +189,14 @@ div#sidekick.playing div#sk_taskbar div.sk_info div.sk_title {
   opacity: 1;
   display: block;
 }
+div#sidekick.playing div#sk_taskbar div.sk_info .sk_divider {
+  float: left;
+}
 div#sidekick.playing div#sk_taskbar button.sk_toggle {
-  background: url('../images/sprides_v12.png') -6px -394px;
+  background: url('../images/sprides_v13.png') -1px -359px;
+  transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
 }
 div#sidekick.playing div#sk_taskbar div.sk_toggles {
   display: block;
@@ -209,6 +218,86 @@ div#sidekick button {
   cursor: pointer;
   cursor: hand;
   padding: 0px;
+}
+div#sidekick #click_warning {
+  width: 50%;
+  min-width: 880px;
+  background-color: #a34316;
+  color: white;
+  position: absolute;
+  top: 100px;
+  min-height: 45px;
+  text-align: center;
+  z-index: 1000002;
+  left: 50%;
+  margin-left: -440px;
+  /*padding:        20px 5px;*/
+  /*border:         solid 2px red;*/
+  font-weight: bold;
+  font-size: 18px;
+  /*.animate;*/
+}
+div#sidekick #click_warning.show {
+  top: -60px;
+  /*.animate;*/
+  -webkit-animation: warning 1s 1 ease-in-out;
+  -moz-animation: warning 1s 1 ease-in-out;
+  -o-animation: warning 1s 1 ease-in-out;
+}
+@-webkit-keyframes warning {
+  0% {
+    -webkit-transform: translateY(100px);
+  }
+  30% {
+    -webkit-transform: translateY(10px);
+  }
+  60% {
+    -webkit-transform: translateY(50px);
+  }
+  100% {
+    -webkit-transform: translateY(0px);
+  }
+}
+@-moz-keyframes warning {
+  0% {
+    -moz-transform: translateY(100px);
+  }
+  30% {
+    -moz-transform: translateY(-30px);
+  }
+  60% {
+    -moz-transform: translateY(-20px);
+  }
+  100% {
+    -moz-transform: translateY(-60px);
+  }
+}
+@-o-keyframes warning {
+  0% {
+    -o-transform: translateY(100px);
+  }
+  30% {
+    -o-transform: translateY(-30px);
+  }
+  60% {
+    -o-transform: translateY(-20px);
+  }
+  100% {
+    -o-transform: translateY(-60px);
+  }
+}
+div#sidekick #click_warning h3 {
+  background-color: #833512;
+  margin: 0px;
+  font-size: 1px;
+  text-align: left;
+  color: white;
+  padding: 1px 5px;
+  min-height: 5px;
+}
+div#sidekick #click_warning span {
+  padding: 15px 5px 20px;
+  display: block;
 }
 div#sidekick div#sk_taskbar {
   width: 100%;
@@ -240,12 +329,18 @@ div#sidekick div#sk_taskbar button {
   min-width: 26px;
   float: left;
 }
+div#sidekick div#sk_taskbar div.sk_powered_by {
+  float: right;
+  color: white;
+  font-size: 12px;
+  padding: 12px;
+}
 div#sidekick div#sk_taskbar div#logo {
   float: left;
   height: 100%;
   width: 125px;
   /*width:  124px; wp 3.8+ */
-  background: url('../images/sprides_v12.png') 5px 0px no-repeat;
+  background: url('../images/sprides_v13.png') 5px 0px no-repeat;
   cursor: pointer;
 }
 div#sidekick div#sk_taskbar button.sk_toggle {
@@ -253,7 +348,7 @@ div#sidekick div#sk_taskbar button.sk_toggle {
   height: 100%;
   width: 32px;
   margin-left: 3px;
-  background: url('../images/sprides_v12.png') 0px -358px;
+  background: url('../images/sprides_v13.png') 0px -358px;
   border: none;
 }
 div#sidekick div#sk_taskbar div.sk_debug {
@@ -341,29 +436,29 @@ div#sidekick div#sk_taskbar div.sk_controls button {
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart {
   left: 0px;
-  background: url('../images/sprides_v12.png') 17px -140px;
+  background: url('../images/sprides_v13.png') 17px -140px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart:hover {
-  background: #d9763b url('../images/sprides_v12.png') 17px -140px;
+  background: #d9763b url('../images/sprides_v13.png') 17px -140px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause {
-  background: url('../images/sprides_v12.png') 17px -178px;
+  background: url('../images/sprides_v13.png') 17px -178px;
   left: 70px;
   border-right: solid 1px white;
   border-left: solid 1px white;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause.playing {
-  background: url('../images/sprides_v12.png') 17px -718px;
+  background: url('../images/sprides_v13.png') 17px -718px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover {
-  background: #d9763b url('../images/sprides_v12.png') 17px -178px;
+  background: #d9763b url('../images/sprides_v13.png') 17px -178px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop {
-  background: url('../images/sprides_v12.png') 17px -210px;
+  background: url('../images/sprides_v13.png') 17px -210px;
   left: 140px;
 }
 div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop:hover {
-  background: #d9763b url('../images/sprides_v12.png') 17px -210px;
+  background: #d9763b url('../images/sprides_v13.png') 17px -210px;
 }
 div#sidekick div#sk_taskbar div.sk_caption {
   position: absolute;
@@ -453,16 +548,16 @@ div#sidekick div#sk_taskbar div.sk_toggles button {
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots {
   /*display:   none;*/
   border-left: solid 1px white;
-  background: #f1631d url('../images/sprides_v12.png') 10px -248px;
+  background: #f1631d url('../images/sprides_v13.png') 10px -248px;
   padding-left: 24px;
   font-size: 18px;
   color: white;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on {
-  background: #fa8c00 url('../images/sprides_v12.png') 10px -248px;
+  background: #fa8c00 url('../images/sprides_v13.png') 10px -248px;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover {
-  background: #fa8c00 url('../images/sprides_v12.png') 10px -248px;
+  background: #fa8c00 url('../images/sprides_v13.png') 10px -248px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -474,13 +569,13 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback {
-  background: #f1631d url('../images/sprides_v12.png') 17px -287px;
+  background: #f1631d url('../images/sprides_v13.png') 17px -287px;
   /*border-right: solid 1px white;*/
   border-left: solid 1px white;
   width: 74px;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback:hover {
-  background: #fa8c00 url('../images/sprides_v12.png') 17px -287px;
+  background: #fa8c00 url('../images/sprides_v13.png') 17px -287px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -492,13 +587,13 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences {
-  background: #f1631d url('../images/sprides_v12.png') 17px -33px;
+  background: #f1631d url('../images/sprides_v13.png') 17px -33px;
   border-right: solid 1px white;
   border-left: solid 1px white;
   width: 74px;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences:hover {
-  background: #fa8c00 url('../images/sprides_v12.png') 17px -33px;
+  background: #fa8c00 url('../images/sprides_v13.png') 17px -33px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -510,11 +605,11 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer {
-  background: #f1631d url('../images/sprides_v12.png') 17px -431px;
+  background: #f1631d url('../images/sprides_v13.png') 17px -431px;
   position: relative;
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer:hover {
-  background: #fa8c00 url('../images/sprides_v12.png') 17px -431px;
+  background: #fa8c00 url('../images/sprides_v13.png') 17px -431px;
   transform: translate3d(0, 0, 0);
   -webkit-transition: all 0.3s ease-out;
   -moz-transition: all 0.3s ease-out;
@@ -534,7 +629,7 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on i {
   top: -10px;
   width: 20px;
   height: 20px;
-  background: url('../images/sprides_v12.png') -9px -696px;
+  background: url('../images/sprides_v13.png') -9px -696px;
 }
 div#sidekick #sk_drawer {
   background-color: #fff;
@@ -556,7 +651,7 @@ div#sidekick #sk_drawer h2 {
   margin: 0px;
 }
 div#sidekick #sk_drawer h2 button {
-  background: url('../images/sprides_v12.png') -8px -656px no-repeat;
+  background: url('../images/sprides_v13.png') -8px -656px no-repeat;
   width: 20px;
   height: 20px;
   border: none;
@@ -592,6 +687,17 @@ div#sidekick #sk_drawer ul.sk_bucketContainer .heading.goprev span {
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer .heading.goprev i {
   left: 6px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.related_walkthroughs_heading.heading {
+  text-align: center;
+  cursor: default;
+  border-bottom-color: transparent;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.related_walkthroughs_heading.heading:hover {
+  background-color: #ebebeb;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.related_walkthroughs_heading.heading span {
+  font-weight: bold;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer ul li {
   padding: 0px;
@@ -763,10 +869,10 @@ div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits 
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li {
   padding-top: 10px;
-  padding-left: 70px;
+  /*padding-left: 70px;*/
   color: #535a5a;
   min-height: 70px;
-  width: 224px;
+  width: 100%;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li h4 {
   color: black;
@@ -777,11 +883,17 @@ div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits 
   padding: 0px;
   margin: 0px;
 }
-div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#more {
-  background: #f6f6f6 url('../images/sprides_v12.png') -294px -107px;
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li i {
+  width: 70px;
+  height: 70px;
+  display: block;
+  float: left;
 }
-div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#types {
-  background: #f6f6f6 url('../images/sprides_v12.png') -294px -177px;
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#more i {
+  background: #f6f6f6 url('../images/sprides_v13.png') -431px -22px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#types i {
+  background: #f6f6f6 url('../images/sprides_v13.png') -494px -22px;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer input[type='text'],
 div#sidekick #sk_drawer ul.sk_bucketContainer input[type='password'] {
@@ -905,9 +1017,13 @@ div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs {
   /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs ul.current_page_walkthroughs {
+  left: 0px;
+}
 div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading {
   border-bottom: solid 1px #17909b;
   margin-bottom: 10px;
+  cursor: default;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading span {
   display: inline;
@@ -921,6 +1037,21 @@ div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading span 
   padding: 1px 4px;
   text-transform: uppercase;
   height: 20px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a li {
+  background: url('../images/sprides_v13.png') 257px -861px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a li span {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  color: #988c8f;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a li.subscribed {
+  background: none;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a li.subscribed span {
+  color: #3e3e3e;
 }
 div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .overview {
   /*font-weight: bold;*/

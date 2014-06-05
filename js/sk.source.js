@@ -1,4 +1,4 @@
-/*! sidekick - v1.3.3 - 2014-05-06 */(function(jQuery, window){
+/*! sidekick - v1.3.4 - 2014-06-05 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
@@ -1391,35 +1391,38 @@ Licensed under the freeBSD license
  * to offer multiple easing options
  *
  * TERMS OF USE - jQuery Easing
- * 
- * Open source under the BSD License. 
- * 
+ *
+ * Open source under the BSD License.
+ *
  * Copyright © 2008 George McGinley Smith
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
- * Redistributions of source code must retain the above copyright notice, this list of 
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of
  * conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list 
- * of conditions and the following disclaimer in the documentation and/or other materials 
+ * Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
- * 
- * Neither the name of the author nor the names of contributors may be used to endorse 
+ *
+ * Neither the name of the author nor the names of contributors may be used to endorse
  * or promote products derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
 */
+
+jQuery(document).ready(function() {
+
 
 // t: current time, b: begInnIng value, c: change In value, d: duration
 jQuery.easing['jswing'] = jQuery.easing['swing'];
@@ -1533,7 +1536,7 @@ jQuery.extend( jQuery.easing,
 		return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
 	},
 	easeInOutBack: function (x, t, b, c, d, s) {
-		if (s == undefined) s = 1.70158; 
+		if (s == undefined) s = 1.70158;
 		if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
 		return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
 	},
@@ -1560,35 +1563,37 @@ jQuery.extend( jQuery.easing,
 /*
  *
  * TERMS OF USE - EASING EQUATIONS
- * 
- * Open source under the BSD License. 
- * 
+ *
+ * Open source under the BSD License.
+ *
  * Copyright © 2001 Robert Penner
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, 
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
- * Redistributions of source code must retain the above copyright notice, this list of 
+ *
+ * Redistributions of source code must retain the above copyright notice, this list of
  * conditions and the following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list 
- * of conditions and the following disclaimer in the documentation and/or other materials 
+ * Redistributions in binary form must reproduce the above copyright notice, this list
+ * of conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
- * 
- * Neither the name of the author nor the names of contributors may be used to endorse 
+ *
+ * Neither the name of the author nor the names of contributors may be used to endorse
  * or promote products derived from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
  *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ *  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- */;/*
+ */
+
+});;/*
 * $ lightbox_me
 * By: Buck Wilson
 * Version : 2.3
@@ -1867,21 +1872,22 @@ jQuery.extend( jQuery.easing,
 
 	SidekickWP.Models.App = Backbone.Model.extend({
 		defaults: {
-			full_library:              null,
-			buckets:                   [],
-			passed_walkthroughs:       [],
-			library_filtered_hotspots: [],
-			paid_library:              null,
-			my_library:                null,
-			wp_version:                null,
-			installed_plugins:         null,
-			current_url:               null,
-			current_plugin:            null,
-			license_status:            null,
-			show_toggle_feedback:      true,
-			sk_debug:                  null,
-			qa_mode:                   false,
-			bucket_counts:             []
+			full_library:                     null,
+			buckets:                          [],
+			passed_walkthroughs:              [],
+			passed_current_page_walkthroughs: [],
+			library_filtered_hotspots:        [],
+			paid_library:                     null,
+			my_library:                       null,
+			wp_version:                       null,
+			installed_plugins:                null,
+			current_url:                      null,
+			current_plugin:                   null,
+			license_status:                   null,
+			show_toggle_feedback:             true,
+			sk_debug:                         null,
+			qa_mode:                          false,
+			bucket_counts:                    []
 		},
 
 		initialize: function(){
@@ -1943,17 +1949,22 @@ jQuery.extend( jQuery.easing,
 				if(typeof sk_paid_library !== 'undefined' && _.size(sk_paid_library.buckets) > 0){
 					console.groupCollapsed('%cFOUND sk_paid_library %o', 'background-color: #51fa3d; color black;',sk_paid_library);
 
-
+					sk_config.site_url = sk_config.site_url.replace('www.','');
 					var paid_library_domain = sk_paid_library.domain_name;
+					paid_library_domain = paid_library_domain.replace('www.','');
 
 					if (paid_library_domain.indexOf(',') > -1) {
 						var paid_library_domains = paid_library_domain.split(',');
 						_.each(paid_library_domains,function(item){
-							if (sk_config.site_url == item.trim()) {
-								matched_domain = item;
-								console.log('%cMATCHED DOMAIN %o == %o', 'background-color: #51fa3d;color: black',sk_config.site_url,item);
-							} else {
-								console.log('%cCHECK DOMAIN %o == %o', 'background-color: #c12029;color: white',sk_config.site_url,item);
+							if (item) {
+								item = item.replace('www.','');
+
+								if (sk_config.site_url == item.trim()) {
+									matched_domain = item;
+									console.log('%cMATCHED DOMAIN %o == %o', 'background-color: #51fa3d;color: black',sk_config.site_url,item);
+								} else {
+									console.log('%cCHECK DOMAIN %o == %o', 'background-color: #c12029;color: white',sk_config.site_url,item);
+								}
 							}
 						});
 					} else {
@@ -1972,7 +1983,7 @@ jQuery.extend( jQuery.easing,
 				}
 			}
 
-			if (matched_domain) {
+			if (matched_domain || sk_config.site_url === 'local.sidekick.pro') {
 				this.set('full_library',sk_paid_library);
 				this.set('paid_library',sk_paid_library);
 				console.info('%cPaid Library for %s -> ' + sk_config.library_paid_file + ' (%o)', 'background-color: #51fa3d; color black;',matched_domain,sk_paid_library);
@@ -2036,12 +2047,21 @@ jQuery.extend( jQuery.easing,
 				this.filter_sub_bucket_recursive(item);
 			},this);
 
+			console.log('filter_walkthroughs library.buckets %o', library.buckets);
+
+
 			_.each(library.buckets,function(item,key){
 				// Delete root bucket if no sub buckets
 				this.check_delete_empty_sub_buckets_recrusive(item);
 
+				console.log('key %o', key);
+
+				console.log('_.size(library.buckets[key].sub_buckets) %o', _.size(library.buckets[key].sub_buckets));
+
+				console.log('library.buckets[key].sub_buckets %o', library.buckets[key].sub_buckets);
+
 				if (_.size(library.buckets[key].sub_buckets) === 0 && _.size(library.buckets[key].walkthroughs) === 0) {
-					// console.log('%cDELETE ROOT BUCKET -> %o(%o)','color: red',key,library.buckets[key]);
+					console.log('%cDELETE ROOT BUCKET -> %o(%o)','color: red',key,library.buckets[key]);
 					delete(library.buckets[key]);
 				}
 			},this);
@@ -2049,22 +2069,29 @@ jQuery.extend( jQuery.easing,
 		},
 
 		check_delete_empty_sub_buckets_recrusive: function(sub_bucket){
-			// console.group('%ccheck_delete_empty_sub_buckets_recrusive %o (%o)', 'color: #d2984c;',sub_bucket.post_title,sub_bucket);
+			console.groupCollapsed('%ccheck_delete_empty_sub_buckets_recrusive %o (%o)', 'color: #d2984c;',sub_bucket.post_title,sub_bucket);
 
 			if (_.size(sub_bucket.sub_buckets) > 0) {
 				_.each(sub_bucket.sub_buckets,function(item,key){
 					if (!this.check_delete_empty_sub_buckets_recrusive(item)) {
-						// console.error('DELETE key %o', key);
+						console.log('%cDELETE key %o', 'color: red;',key);
 						delete(sub_bucket.sub_buckets[key]);
 					}
 				},this);
-				// console.groupEnd();
-				return true;
+
+				console.groupEnd();
+				if (_.size(sub_bucket.sub_buckets) === 0 && _.size(sub_bucket.walkthroughs) === 0 ) {
+					console.log('Delete parent sub bucket as it has no more children');
+					return false;
+				} else {
+					return true;
+				}
+
 			} else if (_.size(sub_bucket.sub_buckets) === 0 && _.size(sub_bucket.walkthroughs) === 0 ){
-				// console.groupEnd();
+				console.groupEnd();
 				return false;
 			}
-			// console.groupEnd();
+			console.groupEnd();
 			return true;
 		},
 
@@ -2156,13 +2183,20 @@ jQuery.extend( jQuery.easing,
 
 		// Checking Plugin Compatibility
 		if (typeof walkthrough.plugin !== 'undefined') {
-			if (typeof sk_config.installed_plugins === 'undefined') return false;
+			if (typeof sk_config.installed_plugins === 'undefined')
+				return false;
+
 			pass_plugin = _.find(sk_config.installed_plugins,function(plugin_data){
 				for (var plugin in plugin_data) {
 					var version = plugin_data[plugin];
 
 					if (plugin == walkthrough.plugin || _.escape(plugin) == walkthrough.plugin) {
 						pass_plugin = true;
+
+						if (typeof walkthrough.plugin_version === 'undefined') {
+							pass_plugin_version = true;
+							return true;
+						}
 
 						pass_plugin_version = _.find(walkthrough.plugin_version,function(version2){
 							if (version == version2) {
@@ -2177,11 +2211,15 @@ jQuery.extend( jQuery.easing,
 			});
 
 			if (!pass_plugin) {
-				console.log('%cFAILED %s (%o) - PLUGIN %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, sk_config.installed_plugins);
+				console.log('%cFAILED %s (%o) - PLUGIN %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, sk_config);
 				return false;
 			}
+
+			console.log('pass_plugin_version %o', pass_plugin_version);
+
+
 			if (!pass_plugin_version){
-				console.log('%cFAILED %s (%o) - PLUGIN %s VER %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, walkthrough.plugin_version, sk_config.installed_plugins);
+				console.log('%cFAILED %s (%o) - PLUGIN %s VER %s (%o)','color: red',walkthrough.title, walkthrough, walkthrough.plugin, walkthrough.plugin_version, sk_config);
 				return false;
 			}
 		}
@@ -2202,6 +2240,8 @@ jQuery.extend( jQuery.easing,
 			console.log('%cFAILED %s - User Level %s != %s','color: red',walkthrough.title, sk_config.user_level, walkthrough.role);
 			return false;
 		}
+
+		var page_related_walkthrough = false;
 
 		// Check display rules
 		if (walkthrough.display_rules) {
@@ -2261,6 +2301,20 @@ jQuery.extend( jQuery.easing,
 						console.groupEnd();
 						return false;
 					}
+				} else if (rule_data.operator.toLowerCase() === 'contains') {
+					if (typeof sk_config[rule_data.variable] === 'undefined' || sk_config[rule_data.variable].indexOf(rule_data.value) === -1) {
+						console.log('%cFAILED Custom Rule [%s] %s < %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+						console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
+						console.log('rule_data.value %o', rule_data.value);
+						console.log('sk_config[rule_data.variable] < rule_data.value %o', sk_config[rule_data.variable] < rule_data.value);
+						console.groupEnd();
+						return false;
+					} else {
+						page_related_walkthrough = true;
+					}
+				} else {
+					console.log('%cFAILED Unrecognized Rule [%s] %s < %s','color: red',rule_data.operator.toLowerCase(),rule_data.variable, rule_data.value);
+					return false;
 				}
 				console.group('%cPASSED Custom Rule %s %s %s','color: #3ab00b',rule_data.variable, sk_config[rule_data.variable], rule_data.operator.toLowerCase(), rule_data.value);
 				console.log('sk_config[rule_data.variable] %o', sk_config[rule_data.variable]);
@@ -2273,6 +2327,16 @@ jQuery.extend( jQuery.easing,
 		var passed_walkthroughs = this.get('passed_walkthroughs');
 		passed_walkthroughs.push(walkthrough.id);
 		this.set('passed_walkthroughs',passed_walkthroughs);
+
+		if (page_related_walkthrough) {
+			var passed_current_page_walkthroughs = this.get('passed_current_page_walkthroughs');
+			passed_current_page_walkthroughs.push({
+				id:    walkthrough.id,
+				title: walkthrough.title,
+				type:  walkthrough.type
+			});
+			this.set('passed_current_page_walkthroughs',passed_current_page_walkthroughs);
+		}
 
 		if (walkthrough.plugin) {
 			console.log('%cPASSED %s', 'color: #3ab00b',walkthrough.plugin + ': ' + walkthrough.title + '(' + walkthrough.id + ')');
@@ -2336,7 +2400,8 @@ jQuery.extend( jQuery.easing,
 
 	SidekickWP.Models.Bucket = Backbone.Model.extend({
 		defaults: {
-			full_library: null
+			full_library:                     null,
+			passed_current_page_walkthroughs: null
 		},
 
 		initialize: function(){
@@ -2515,24 +2580,23 @@ jQuery.extend( jQuery.easing,
 			SidekickWP.Events.on('window_resize',          this.check_sidebar_minifiy, this);
 			SidekickWP.Events.on('size_drawer',            this.size_drawer, this);
 
-
-			Sidekick.Events.on('track_play',				this.check_sidebar_minifiy, this);
-			Sidekick.Events.on('track_play',				this.toggle_sidekick_drawer,'hide');
-			Sidekick.Events.on('track_stop',				this.open_sidekick_drawer);
-
-			Sidekick.Events.on('track_play',				this.remove_hotspots,this);
-			Sidekick.Events.on('track_stop',				this.draw_hotspots,this);
-
-			Sidekick.Events.on('nextStep',					this.update_debugger);
+			Sidekick.Events.on('show_click_warning', this.show_click_warning, this);
+			Sidekick.Events.on('track_play',         this.check_sidebar_minifiy, this);
+			Sidekick.Events.on('track_play',         this.toggle_sidekick_drawer,'hide');
+			Sidekick.Events.on('track_stop',         this.open_sidekick_drawer);
+			Sidekick.Events.on('track_play',         this.remove_hotspots,this);
+			Sidekick.Events.on('track_stop',         this.draw_hotspots,this);
+			Sidekick.Events.on('nextStep',           this.update_debugger);
 
 			return this.render();
 		},
 
 		render: function(){
-			console.groupEnd('%crender: SidekickWP: appView %o', 'color:#8fa2ff', this);
+			console.groupCollapsed('%crender: SidekickWP: appView %o', 'color:#8fa2ff', this);
 
 			this.BucketContainer = new SidekickWP.Models.BucketContainer({
-				full_library: this.model.get('full_library')
+				full_library:                     this.model.get('full_library'),
+				passed_current_page_walkthroughs: this.model.get('passed_current_page_walkthroughs')
 			});
 
 			if (_.size(this.model.get('full_library').buckets) > 0) {
@@ -2543,10 +2607,13 @@ jQuery.extend( jQuery.easing,
 			}
 
 			var template = _.template( SidekickWP.Templates.App, {
-				sk_debug:        this.model.get('sk_debug'),
-				BucketContainer: BucketContainer,
-				paid_library:    this.model.get('paid_library'),
-				hotspots:        $.cookie('sidekick_hotspots')
+				sidekick_title:                   (typeof sk_config.sidekick_title !== 'undefined') ? sk_config.sidekick_title : '',
+				drawer_title:                     (typeof sk_config.drawer_title !== 'undefined') ? sk_config.drawer_title : 'Walkthroughs',
+				show_powered_by:                  (typeof sk_config.show_powered_by !== 'undefined') ? sk_config.show_powered_by : '',
+				sk_debug:                         this.model.get('sk_debug'),
+				BucketContainer:                  BucketContainer,
+				paid_library:                     this.model.get('paid_library'),
+				hotspots:                         $.cookie('sidekick_hotspots')
 			});
 			this.$el.append( template );
 
@@ -2562,8 +2629,8 @@ jQuery.extend( jQuery.easing,
 			var currentDebugMode = $.cookie('sidekick_debug_mode');
 
 			$(document).bind('keypress.sidekickwp',{context: this}, function(e){
-				console.log('e %o', e);
-				console.log('e.keyCode %o', e.keyCode);
+				// console.log('e %o', e);
+				// console.log('e.keyCode %o', e.keyCode);
 
 				if ((e.keyCode == 68 || e.charCode == 68) && e.shiftKey === true) { // shift D
 					var currentDebugMode = $.cookie('sidekick_debug_mode');
@@ -2635,12 +2702,31 @@ jQuery.extend( jQuery.easing,
 			SidekickWP.Events.trigger('screen_activate');
 		},
 
+		show_click_warning: function(){
+			$('#sidekick #click_warning').remove();
+			$('#sidekick').append('<div id="click_warning"><h3></h3><span>Clicks are restricted during Walkthroughs. Stop the Walkthrough to navigate normally.</span></div>')
+			.find('#click_warning')
+			.addClass('show')
+			.wait(3000)
+			.removeClass('show');
+		},
+
 		check_sidebar_minifiy: function(){
 			var width = $( document ).width();
 			var playing = $('#sidekick').hasClass('playing');
 			if (width < 784 && playing) {
 				$('.sidekick_stop').trigger('click');
-				Sidekick.Events.trigger('show_modal',{error_id:1,msg: 'Sidekick requires a larger window to run properly.'});
+
+				Sidekick.Events.trigger('show_modal',{
+					error_id: 1,
+					title:    'ERROR',
+					msg:      'Sidekick requires a larger window to run properly.',
+
+					button1: {
+						title:  'Ok',
+						onclick: "javascript:jQuery(\'#sk_lightbox .close\').trigger(\'click\');javascript:jQuery(\'.sidekick_play_pause\').trigger(\'click\')"
+					}
+				});
 			}
 
 			if ('body.sticky-menu') {
@@ -2657,7 +2743,24 @@ jQuery.extend( jQuery.easing,
 
 		show_feedback: function(){
 			// console.log('show_feedback');
-			Sidekick.Events.trigger('show_modal',{title:'Feedback',message: 'Send us some feedback!',primary_button_message: 'Send',secondary_button_message:'Cancel',email:sk_config.user_email});
+			// Sidekick.Events.trigger('show_modal',{title:'Feedback',message: 'Send us some feedback!',primary_button_message: 'Send',secondary_button_message:'Cancel',email:sk_config.user_email});
+
+			Sidekick.Events.trigger('show_modal',{
+				title: 'Feedback',
+				// msg:   'Send us some feedback!',
+				email: sk_config.user_email,
+				height: 340,
+
+				button1: {
+					title:  'Cancel',
+					onclick: "javascript:jQuery(\'#sk_lightbox .close\').trigger(\'click\');javascript:jQuery(\'.sidekick_play_pause\').trigger(\'click\')"
+				},
+				button2: {
+					title:  'Send',
+					onclick: "javascript:Sidekick.Events.trigger(\'send_notification\')"
+				}
+			});
+
 		},
 
 		resize_sidekick_drawer: function(){
@@ -2863,10 +2966,10 @@ jQuery.extend( jQuery.easing,
 							// selectors = '.add-new-h2';
 							$('body').append('<a href="javascript: sidekick.play(' + hotspot_data.id + ')"><div class="sk_hotspot sk_hotspot_' + hotspot + '" data-target="' + selectors + '"></div></a>');
 
-							console.log('%cAttaching Single Hotspot %o[%O] -> (%o [%O])','color: #64c541','sk_hotspot_' + hotspot,$('.sk_hotspot_' + hotspot), selectors,$(selectors));
+							// console.log('%cAttaching Single Hotspot %o[%O] -> (%o [%O])','color: #64c541','sk_hotspot_' + hotspot,$('.sk_hotspot_' + hotspot), selectors,$(selectors));
 
-							console.log('at: selector_x + " " + selector_y %o', selector_x + " " + selector_y);
-							console.log('my: hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding %o', hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding);
+							// console.log('at: selector_x + " " + selector_y %o', selector_x + " " + selector_y);
+							// console.log('my: hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding %o', hotspot_x + hotspot_x_padding + " " + hotspot_y + hotspot_y_padding);
 
 							$('.sk_hotspot_' + hotspot).position({
 								at:        selector_x + " " + selector_y,
@@ -2885,8 +2988,8 @@ jQuery.extend( jQuery.easing,
 
 
 							$(selectors).on("css-change", function(event, change){
-								console.log('css-change',arguments);
-								console.log('this %o', this);
+								// console.log('css-change',arguments);
+								// console.log('this %o', this);
 
 								var selector_x        = 'left';
 								var selector_y        = 'top';
@@ -2905,7 +3008,7 @@ jQuery.extend( jQuery.easing,
 
 							$('.sk_hotspot').wait(20*count).addClass('visible');
 						} else if ($(selectors).length > 1){
-							console.log('selectors %o', selectors);
+							// console.log('selectors %o', selectors);
 
 							_.each($(selectors),function(item,key){
 								$('body').append('<a href="javascript: sidekick.play(' + hotspot_data.id + ')"><div class="sk_hotspot sk_hotspot_' + hotspot + '_' + key + '" data-target="' + item + '"></div></a>');
@@ -2947,8 +3050,9 @@ jQuery.extend( jQuery.easing,
 			// console.group('%crender: render: bucketContainerView %o', 'color:#8fa2ff', this);
 
 			this.bucket = new SidekickWP.Models.Bucket({
-				title:        this.model.get('title'),
-				full_library: this.model.get('full_library')
+				title:                            this.model.get('title'),
+				full_library:                     this.model.get('full_library'),
+				passed_current_page_walkthroughs: this.model.get('passed_current_page_walkthroughs')
 			});
 			this.$el.append(this.bucket.view.render().el);
 			// console.groupEnd();
@@ -2956,7 +3060,7 @@ jQuery.extend( jQuery.easing,
 		},
 
 		clicked_bucket: function(e){
-			// console.log('clicked_bucket',e);
+			console.log('clicked_bucket',e);
 
 
 			var navigation_history = this.model.get('navigation_history');
@@ -3040,7 +3144,7 @@ jQuery.extend( jQuery.easing,
 		},
 
 		draw_bucket: function(bucket_id){
-			// console.info('draw_bucket %o', bucket_id);
+			console.info('draw_bucket %o', bucket_id);
 			var full_library = this.model.get('full_library');
 			var bucket_data  = this.find_bucket_by_id_rec(full_library.buckets,'id',bucket_id);
 
@@ -3060,7 +3164,7 @@ jQuery.extend( jQuery.easing,
 		},
 
 		draw_walkthroughs: function(bucket_id){
-			// console.log('draw_walkthroughs %o', bucket_id);
+			console.log('draw_walkthroughs %o', bucket_id);
 
 			var full_library = this.model.get('full_library');
 			var bucket_data = this.find_bucket_by_id_rec(full_library.buckets,'id',bucket_id);
@@ -3078,7 +3182,8 @@ jQuery.extend( jQuery.easing,
 		},
 
 		setup_events: function(){
-			$('.heading').unbind('click').click({context:this},function(e){
+
+			$('[data-open_bucket],[data-open_walkthroughs],.goprev,.sub_bucket_heading').unbind('click').click({context:this},function(e){
 				e.data.context.clicked_bucket(this);
 			});
 
@@ -3102,7 +3207,8 @@ jQuery.extend( jQuery.easing,
 			// console.group('%crender: render: bucketView %o', 'color:#8fa2ff', this);
 
 			var variables = {
-				full_library: this.model.get('full_library')
+				full_library:                     this.model.get('full_library'),
+				passed_current_page_walkthroughs: this.model.get('passed_current_page_walkthroughs')
 			};
 
 			console.log('SidekickWP.Templates.Bucket variables %o', variables);
@@ -3275,7 +3381,7 @@ jQuery.extend( jQuery.easing,
 SidekickWP.Templates.App = [
 	"<div id='sidekick' class='sidekick_player'>",
 		"<div id='sk_taskbar'>",
-			"<div id='logo'></div>",
+			"<div id='logo'><% print(sidekick_title) %></div>",
 			"<button class='sk_toggle'></button>",
 			"<div class='sk_controls'>",
 				"<button class='sidekick_restart'></button>",
@@ -3287,6 +3393,7 @@ SidekickWP.Templates.App = [
 				"<input type='text' name='step' placeholder='Force Step'></input>",
 				"<div class=''>Skip Step <br/>Press ></div>",
 			"</div>",
+
 			"<div class='sk_toggles'>",
 				// "<% console.log('hotspots %o',hotspots);%>",
 				"<button id='toggle_hotspots' <% if (hotspots === '1' || typeof hotspots === 'undefined'){%>class='on'<% } %> alt='Number of hotspots'>0</button>",
@@ -3294,8 +3401,12 @@ SidekickWP.Templates.App = [
 				"<button id='toggle_preferences'></button>",
 				"<button id='toggle_drawer'><i></i></button>",
 			"</div>",
+			"<% if (show_powered_by){ %>",
+				"<div class='sk_powered_by'>Powered by SIDEKICK.pro</div>",
+			"<% } %>",
 			"<div class='sk_info'>",
 				"<div class='sk_title'><label>Now Playing</label><span class='sk_walkthrough_title'></span></div>",
+				"<div class='sk_divider'></div>",
 				"<div class='sk_time'>0:00/0:00</div>",
 			"</div>",
 			"<div class='sk_caption'>",
@@ -3303,7 +3414,7 @@ SidekickWP.Templates.App = [
 			"</div>",
 		"</div>",
 		"<div id='sk_drawer'>",
-			"<h2><span>Walkthroughs</span><button id='close_sidekick'></button></h2>",
+			"<h2><span><% print(drawer_title) %></span><button id='close_sidekick'></button></h2>",
 			"<ul class='sk_bucketContainer'>",
 				"<% print(BucketContainer) %>",
 				"<% if(typeof paid_library === 'undefined' || paid_library == null || _.size(paid_library.buckets) == 0){ %>",
@@ -3315,10 +3426,53 @@ SidekickWP.Templates.App = [
 ].join("");
 
 SidekickWP.Templates.Bucket = [
-	"<ul class='buckets' data-bucket_id='buckets'>",
+	"<ul class='buckets show' data-bucket_id='buckets'>",
 		"<% _.each(full_library.buckets, function(bucket_data, bucket_title){ %>",
 			"<li class='heading bucket_heading' <% if (bucket_data.sub_buckets){ %> data-open_bucket='<% print(bucket_data.id) %>' <% } else { %> data-open_walkthroughs='<% print(bucket_data.id) %>' <% } %> ><span><% print(bucket_title) %></span><i></i></li>",
 		"<% }); %>",
+		"<% if (_.size(passed_current_page_walkthroughs) > 0){ %>",
+			"<li class='heading bucket_heading related_walkthroughs_heading'><span>Related Walkthrough(s)</span></li>",
+			"<li>",
+				"<ul class='walkthroughs'>",
+					"<ul class='walkthrough current_page_walkthroughs'>",
+
+						"<ul class='walkthroughs_inner'>",
+
+							"<% var first_drawn = false; %>",
+							"<% _.each(passed_current_page_walkthroughs, function(walkthrough){ %>",
+								"<% if (walkthrough.type == 'overview'){ %>",
+									"<% if (!first_drawn){ %>",
+										"<% if (_.size(passed_current_page_walkthroughs) > 1){ %>",
+											"<li class='sub_heading'><span>Overviews</span></li>",
+										"<% } else{ %>",
+											"<li class='sub_heading'><span>Overview</span></li>",
+										"<% } %>",
+										"<% first_drawn = true %>",
+									"<% } %>",
+									"<a href='javascript: <% if (walkthrough.subscribed) { %> sidekick.play(<% print(walkthrough.id) %>) <% } else { %> sidekick.upgrade() <% } %>'><li class='overview <% if (walkthrough.subscribed){ %>subscribed<% } %>'><span><% print(walkthrough.title) %></span></li></a>",
+								"<% } %>",
+							"<% }); %>",
+							"<% var first_drawn = false; %>",
+							"<% _.each(passed_current_page_walkthroughs, function(walkthrough){ %>",
+								"<% if (walkthrough.type == 'how'){ %>",
+									"<% if (!first_drawn){ %>",
+										"<% if (_.size(passed_current_page_walkthroughs) > 1){ %>",
+											"<li class='sub_heading'><span>How Do I...</span></li>",
+										"<% } else{ %>",
+											"<li class='sub_heading'><span>How Do I...</span></li>",
+										"<% } %>",
+										"<% first_drawn = true %>",
+									"<% } %>",
+									"<a href='javascript: <% if (walkthrough.subscribed) { %> sidekick.play(<% print(walkthrough.id) %>) <% } else { %> sidekick.upgrade() <% } %>'><li class='how <% if (walkthrough.subscribed){ %>subscribed<% } %>'><span><% print(walkthrough.title) %></span></li></a>",
+								"<% } %>",
+							"<% }); %>",
+						"</ul>",
+					"</ul>",
+				"</ul>",
+			"</li>",
+
+
+		"<% } %>",
 	"</ul>"
 ].join("");
 
@@ -3378,10 +3532,10 @@ SidekickWP.Templates.User = [
 							"<h3>Benefits of premium</h3>",
 							"<ul>",
 								"<li id='more'>",
-									"<h4>More Walkthroughs</h4><p>Get our full WordPress Core library of over 150 walkthroughs.</p>",
+									"<i></i><h4>More Walkthroughs</h4><p>Get our full WordPress Core library of over 150 walkthroughs.</p>",
 								"</li>",
 								"<li id='types'>",
-									"<h4>Hotspots & Overviews</h4><p>Gain in depth knowledge and quick hints.</p>",
+									"<i></i><h4>Hotspots & Overviews</h4><p>Gain in depth knowledge and quick hints.</p>",
 								"</li>",
 							"</ul>",
 						"</div>",
@@ -3435,7 +3589,7 @@ SidekickWP.Templates.Walkthroughs = [
 							"<% } %>",
 							"<% first_drawn = true %>",
 						"<% } %>",
-						"<a href='javascript: sidekick.play(<% print(walkthrough.id) %>)'><li class='overview'><% print(walkthrough.title) %></li></a>",
+						"<a href='javascript: <% if (walkthrough.subscribed) { %> sidekick.play(<% print(walkthrough.id) %>) <% } else { %> sidekick.upgrade() <% } %>'><li class='overview <% if (walkthrough.subscribed){ %>subscribed<% } %>'><span><% print(walkthrough.title) %></span></li></a>",
 					"<% } %>",
 				"<% }); %>",
 				"<% var first_drawn = false; %>",
@@ -3449,7 +3603,7 @@ SidekickWP.Templates.Walkthroughs = [
 							"<% } %>",
 							"<% first_drawn = true %>",
 						"<% } %>",
-						"<a href='javascript: sidekick.play(<% print(walkthrough.id) %>)'><li class='how'><% print(walkthrough.title) %></li></a>",
+						"<a href='javascript: <% if (walkthrough.subscribed) { %> sidekick.play(<% print(walkthrough.id) %>) <% } else { %> sidekick.upgrade() <% } %>'><li class='how <% if (walkthrough.subscribed){ %>subscribed<% } %>'><span><% print(walkthrough.title) %></span></li></a>",
 					"<% } %>",
 				"<% }); %>",
 			"</ul>",
@@ -3570,14 +3724,8 @@ SidekickWP.Templates.Message = [
 		// 	}
 		// }
 	});
-}(jQuery));;
-jQuery(document).ready(function($) {
-	console.log('sk plr rdy');
-	console.log('sk_free_library %o', sk_free_library);
-
+}(jQuery));;jQuery(document).ready(function($) {
 	window.sidekickWP = new SidekickWP.Models.App({
 		show_toggle_feedback: true
 	});
-	// console.log('window.sidekickWP %o', window.sidekickWP);
-	// jQuery('#logo').trigger('click');
 });

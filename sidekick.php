@@ -5,15 +5,15 @@ Plugin Name: Sidekick
 Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
-Tested up to: 3.9
-Version: 1.3.3
+Tested up to: 3.9.1
+Version: 1.3.4
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION','1.3.3');
+define('SK_PLUGIN_VERSION','1.3.4');
 define('SK_LIBRARY_VERSION',5);
-define('SK_PLATFORM_VERSION',6);
+define('SK_PLATFORM_VERSION',7);
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -57,7 +57,7 @@ class Sidekick{
 			wp_enqueue_script("sk_free_library" , SK_FREE_LIBRARY_FILE					,							array()			,null);
 		}
 
-		wp_enqueue_script('sidekick'   		,"{$protocol}platform.sidekick.pro/v" . SK_PLATFORM_VERSION . '/sidekick.min.js',				array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
+		wp_enqueue_script('sidekick'   		,"{$protocol}platform.sidekick.pro/v" . SK_PLATFORM_VERSION . '/wordpress/sidekick.min.js',				array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), SK_PLUGIN_VERSION);
 		wp_enqueue_script('player'         	,plugins_url( '/js/sk.source.js'		, __FILE__ ),				array('sidekick')	,SK_PLUGIN_VERSION);
 
 		wp_enqueue_style('sk-style'    		,plugins_url( '/css/sidekick_wordpress.css' , __FILE__ ),		null 				,SK_PLUGIN_VERSION);
@@ -295,8 +295,25 @@ class Sidekick{
 			global $current_user;
 			$data = get_userdata($current_user->ID);
 			foreach ($data->allcaps as $cap => $val) {
+				$cap = sanitize_title($cap);
 				$cap = str_replace('-', '_', $cap);
 				echo "\n 						cap_{$cap} : $val,";
+			}
+		}
+
+		function get_current_url() {
+
+			if (isset($_SERVER['REQUEST_URI'])) {
+				return 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+			} else if (isset($_SERVER['PATH_INFO'])) {
+				return $_SERVER['PATH_INFO'];
+			} else {
+				$host = $_SERVER['HTTP_HOST'];
+				$port = $_SERVER['SERVER_PORT'];
+				$request = $_SERVER['PHP_SELF'];
+				$query = isset($_SERVER['argv']) ? substr($_SERVER['argv'][0], strpos($_SERVER['argv'][0], ';') + 1) : '';
+				$toret = $protocol . '://' . $host . ($port == $protocol_port ? '' : ':' . $port) . $request . (empty($query) ? '' : '?' . $query);
+				return $toret;
 			}
 		}
 
@@ -341,6 +358,7 @@ class Sidekick{
 						main_soft_name:      	'WordPress',
 						main_soft_version:   	'<?php echo get_bloginfo("version") ?>',
 						plugin_url:          	'<?php echo admin_url("admin.php?page=sidekick") ?>',
+						current_url: 			'<?php echo $this->get_current_url() ?>',
 						theme_version:       	'<?php echo $theme->Version ?>',
 						site_url: 				'<?php echo $site_url ?>',
 						track_data:          	'<?php echo get_option( "track_data" ) ?>',
