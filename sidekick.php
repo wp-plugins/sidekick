@@ -6,14 +6,14 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9.1
-Version: 1.3.6
+Version: 1.3.7
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION','1.3.5');
+define('SK_PLUGIN_VERSION','1.3.7');
 define('SK_LIBRARY_VERSION',5);
-define('SK_PLATFORM_VERSION',7);
+define('SK_PLATFORM_VERSION',9);
 define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -380,7 +380,11 @@ class Sidekick{
 					use_native_controls: 	false
 						// open_bucket: 476
 					}
-					<?php if ($activation_id = get_option( "sk_activation_id" )){ ?>sk_config.activation_id = '<?php echo $activation_id ?>';<?php } ?>
+					<?php if ($activation_id = get_option( "sk_activation_id" )){ ?>
+						sk_config.activation_id = '<?php echo $activation_id ?>';
+					<?php } else { ?>
+						sk_config.activation_id = '<?php echo DEFAULT_ACTIVATION_ID ?>';
+					<?php } ?>
 					<?php if (get_option( "sk_composer_button" )){ ?>sk_config.sk_composer_button = '<?php echo true ?>';<?php } ?>
 					<?php if ($sk_just_activated): ?>sk_config.just_activated = true;sk_config.show_login = true;<?php endif; ?>
 

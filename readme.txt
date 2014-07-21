@@ -130,6 +130,9 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
+= 1.3.7 =
+* Switch over to new platform version
+
 = 1.3.6 =
 * Sidekick Activation Bug Fixed
 
