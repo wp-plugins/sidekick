@@ -6,12 +6,12 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9.1
-Version: 1.3.7
+Version: 1.4
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION','1.3.7');
+define('SK_PLUGIN_VERSION','1.4');
 define('SK_LIBRARY_VERSION',5);
 define('SK_PLATFORM_VERSION',9);
 define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');

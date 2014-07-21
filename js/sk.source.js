@@ -1,4 +1,4 @@
-/*! sidekick - v1.3.7 - 2014-07-21 */(function(jQuery, window){
+/*! sidekick - v1.4 - 2014-07-21 */(function(jQuery, window){
 
 jQuery.fn.center = function () {
 	this.css("position","absolute");
