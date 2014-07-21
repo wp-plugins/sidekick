@@ -2,9 +2,9 @@
 Contributors: raptor235,benfox,andymci
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
-Requires at least: 3.5
+Requires at least: 3.7
 Tested up to: 3.9
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,20 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 1.3.5 =
+* CSS Fixes
+* Autostart on specific pages
+* Added Wait_For Event
+* Changed error messaging
+* Fixed underscore template conflict with other backbone themes / apps
+* Added LABjs file loading
+* Added library load doublecheck
+* Optimized Tracking
+* Fixes to display rules boolean operations
+* Added handlers for open a specific bucket
+* Added handlers to auto open a specific bucket
+* Fixed a bug when there were no comments in the blog
 
 = 1.3.4 =
 * Updated Modal UI

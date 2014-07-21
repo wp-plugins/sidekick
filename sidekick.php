@@ -6,14 +6,15 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9.1
-Version: 1.3.4
+Version: 1.3.5
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_PLUGIN_VERSION','1.3.4');
+define('SK_PLUGIN_VERSION','1.3.5');
 define('SK_LIBRARY_VERSION',5);
 define('SK_PLATFORM_VERSION',7);
+define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -85,6 +86,12 @@ class Sidekick{
 				delete_option('sk_activation_id');
 			}
 
+			if (isset($_POST['sk_composer_button'])) {
+				update_option( 'sk_composer_button', true );
+			} else {
+				delete_option('sk_composer_button');
+			}
+
 			if (isset($_POST['sk_track_data'])) {
 				update_option( 'sk_track_data', true );
 			} else {
@@ -92,14 +99,15 @@ class Sidekick{
 			}
 
 			update_option( 'sk_activated', true );
-			die('<script>window.open("' . get_site_url() . '/wp-admin/options-general.php?page=sidekick&firstuse","_self")</script>');
+			die('<script>window.open("' . get_site_url() . '/wp-admin/options-general.php?page=sidekick","_self")</script>');
 		}
 
-		$activation_id = get_option( 'sk_activation_id' );
-		$email         = get_option( 'sk_email' );
-		$first_name    = get_option( 'sk_first_name' );
-		$sk_track_data    = get_option( 'sk_track_data' );
-		$error         = null;
+		$activation_id      = get_option( 'sk_activation_id' );
+		$email              = get_option( 'sk_email' );
+		$first_name         = get_option( 'sk_first_name' );
+		$sk_track_data      = get_option( 'sk_track_data' );
+		$sk_composer_button = get_option ('sk_composer_button');
+		$error              = null;
 
 		if (defined('SK_PAID_LIBRARY_FILE') && $activation_id) {
 			$_POST['activation_id'] = $activation_id;
@@ -147,7 +155,8 @@ class Sidekick{
 
 		?>
 
-		<?php if ($_SERVER['QUERY_STRING'] == 'page=sidekick&firstuse'): ?>
+		<?php if (get_option('sk_firstuse') == true): ?>
+			<?php delete_option('sk_firstuse') ?>
 			<script type="text/javascript">
 				jQuery(document).ready(function($) {
 					jQuery('#sidekick #logo').trigger('click');
@@ -182,204 +191,203 @@ class Sidekick{
 					<?php settings_fields('sk_license'); ?>
 					<table class="form-table">
 						<tbody>
-								<!-- <tr valign="top">
-									<th scope="row" valign="top">First Name</th>
-									<td>
-										<input id="first_name" name="first_name" type="text" class="regular-text" value="<?php echo $first_name ?>" />
-										<label class="description" for="first_name"><?php _e('Enter your first name'); ?></label>
-									</td>
-								</tr> -->
+							<tr valign="top">
+								<th scope="row" valign="top">Activation ID</th>
+								<td><input class='regular-text' type='text' name='activation_id' value='<?php echo $activation_id ?>'></input></td>
+							</tr>
 
-								<!-- <tr valign="top">
-									<th scope="row" valign="top">E-Mail</th>
-									<td>
-										<input id="email" name="email" type="text" class="regular-text" value="<?php echo $email ?>" />
-										<label class="description" for="email"><?php _e('Enter your email address'); ?></label>
-									</td>
-								</tr> -->
+							<tr valign="top">
+								<th scope="row" valign="top">Status</th>
+								<td><span style='color: green' class='<?php echo strtolower($status) ?>'><?php echo ucfirst($status) ?></span></td>
+							</tr>
 
-								<tr valign="top">
-									<th scope="row" valign="top">Activation ID</th>
-									<td><input class='regular-text' type='text' name='activation_id' value='<?php echo $activation_id ?>'></input></td>
-								</tr>
+							<tr valign="top">
+								<th scope="row" valign="top">
+									Data Tracking
+								</th>
+								<td>
+									<input name="sk_track_data" type="checkbox" <?php if ($sk_track_data): ?>CHECKED<?php endif ?> />
+									<input type='hidden' name='status' value='<?php echo $status ?>'/>
+									<label class="description" for="track_data">Help Sidekick by providing tracking data which will help us build better help tools.</label>
+								</td>
+							</tr>
 
-								<tr valign="top">
-									<th scope="row" valign="top">Status</th>
-									<td><span style='color: green' class='<?php echo strtolower($status) ?>'><?php echo ucfirst($status) ?></span></td>
-								</tr>
+							<tr valign="top" style='display: none'>
+								<th scope="row" valign="top">
+									Enable Composer Mode
+								</th>
+								<td>
+									<input name="sk_composer_button" type="checkbox" <?php if ($sk_composer_button): ?>CHECKED<?php endif ?> />
+									<label class="description" for="track_data">Enable Walkthrough creation.</label>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<?php submit_button('Update'); ?>
+				</form>
+			<?php endif ?>
 
-								<tr valign="top">
-									<th scope="row" valign="top">
-										Data Tracking
-									</th>
-									<td>
-										<input id="track_data" name="sk_track_data" type="checkbox" <?php if ($sk_track_data): ?>CHECKED<?php endif ?> />
-										<input type='hidden' name='status' value='<?php echo $status ?>'/>
-										<label class="description" for="track_data">Help Sidekick by providing tracking data which will help us build better help tools.</label>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<?php submit_button('Update'); ?>
-					</form>
-				<?php endif ?>
+			<h3>Welcome to the fastest and easiest way to learn WordPress</h3>
 
-				<h3>Welcome to the fastest and easiest way to learn WordPress</h3>
+			<p></p>
+			<p>Like SIDEKICK? Please leave us a 5 star rating on <a target='_blank' href='http://wordpress.org/plugins/sidekick/'>http://WordPress.org</a></p>
+			<br/>
+			<p>Here are a few things you should know:</p>
 
-				<p></p>
-				<p>Like SIDEKICK? Please leave us a 5 star rating on <a target='_blank' href='http://wordpress.org/plugins/sidekick/'>http://WordPress.org</a></p>
-				<br/>
-				<p>Here are a few things you should know:</p>
+			<ul>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;1. Clicking the check-box above will allow us to link your email address to the stats we collect so we can contact you if we have a question or notice an issue. It’s not mandatory, but it would help us out. </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;2. Your Activation ID is unique and locked to this URL. </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;3. Want even more Walkthroughs for WordPress, WooCommerce and more? <a target='_blank' href='http://www.sidekick.pro/wordpress/modules?utm_source=plugin_settings'>UPGRADE Now!</a> </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;4. The Sidekick team adheres strictly to CANSPAM. From time to time we may send critical updates (such as security notices) to the email address setup as the Administrator on this site. </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;5. If you have any questions, bug reports or feedback, please send them to <a target='_blank' href='mailto:info@sidekick.pro'>us</a> </li>
+				<li>&nbsp;&nbsp;&nbsp;&nbsp;6. You can find our terms of use <a target='_blank' href='http://www.sidekick.pro/terms-of-use/'>here</a></li>
+			</ul>
+			<p>Thank you,</p>
+			<br/>
 
-				<ul>
-					<li>&nbsp;&nbsp;&nbsp;&nbsp;1. Clicking the check-box above will allow us to link your email address to the stats we collect so we can contact you if we have a question or notice an issue. It’s not mandatory, but it would help us out. </li>
-					<li>&nbsp;&nbsp;&nbsp;&nbsp;2. Your Activation ID is unique and locked to this URL. </li>
-					<li>&nbsp;&nbsp;&nbsp;&nbsp;3. Want even more Walkthroughs for WordPress, WooCommerce and more? <a target='_blank' href='http://www.sidekick.pro/wordpress/modules?utm_source=plugin_settings'>UPGRADE Now!</a> </li>
-					<li>&nbsp;&nbsp;&nbsp;&nbsp;4. The Sidekick team adheres strictly to CANSPAM. From time to time we may send critical updates (such as security notices) to the email address setup as the Administrator on this site. </li>
-					<li>&nbsp;&nbsp;&nbsp;&nbsp;5. If you have any questions, bug reports or feedback, please send them to <a target='_blank' href='mailto:info@sidekick.pro'>us</a> </li>
-					<li>&nbsp;&nbsp;&nbsp;&nbsp;6. You can find our terms of use <a target='_blank' href='http://www.sidekick.pro/terms-of-use/'>here</a></li>
-				</ul>
-				<p>Thank you,</p><br/>
+		</div>
+		<?php
+	}
 
-			</div>
-			<?php
+	function get_domain(){
+		$site_url = get_site_url();
+		if(substr($site_url, -1) == '/') {
+			$site_url = substr($site_url, 0, -1);
+		}
+		$site_url = str_replace(array("http://","https://"),array(""),$site_url);
+		return $site_url;
+	}
+
+	function list_post_types(){
+		global $wpdb;
+		$query = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
+		$counts = $wpdb->get_results($query);
+		foreach ($counts as $key => $type) {
+			$type->post_type = str_replace('-', '_', $type->post_type);
+			echo "\n 						post_type_{$type->post_type} : $type->count,";
+		}
+	}
+
+	function list_taxonomies(){
+		global $wpdb;
+		$query = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+		$counts = $wpdb->get_results($query);
+		foreach ($counts as $key => $taxonomy) {
+			$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
+			echo "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
+		}
+	}
+
+	function list_comments(){
+		global $wpdb;
+		$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
+		$counts = $wpdb->get_var($query);
+		if (!$counts) $counts = 0;
+		echo "\n 						comment_count : $counts,";
+	}
+
+	function list_post_statuses(){
+		global $wpdb;
+		$query = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
+		$counts = $wpdb->get_results($query);
+		foreach ($counts as $key => $type) {
+			$type->post_status = str_replace('-', '_', $type->post_status);
+			echo "\n 						post_status_{$type->post_status} : $type->count,";
+		}
+	}
+
+	function get_user_data(){
+		global $current_user;
+		$data = get_userdata($current_user->ID);
+		echo "\n 						user_id : $current_user->ID,";
+		foreach ($data->allcaps as $cap => $val) {
+			$cap = sanitize_title($cap);
+			$cap = str_replace('-', '_', $cap);
+			echo "\n 						cap_{$cap} : $val,";
+		}
+	}
+
+	function get_current_url() {
+
+		if (isset($_SERVER['REQUEST_URI'])) {
+			return 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+		} else if (isset($_SERVER['PATH_INFO'])) {
+			return $_SERVER['PATH_INFO'];
+		} else {
+			$host = $_SERVER['HTTP_HOST'];
+			$port = $_SERVER['SERVER_PORT'];
+			$request = $_SERVER['PHP_SELF'];
+			$query = isset($_SERVER['argv']) ? substr($_SERVER['argv'][0], strpos($_SERVER['argv'][0], ';') + 1) : '';
+			$toret = $protocol . '://' . $host . ($port == $protocol_port ? '' : ':' . $port) . $request . (empty($query) ? '' : '?' . $query);
+			return $toret;
+		}
+	}
+
+	function footer(){
+		global $current_user, $wp_roles;
+
+		$current_user      = wp_get_current_user();
+		$sk_just_activated = get_option( 'sk_just_activated' );
+		$sk_track_data     = get_option( 'sk_track_data' );
+		$theme             = wp_get_theme();
+		$not_supported_ie  = false;
+
+		delete_option( 'sk_just_activated' );
+		foreach($wp_roles->role_names as $role => $Role) {
+			if (array_key_exists($role, $current_user->caps)){
+				$user_role = $role;
+				break;
+			}
 		}
 
-		function get_domain(){
-			$site_url = get_site_url();
-			if(substr($site_url, -1) == '/') {
-				$site_url = substr($site_url, 0, -1);
-			}
-			$site_url = str_replace(array("http://","https://"),array(""),$site_url);
-			return $site_url;
+		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
+			$not_supported_ie = true;
 		}
 
-		function list_post_types(){
-			global $wpdb;
-			$query = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
-			$counts = $wpdb->get_results($query);
-			foreach ($counts as $key => $type) {
-				$type->post_type = str_replace('-', '_', $type->post_type);
-				echo "\n 						post_type_{$type->post_type} : $type->count,";
-			}
-		}
+		$site_url = $this->get_domain();
 
-		function list_taxonomies(){
-			global $wpdb;
-			$query = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
-			$counts = $wpdb->get_results($query);
-			foreach ($counts as $key => $taxonomy) {
-				$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
-				echo "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
-			}
-		}
+		?>
 
-		function list_comments(){
-			global $wpdb;
-			$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
-			$counts = $wpdb->get_var($query);
-			echo "\n 						comment_count : $counts,";
-		}
+		<?php if (!$not_supported_ie): ?>
 
-		function list_post_statuses(){
-			global $wpdb;
-			$query = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
-			$counts = $wpdb->get_results($query);
-			foreach ($counts as $key => $type) {
-				$type->post_status = str_replace('-', '_', $type->post_status);
-				echo "\n 						post_status_{$type->post_status} : $type->count,";
-			}
-		}
+			<script type="text/javascript">
 
-		function get_user_data(){
-			global $current_user;
-			$data = get_userdata($current_user->ID);
-			foreach ($data->allcaps as $cap => $val) {
-				$cap = sanitize_title($cap);
-				$cap = str_replace('-', '_', $cap);
-				echo "\n 						cap_{$cap} : $val,";
-			}
-		}
-
-		function get_current_url() {
-
-			if (isset($_SERVER['REQUEST_URI'])) {
-				return 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-			} else if (isset($_SERVER['PATH_INFO'])) {
-				return $_SERVER['PATH_INFO'];
-			} else {
-				$host = $_SERVER['HTTP_HOST'];
-				$port = $_SERVER['SERVER_PORT'];
-				$request = $_SERVER['PHP_SELF'];
-				$query = isset($_SERVER['argv']) ? substr($_SERVER['argv'][0], strpos($_SERVER['argv'][0], ';') + 1) : '';
-				$toret = $protocol . '://' . $host . ($port == $protocol_port ? '' : ':' . $port) . $request . (empty($query) ? '' : '?' . $query);
-				return $toret;
-			}
-		}
-
-		function footer(){
-			global $current_user, $wp_roles;
-
-			$current_user      = wp_get_current_user();
-			$sk_just_activated = get_option( 'sk_just_activated' );
-			$sk_track_data     = get_option( 'sk_track_data' );
-			$theme             = wp_get_theme();
-			$not_supported_ie  = false;
-
-			delete_option( 'sk_just_activated' );
-			foreach($wp_roles->role_names as $role => $Role) {
-				if (array_key_exists($role, $current_user->caps)){
-					$user_role = $role;
-					break;
-				}
-			}
-
-			if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
-				$not_supported_ie = true;
-			}
-
-			$site_url = $this->get_domain();
-
-			?>
-
-			<?php if (!$not_supported_ie): ?>
-
-				<script type="text/javascript">
-
-					var sk_config = {
-						domain:              	'<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
-						installed_plugins:   	<?php echo $this->list_plugins() ?>,
-						installed_theme:     	'<?php echo $theme->Name ?>',
-						library_free_file:   	'<?php echo (defined("SK_FREE_LIBRARY_FILE") ? SK_FREE_LIBRARY_FILE : '') ?>',
-						library_paid_file:   	'<?php echo (defined("SK_PAID_LIBRARY_FILE") ? SK_PAID_LIBRARY_FILE : '') ?>',
-						library_version:   		'<?php echo (defined("SK_LIBRARY_VERSION") ? SK_LIBRARY_VERSION : '') ?>',
-						plugin_version:   		'<?php echo (defined("SK_PLUGIN_VERSION") ? SK_PLUGIN_VERSION : '') ?>',
-						platform_version:   	'<?php echo (defined("SK_PLATFORM_VERSION") ? SK_PLATFORM_VERSION : '') ?>',
-						main_soft_name:      	'WordPress',
-						main_soft_version:   	'<?php echo get_bloginfo("version") ?>',
-						plugin_url:          	'<?php echo admin_url("admin.php?page=sidekick") ?>',
-						current_url: 			'<?php echo $this->get_current_url() ?>',
-						theme_version:       	'<?php echo $theme->Version ?>',
-						site_url: 				'<?php echo $site_url ?>',
-						track_data:          	'<?php echo get_option( "track_data" ) ?>',
-						user_level:          	'<?php echo $user_role ?>',
-						user_email:          	'<?php echo $current_user->user_email ?>',
-						<?php $this->list_post_types() ?>
-						<?php $this->list_taxonomies() ?>
-						<?php $this->get_user_data() ?>
-						<?php $this->list_comments() ?>
-						<?php $this->list_post_statuses() ?>
-						comment_count: 3,
-						use_native_controls: 	false
+				var sk_config = {
+					domain:            '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
+					base_url:          '<?php echo site_url() ?>',
+					installed_plugins: <?php echo $this->list_plugins() ?>,
+					installed_theme:   '<?php echo $theme->Name ?>',
+					library_free_file: '<?php echo (defined("SK_FREE_LIBRARY_FILE") ? SK_FREE_LIBRARY_FILE : '') ?>',
+					library_paid_file: '<?php echo (defined("SK_PAID_LIBRARY_FILE") ? SK_PAID_LIBRARY_FILE : '') ?>',
+					library_version:   '<?php echo (defined("SK_LIBRARY_VERSION") ? SK_LIBRARY_VERSION : '') ?>',
+					plugin_version:    '<?php echo (defined("SK_PLUGIN_VERSION") ? SK_PLUGIN_VERSION : '') ?>',
+					platform_version:  '<?php echo (defined("SK_PLATFORM_VERSION") ? SK_PLATFORM_VERSION : '') ?>',
+					main_soft_name:    'WordPress',
+					main_soft_version: '<?php echo get_bloginfo("version") ?>',
+					plugin_url:        '<?php echo admin_url("admin.php?page=sidekick") ?>',
+					current_url:       '<?php echo $this->get_current_url() ?>',
+					theme_version:     '<?php echo $theme->Version ?>',
+					site_url:          '<?php echo $site_url ?>',
+					track_data:        '<?php echo get_option( "track_data" ) ?>',
+					user_level:        '<?php echo $user_role ?>',
+					user_email:        '<?php echo $current_user->user_email ?>',
+					is_multisite:      <?php echo (is_multisite()) ? "true" : "false" ?>,
+					<?php $this->list_post_types() ?>
+					<?php $this->list_taxonomies() ?>
+					<?php $this->get_user_data() ?>
+					<?php $this->list_comments() ?>
+					<?php $this->list_post_statuses() ?>
+					use_native_controls: 	false
 						// open_bucket: 476
 					}
-					<?php if ($activation_id = get_option( "sk_activation_id" )){ ?>
-						sk_config.activation_id = '<?php echo $activation_id ?>';
-						<?php } ?>
-						<?php if ($sk_just_activated): ?>
-						sk_config.just_activated = true;
-						sk_config.show_login = true;
-					<?php endif; ?>
+					<?php if ($activation_id = get_option( "sk_activation_id" )){ ?>sk_config.activation_id = '<?php echo $activation_id ?>';<?php } ?>
+					<?php if (get_option( "sk_composer_button" )){ ?>sk_config.sk_composer_button = '<?php echo true ?>';<?php } ?>
+					<?php if ($sk_just_activated): ?>sk_config.just_activated = true;sk_config.show_login = true;<?php endif; ?>
+
+					var skc_config = {
+						API_URL: 'http://library.sidekick.pro/api'
+					}
+
 				</script>
 			<?php endif ?>
 			<?php
@@ -461,6 +469,8 @@ class Sidekick{
 		}
 
 		function activate_plugin(){
+			die('activate_plugin');
+			update_option( 'sk_firstuse', true );
 			update_option( 'sk_do_activation_redirect', true );
 			$data = array(
 				'source' => 'plugin',
@@ -468,14 +478,13 @@ class Sidekick{
 				'type' => 'activate'
 				);
 			$this->track($data);
-		// $this->redirect();
 		}
 
 		function redirect(){
 			if (get_option('sk_do_activation_redirect', false)) {
 				delete_option('sk_do_activation_redirect');
 				$siteurl = get_site_url();
-				wp_redirect($siteurl . "/wp-admin/options-general.php?page=sidekick&firstuse");
+				wp_redirect($siteurl . "/wp-admin/options-general.php?page=sidekick");
 				die();
 			}
 		}
@@ -512,10 +521,8 @@ class Sidekick{
 	}
 
 	$sidekick = new Sidekick;
-	if (!defined('SK_PLUGIN_DEGBUG')){
-		register_activation_hook( __FILE__, array($sidekick,'activate_plugin') );
-		register_deactivation_hook( __FILE__, array($sidekick,'deactivate_plugin')  );
-	}
+	register_activation_hook( __FILE__, array($sidekick,'activate_plugin') );
+	register_deactivation_hook( __FILE__, array($sidekick,'deactivate_plugin')  );
 
 	add_action('admin_menu', array($sidekick,'setup_menu'));
 	add_action('admin_init', array($sidekick,'redirect'));
@@ -524,13 +531,7 @@ class Sidekick{
 	if (!defined('SK_PLUGIN_DEGBUG'))
 		require_once('sk_init.php');
 
-	global $screen;
-
-
-
 	if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('IFRAME_REQUEST')) {
 		add_action('admin_footer', array($sidekick,'footer'));
 		add_action('customize_controls_print_footer_scripts', array($sidekick,'footer'));
 	}
-
-
