@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 3.9
-Stable tag: 1.4
+Stable tag: 1.5
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,7 +130,21 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
-= 1.4
+= 1.5 =
+* Paid vs Free Walkthrough Seperation
+* Clean Up of Logs
+
+= 1.4.2 =
+* New Administration Screen
+* Auto Start of a Walkthrough for each user
+* Disable Specific Walkthroughs
+
+= 1.4.1 =
+* Fixed issue with hotspot button not showing
+* Added ability to auto start a Walkthrough
+* Added ability to disable specific Walkthroughs
+
+= 1.4 =
 * Switch over to new platform version
 * Sidekick Activation Bug Fixed
 * CSS Fixes
