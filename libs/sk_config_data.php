@@ -14,9 +14,29 @@ class sk_config_data{
 		global $wpdb;
 		$query = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
 		$counts = $wpdb->get_results($query);
+
 		foreach ($counts as $key => $type) {
 			$type->post_type = str_replace('-', '_', $type->post_type);
 			$output .= "\n 						post_type_{$type->post_type} : $type->count,";
+		}
+		return $output;
+	}
+
+	function get_themes(){
+		$themes = wp_get_themes( array( 'allowed' => true ) );
+		return count($themes);
+	}
+
+	function get_post_types_and_statuses(){
+		global $wpdb;
+		$query = "SELECT post_type, post_status, count(distinct ID) as count from wp_posts group by post_type, post_status";
+		$counts = $wpdb->get_results($query);
+
+		foreach ($counts as $key => $type) {
+			$type->post_type   = str_replace('-', '_', $type->post_type);
+			$type->post_status = str_replace('-', '_', $type->post_status);
+
+			$output .= "\n 						post_type_{$type->post_type}_{$type->post_status} : $type->count,";
 		}
 		return $output;
 	}
@@ -25,6 +45,7 @@ class sk_config_data{
 		global $wpdb;
 		$query = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
 		$counts = $wpdb->get_results($query);
+
 		foreach ($counts as $key => $taxonomy) {
 			$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
 			$output .= "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
@@ -44,6 +65,7 @@ class sk_config_data{
 		global $wpdb;
 		$query = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
 		$counts = $wpdb->get_results($query);
+
 		foreach ($counts as $key => $type) {
 			$type->post_status = str_replace('-', '_', $type->post_status);
 			$output .= "\n 						post_status_{$type->post_status} : $type->count,";
@@ -121,6 +143,12 @@ class sk_config_data{
 
 	function get_user_role(){
 		global $current_user, $wp_roles;
+		if(!isset($current_user->caps) || count($current_user->caps) < 1){
+			// In MS in some specific pages current user is returning empty caps so this is a work around for that case.
+			if (current_user_can('activate_plugins')){
+				return 'administrator';
+			}
+		}
 		foreach($wp_roles->role_names as $role => $Role) {
 			if (array_key_exists($role, $current_user->caps)){
 				$user_role = $role;

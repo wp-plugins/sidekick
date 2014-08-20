@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 3.9
-Stable tag: 1.5
+Stable tag: 1.5.2
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,7 +130,13 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
-= 1.5 =
+= 1.5.2 =
+* Fixed Multisite issue with role detection on certain pages
+
+= 1.5.1 =
+* Added more parameters to tag Walkthroughs againts
+
+= 1.5.0 =
 * Paid vs Free Walkthrough Seperation
 * Clean Up of Logs
 
