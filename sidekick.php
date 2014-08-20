@@ -6,13 +6,14 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9.1
-Version: 1.5
+Version: 1.5.2
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
 define('SK_LIBRARY_VERSION',6);
 define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
+define('SK_LIBRARY_DOMAIN','pullvod.flowpress.netdna-cdn.com/library');
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -30,9 +31,15 @@ class Sidekick{
 		$protocol = $this->protocol();
 		$this->check_versions();
 
-		$SK_FREE_LIBRARY_FILE = "{$protocol}library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?" . date('m-d-y-G');
+		if (strpos($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'], '.sidekick')) {
+			$version = time();
+		} else {
+			$version = date('m-d-y-G');
+		}
+
+		$SK_FREE_LIBRARY_FILE = $protocol . SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?{$version}";
 		if ($activation_id) {
-			$SK_PAID_LIBRARY_FILE = "{$protocol}library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?" . date('m-d-y-G');
+			$SK_PAID_LIBRARY_FILE = $protocol . SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?{$version}";
 		}
 	}
 
@@ -151,7 +158,7 @@ class Sidekick{
 		}
 
 		if (!$activation_id) {
-			$warn = "You're using the <b>free</b> version of Sidekick, to gain full access to the walkthrough library please <a target='_blank' href='http://www.sidekick.pro/wordpress/modules/'>upgrade</a> to the full module.";
+			$warn = "You're using the <b>free</b> version of Sidekick, to gain full access to the walkthrough library please <a target='_blank' href='http://www.sidekick.pro/wordpress/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>upgrade</a> to the full module.";
 		}
 
 		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
@@ -195,16 +202,19 @@ class Sidekick{
 		$not_supported_ie         = false;
 		// $sk_composer_button       = true; // BETA
 
-		$user_role         = $sk_config_data->get_user_role();
-		$site_url          = $sk_config_data->get_domain();
-		$installed_plugins = $sk_config_data->get_plugins();
-		$disabled_wts      = $sk_config_data->get_disabled_wts();
-		$current_url       = $sk_config_data->get_current_url();
-		$post_types        = $sk_config_data->get_post_types();
-		$taxonomies        = $sk_config_data->get_taxonomies();
-		$user_data         = $sk_config_data->get_user_data();
-		$comments          = $sk_config_data->get_comments();
-		$post_statuses     = $sk_config_data->get_post_statuses();
+		$user_role               = $sk_config_data->get_user_role();
+		$site_url                = $sk_config_data->get_domain();
+		$installed_plugins       = $sk_config_data->get_plugins();
+		$disabled_wts            = $sk_config_data->get_disabled_wts();
+		$current_url             = $sk_config_data->get_current_url();
+		$post_types              = $sk_config_data->get_post_types();
+		$taxonomies              = $sk_config_data->get_taxonomies();
+		$user_data               = $sk_config_data->get_user_data();
+		$comments                = $sk_config_data->get_comments();
+		$post_statuses           = $sk_config_data->get_post_statuses();
+		$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
+		$number_of_themes        = $sk_config_data->get_themes();
+
 
 		$plugin_data = get_plugin_data(plugin_dir_path( dirname( __FILE__ ) ) . 'sidekick/sidekick.php');
 
@@ -248,13 +258,15 @@ class Sidekick{
 					installed_plugins:        <?php echo $installed_plugins ?>,
 					disable_wts:              <?php echo $disabled_wts ?>,
 					is_multisite:             <?php echo (is_multisite()) ? "true" : "false" ?>,
-					sk_autostart_only_once:   true,
-					auto_open_root_bucket_id: 79,
+					number_of_themes:         <?php echo $number_of_themes ?>,
 					<?php echo $post_types ?>
 					<?php echo $taxonomies ?>
 					<?php echo $user_data ?>
 					<?php echo $comments ?>
 					<?php echo $post_statuses ?>
+					<?php echo $post_types_and_statuses ?>
+					sk_autostart_only_once:   true,
+					auto_open_root_bucket_id: 79
 				}
 
 				var skc_config = {
@@ -292,7 +304,7 @@ class Sidekick{
 
 			$protocol = $this->protocol();
 
-			$library_file = "{$protocol}library.sidekick.pro/library/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
+			$library_file = $protocol . SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
 			$ch = curl_init($library_file);
 			curl_setopt($ch, CURLOPT_NOBODY, true);
 			curl_exec($ch);
