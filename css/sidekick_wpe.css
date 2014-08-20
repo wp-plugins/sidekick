@@ -1,0 +1,355 @@
+@font-face {
+  font-family: SourceSansProRegular;
+  src: url(fonts/SourceSansPro-Regular.ttf);
+}
+body div.sidekick_pointer {
+  background-color: rgba(235, 97, 38, 0.4);
+}
+body div.sidekick_pointer div.sk_point {
+  background-color: rgba(235, 97, 38, 0.9);
+}
+body div#sidekick_need_input.left,
+body div#sidekick_need_input.right,
+body div#sidekick_need_input.top,
+body div#sidekick_need_input.bottom {
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+  text-shadow: none;
+  font-family: SourceSansProRegular;
+}
+body div#sidekick_need_input span {
+  font-size: 19px;
+}
+body div#sidekick_need_input button {
+  background-image: none;
+  background-color: #111f26;
+  border-radius: 0px;
+  padding: 3px 14px;
+  margin-top: 8px;
+}
+body div#sidekick_need_input button:hover {
+  background-color: #294a5b;
+  background-image: none;
+}
+body .sidekickHighlightInput {
+  outline-color: #eb6126;
+  box-shadow: inset 0px 0px 0px 2px #eb6126;
+}
+body div.sk_hotspot {
+  background-position: -110px -796px;
+}
+body div.sk_modal h1 {
+  background-color: #162a33;
+  font-size: 18px;
+  font-weight: normal;
+}
+body div.sk_modal i {
+  background-position: -107px -833px;
+}
+body div.sk_modal button {
+  background-color: #40bac8;
+}
+body div.sk_modal button:hover {
+  background-color: #24757e;
+}
+body div#sidekick {
+  width: 220px;
+  font-family: SourceSansProRegular;
+}
+body div#sidekick.open div#sk_taskbar button.sk_toggle {
+  background: url('../images/sprides_v13.png?v=1.3.4') -52px -358px;
+  transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+}
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background-position: -85px -178px;
+}
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover {
+  background-position: 17px -178px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background-position: -86px -718px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover {
+  background-position: 17px -718px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_toggles,
+body div#sidekick.paused div#sk_taskbar div.sk_toggles {
+  display: none;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_restart,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_restart {
+  background-position: -85px -140px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_restart:hover,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_restart:hover {
+  background-position: -40px -140px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_restart,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_restart,
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_stop,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_stop,
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  border-right-color: #4a565c;
+  border-left-color: #4a565c;
+  background-color: #162a33;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_restart:hover,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_restart:hover,
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_stop:hover,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_stop:hover,
+body div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover,
+body div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover {
+  background-color: #162a33;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_info .sk_divider,
+body div#sidekick.paused div#sk_taskbar div.sk_info .sk_divider {
+  background-color: #2d7d88;
+  width: 1px;
+  height: 24px;
+  float: left;
+  margin-top: 10px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_info div.sk_title,
+body div#sidekick.paused div#sk_taskbar div.sk_info div.sk_title {
+  border-right: none;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_info div.sk_title label,
+body div#sidekick.paused div#sk_taskbar div.sk_info div.sk_title label {
+  font-size: 10px;
+  margin-top: 4px;
+  height: 14px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_info div.sk_title span,
+body div#sidekick.paused div#sk_taskbar div.sk_info div.sk_title span {
+  font-size: 14px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_info div.sk_time,
+body div#sidekick.paused div#sk_taskbar div.sk_info div.sk_time {
+  font-size: 14px;
+  margin-top: 17px;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_caption.show,
+body div#sidekick.paused div#sk_taskbar div.sk_caption.show {
+  /*bottom:   43px;*/
+  z-index: 999;
+  position: absolute;
+  background: none;
+  background-color: #dbdad6;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_caption.show .text,
+body div#sidekick.paused div#sk_taskbar div.sk_caption.show .text {
+  color: #162a33;
+}
+body div#sidekick.playing div#sk_taskbar div.sk_caption.show .text b,
+body div#sidekick.paused div#sk_taskbar div.sk_caption.show .text b {
+  font-weight: bold;
+  color: #162a33;
+}
+body div#sidekick div#click_warning h3 {
+  display: none;
+}
+body div#sidekick div#click_warning span {
+  background: none;
+  position: relative;
+  border-top-left-radius: 0px;
+  font-size: 21px;
+  padding-top: 20px;
+}
+body div#sidekick div#sk_taskbar {
+  background: none;
+  background-color: #40bac8;
+  position: relative;
+  filter: -;
+}
+body div#sidekick div#sk_taskbar #logo {
+  background: none;
+  padding: 10px 30px;
+  font-size: 18px;
+  color: white;
+}
+body div#sidekick div#sk_taskbar div.sk_powered_by {
+  float: right;
+  font-size: 12px;
+  color: #305b6e;
+  padding: 12px;
+}
+body div#sidekick div#sk_taskbar button.sk_toggle {
+  background: url('../images/sprides_v13.png?v=1.3.4') -52px -358px;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}
+body div#sidekick div#sk_taskbar div.sk_controls {
+  background: none;
+  background-color: #162a33;
+  border: none;
+  filter: -;
+}
+body div#sidekick div#sk_taskbar div.sk_controls button {
+  opacity: 1;
+}
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart,
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop,
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+  border-right-color: #4a565c;
+  border-left-color: #4a565c;
+}
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop {
+  position: relative;
+  background-position: -85px -210px;
+  /*&:hover{
+							background-position: -40px -210px;
+							}*/
+}
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-width: 16px 0px 0px 16px;
+  border-style: solid;
+  border-color: #40bac8 #162a33;
+}
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart {
+  background-position: -85px -140px;
+  /*&:hover{
+							background-position: -40px -140px;
+							}*/
+}
+body div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background-position: -85px -178px;
+  /*&:hover{
+							background-position: -40px -178px;
+							}*/
+}
+body div#sidekick div#sk_taskbar div.sk_toggles #toggle_feedback {
+  display: none;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles #toggle_preferences {
+  display: none;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles #toggle_hotspots {
+  display: none;
+  visibility: hidden;
+  width: 1px;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer {
+  background-color: #35657a;
+  border: none;
+  border-top-left-radius: 10px;
+  position: relative;
+  transition: none;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:before,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-width: 16px 16px 0px 0;
+  border-style: solid;
+  border-color: #40bac8 #35657a;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer:hover {
+  background-color: #254757;
+  transition: none;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover:before,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer:hover:before {
+  border-color: #40bac8 #254757;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on {
+  background-color: #162a33;
+  border-color: #40bac8 #162a33;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on:before,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on:before {
+  border-color: #40bac8 #162a33;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on:hover,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on:hover {
+  background-color: #35657a;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on:hover:before,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on:hover:before {
+  border-color: #40bac8 #35657a;
+}
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on i,
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on i {
+  background-position: -59px -696px;
+}
+body div#sidekick #sk_drawer {
+  background-color: #ffffff;
+  box-shadow: none;
+}
+body div#sidekick #sk_drawer h2 {
+  background-color: #162a33;
+  padding-left: 20px;
+  font-size: 27px;
+  text-transform: none;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading {
+  background-color: #ffffff;
+  color: #40bac8;
+  border-bottom-color: #b5b5b5;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading i {
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading:hover {
+  background-color: #f3f3f3;
+  color: #40bac8;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading:hover i {
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading.goprev {
+  text-align: left;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading.goprev span {
+  margin-left: 40px;
+  font-size: 18px;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li.heading.sub_bucket_heading span {
+  font-size: 14px;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer li span {
+  font-size: 18px;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading {
+  border-bottom-color: #b5b5b5;
+  margin: 0px;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading span {
+  background-color: #b5b5b5;
+  margin-top: 10px;
+  display: inline-block;
+  margin-bottom: 0px;
+  padding-top: 2px;
+  font-size: 14px;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .heading {
+  text-align: left;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .heading span {
+  margin-left: 40px;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li.subscribed {
+  border-bottom: solid 1px #b5b5b5;
+  padding-top: 10px;
+  width: 100%;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li.subscribed span {
+  color: #40bac8;
+}
+body div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li.subscribed:hover {
+  background-color: #f3f3f3;
+  color: #40bac8;
+  margin-left: 0px;
+}
