@@ -143,6 +143,11 @@ class sk_config_data{
 
 	function get_user_role(){
 		global $current_user, $wp_roles;
+
+		if (is_super_admin($current_user->ID)) {
+			return 'administrator';
+		}
+
 		if(!isset($current_user->caps) || count($current_user->caps) < 1){
 			// In MS in some specific pages current user is returning empty caps so this is a work around for that case.
 			if (current_user_can('activate_plugins')){

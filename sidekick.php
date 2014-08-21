@@ -6,14 +6,15 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.7
 Tested up to: 3.9.1
-Version: 1.5.2
+Version: 1.5.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
 define('SK_LIBRARY_VERSION',6);
 define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
-define('SK_LIBRARY_DOMAIN','pullvod.flowpress.netdna-cdn.com/library');
+define('SK_LIBRARY_DOMAIN','https://pullvod-flowpress.netdna-ssl.com/library');
+
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -37,9 +38,9 @@ class Sidekick{
 			$version = date('m-d-y-G');
 		}
 
-		$SK_FREE_LIBRARY_FILE = $protocol . SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?{$version}";
+		$SK_FREE_LIBRARY_FILE = SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?{$version}";
 		if ($activation_id) {
-			$SK_PAID_LIBRARY_FILE = $protocol . SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?{$version}";
+			$SK_PAID_LIBRARY_FILE = SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?{$version}";
 		}
 	}
 
@@ -304,7 +305,7 @@ class Sidekick{
 
 			$protocol = $this->protocol();
 
-			$library_file = $protocol . SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
+			$library_file = SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
 			$ch = curl_init($library_file);
 			curl_setopt($ch, CURLOPT_NOBODY, true);
 			curl_exec($ch);
