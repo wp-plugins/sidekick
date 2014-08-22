@@ -13,8 +13,12 @@ Author URI: http://www.sidekick.pro
 
 define('SK_LIBRARY_VERSION',6);
 define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
-define('SK_LIBRARY_DOMAIN','https://pullvod-flowpress.netdna-ssl.com/library');
 
+define('SK_DOMAIN','http://pullvod.flowpress.netdna-cdn.com/');
+define('SK_DOMAIN_SSL','https://pullvod-flowpress.netdna-ssl.com/');
+
+define('SK_LIBRARY_DOMAIN','http://library.sidekick.pro/');
+define('SK_LIBRARY_DOMAIN_SSL','https://library.sidekick.pro/');
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -32,15 +36,9 @@ class Sidekick{
 		$protocol = $this->protocol();
 		$this->check_versions();
 
-		if (strpos($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'], '.sidekick')) {
-			$version = time();
-		} else {
-			$version = date('m-d-y-G');
-		}
-
-		$SK_FREE_LIBRARY_FILE = SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js?{$version}";
+		$SK_FREE_LIBRARY_FILE = SK_DOMAIN_USED . "library/v" . SK_LIBRARY_VERSION . "/releases/xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree/library.js";
 		if ($activation_id) {
-			$SK_PAID_LIBRARY_FILE = SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js?{$version}";
+			$SK_PAID_LIBRARY_FILE = SK_DOMAIN_USED . "library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js";
 		}
 	}
 
@@ -57,9 +55,13 @@ class Sidekick{
 	}
 
 	function protocol() {
-		if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) {
+		if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+			define('SK_DOMAIN_USED',SK_DOMAIN_SSL);
+			define('SK_LIBRARY_DOMAIN_USED',SK_LIBRARY_DOMAIN_SSL);
 			return 'https://';
 		} else {
+			define('SK_DOMAIN_USED',SK_DOMAIN);
+			define('SK_LIBRARY_DOMAIN_USED',SK_LIBRARY_DOMAIN);
 			return 'http://';
 		}
 	}
@@ -69,19 +71,23 @@ class Sidekick{
 
 		$activation_id = get_option("sk_activation_id");
 
-		$protocol = $this->protocol();
-
-		if ($activation_id) {
-			wp_enqueue_script("sk_paid_library" , $SK_PAID_LIBRARY_FILE,null,null);
-			wp_enqueue_script("sk_free_library" , $SK_FREE_LIBRARY_FILE,array('sk_paid_library'),null);
+		if (strpos($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'], '.sidekick')) {
+			$version = time();
 		} else {
-			wp_enqueue_script("sk_free_library" , $SK_FREE_LIBRARY_FILE,array(),null);
+			$version = date('m-d-y-G');
 		}
 
-		wp_enqueue_script('sidekick'   		,"{$protocol}platform.sidekick.pro/wordpress/sidekick.min.js",	array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), get_transient( 'sk_platform_version' ));
-		wp_enqueue_script('player'         	,"{$protocol}player.sidekick.pro/wordpress/js/sk.min.js",		array('sidekick')	,get_transient( 'sk_player_version' ));
+		if ($activation_id) {
+			wp_enqueue_script("sk_paid_library" , $SK_PAID_LIBRARY_FILE,null,$version);
+			wp_enqueue_script("sk_free_library" , $SK_FREE_LIBRARY_FILE,array('sk_paid_library'),$version);
+		} else {
+			wp_enqueue_script("sk_free_library" , $SK_FREE_LIBRARY_FILE,array(),$version);
+		}
 
-		wp_enqueue_style('sk-style'    		,"{$protocol}player.sidekick.pro/wordpress/css/sidekick_wordpress.css",	null 				,get_transient( 'sk_player_version' ));
+		wp_enqueue_script('sidekick'   		,SK_DOMAIN_USED . "cdn/platform/wordpress/sidekick.min.js",	array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), get_transient( 'sk_platform_version' ));
+		wp_enqueue_script('player'         	,SK_DOMAIN_USED . "cdn/player/wordpress/js/sk.min.js",		array('sidekick')	,get_transient( 'sk_player_version' ));
+
+		wp_enqueue_style('sk-style'    		,SK_DOMAIN_USED . "cdn/player/wordpress/css/sidekick_wordpress.css",	null 				,get_transient( 'sk_player_version' ));
 
 		wp_enqueue_style('wp-pointer');
 		wp_enqueue_script('wp-pointer');
@@ -201,7 +207,7 @@ class Sidekick{
 		$autostart_walkthrough_id = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : 'null' );
 		$theme                    = wp_get_theme();
 		$not_supported_ie         = false;
-		// $sk_composer_button       = true; // BETA
+		$sk_composer_button       = true; // BETA
 
 		$user_role               = $sk_config_data->get_user_role();
 		$site_url                = $sk_config_data->get_domain();
@@ -271,8 +277,8 @@ class Sidekick{
 				}
 
 				var skc_config = {
-					url:         '//p.vod-flowpress.flowpress.netdna-cdn.com/vod/vod-flowpress.flowpress/public_html/composer/',
-					apiUrl:      '//library.sidekick.pro/api',
+					url:         '<?php echo SK_DOMAIN_USED ?>cdn/composer/',
+					apiUrl:      '<?php echo SK_LIBRARY_DOMAIN_USED ?>api',
 					baseSiteUrl: sk_config.base_url
 				}
 
@@ -286,7 +292,7 @@ class Sidekick{
 	function track($data){
 		$protocol = $this->protocol();
 
-		$response = wp_remote_post( "{$protocol}library.sidekick.pro/wp-admin/admin-ajax.php", array(
+		$response = wp_remote_post( SK_LIBRARY_DOMAIN_USED . "wp-admin/admin-ajax.php", array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
@@ -305,7 +311,7 @@ class Sidekick{
 
 			$protocol = $this->protocol();
 
-			$library_file = SK_LIBRARY_DOMAIN . "/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
+			$library_file = SK_DOMAIN_USED . "library/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
 			$ch = curl_init($library_file);
 			curl_setopt($ch, CURLOPT_NOBODY, true);
 			curl_exec($ch);
@@ -341,12 +347,12 @@ class Sidekick{
 		$protocol = $this->protocol();
 
 		if ( false === ( $player_version = get_transient( 'sk_player_version' ) ) ) {
-			$player_version = file_get_contents("{$protocol}player.sidekick.pro/wordpress/version?v=x");
+			$player_version = file_get_contents(SK_DOMAIN_USED . "cdn/player/wordpress/version?v=x");
 			set_transient( 'sk_player_version', $player_version, 2 * HOUR_IN_SECONDS );
 		}
 
 		if ( false === ( $platform_version = get_transient( 'sk_platform_version' ) ) ) {
-			$platform_version = file_get_contents("{$protocol}platform.sidekick.pro/wordpress/version?v=x");
+			$platform_version = file_get_contents(SK_DOMAIN_USED . "cdn/platform/wordpress/version?v=x");
 			set_transient( 'sk_platform_version', $platform_version, 2 * HOUR_IN_SECONDS );
 		}
 	}
