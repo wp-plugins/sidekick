@@ -397,7 +397,7 @@ class Sidekick{
 		global $current_user ;
 
 		if ( ! get_user_meta($current_user->ID, 'sk_ignore_notice') ) {
-			printf ('<div class="updated"><p>Need help with WordPress? Click HELP ME in the bottom left corner to get started! <a href="%1$s">Hide Notice</a></p></div>','?sk_ignore_notice=1');
+			printf ('<div class="updated"><p>Need help with WordPress? Click HELP ME in the bottom left corner to get started! <a href="%1$s">Hide</a></p></div>','?sk_ignore_notice=1');
 		}
 	}
 
