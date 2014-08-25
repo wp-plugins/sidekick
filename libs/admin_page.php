@@ -273,6 +273,7 @@
 								</tbody>
 							</table>
 							<?php submit_button('Update'); ?>
+							<?php wp_nonce_field( 'update_sk_settings' ); ?>
 						</form>
 					<?php endif ?>
 				</div>
