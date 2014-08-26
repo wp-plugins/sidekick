@@ -210,7 +210,7 @@ class Sidekick{
 		$autostart_walkthrough_id = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : 'null' );
 		$theme                    = wp_get_theme();
 		$not_supported_ie         = false;
-		$sk_composer_button       = true; // BETA
+		// $sk_composer_button       = true; // BETA
 
 		$user_role               = $sk_config_data->get_user_role();
 		$site_url                = $sk_config_data->get_domain();

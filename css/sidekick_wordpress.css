@@ -1,3 +1,7 @@
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_composer,
+body div#sidekick.composer_button_on div#sk_taskbar div.sk_toggles button#toggle_composer {
+  display: none;
+}
 @media screen and (max-width: 782px) {
   body div#sidekick,
   body div#sidekick.sidekick_player {
