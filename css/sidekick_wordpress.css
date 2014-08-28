@@ -635,6 +635,7 @@ div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover {
   /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
 }
 div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback {
+  display: none;
   background: #f1631d url('../images/sprides_v13.png?v=1.3.4') 17px -287px;
   /*border-right: solid 1px white;*/
   border-left: solid 1px white;
