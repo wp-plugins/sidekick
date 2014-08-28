@@ -1,0 +1,1340 @@
+body div#sidekick div#sk_taskbar div.sk_toggles button#toggle_composer,
+body div#sidekick.composer_button_on div#sk_taskbar div.sk_toggles button#toggle_composer {
+  display: none;
+}
+@media screen and (max-width: 782px) {
+  body div#sidekick,
+  body div#sidekick.sidekick_player {
+    display: none;
+  }
+}
+@-moz-keyframes pulse {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.point_left {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+.point_right {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.rotate_right2 {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+div.sk_hotspot {
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  cursor: pointer;
+  background: url('../images/sprides_v13.png?v=1.3.4') -3px -796px;
+  opacity: 0.0;
+  margin-left: -20px;
+  margin-top: -10px;
+  z-index: 1000000;
+}
+div.sk_hotspot.visible {
+  opacity: 0.8;
+  -webkit-animation: sk_player_cssAnimation 0.3s 1 ease;
+  -moz-animation: sk_player_cssAnimation 0.3s 1 ease;
+  -o-animation: sk_player_cssAnimation 0.3s 1 ease;
+}
+@-webkit-keyframes sk_player_cssAnimation {
+  from {
+    -webkit-transform: rotate(49deg) scale(0.5) translate(20px);
+  }
+  to {
+    -webkit-transform: rotate(0deg) scale(3);
+  }
+}
+@-moz-keyframes sk_player_cssAnimation {
+  from {
+    -moz-transform: rotate(49deg) scale(0.5) translate(20px);
+  }
+  to {
+    -moz-transform: rotate(0deg) scale(3);
+  }
+}
+@-o-keyframes sk_player_cssAnimation {
+  from {
+    -o-transform: rotate(49deg) scale(0.5) translate(20px);
+  }
+  to {
+    -o-transform: rotate(0deg) scale(3);
+  }
+}
+div.sk_hotspot:hover {
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+  opacity: 1;
+  transform: scale(1.2, 1.2);
+  -ms-transform: scale(1.2, 1.2);
+  -webkit-transform: scale(1.2, 1.2);
+  -o-transform: scale(1.2, 1.2);
+  -moz-transform: scale(1.2, 1.2);
+}
+body.branch-3-8 div#sidekick {
+  width: 160px;
+}
+body.branch-3-8 div#sidekick.open {
+  width: 100%;
+}
+body.branch-3-8 div#sidekick.open div#sk_taskbar div#logo {
+  width: 134px;
+}
+body.branch-3-8 div#sidekick.playing {
+  width: 100%;
+}
+body.branch-3-8 div#sidekick.playing div#sk_taskbar div#logo {
+  width: 134px;
+}
+body.wp-customizer #sk_drawer,
+body.full-overlay-active #sk_drawer {
+  display: none;
+}
+body.wp-customizer div#sidekick.sidekick_player,
+body.full-overlay-active div#sidekick.sidekick_player {
+  display: none;
+}
+body.wp-customizer div#sidekick.playing.sidekick_player,
+body.full-overlay-active div#sidekick.playing.sidekick_player {
+  display: block;
+}
+div#sidekick {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  height: 40px;
+  width: 160px;
+  /*overflow: hidden;*/
+  z-index: 9999998;
+  /*.animate_reg;*/
+}
+div#sidekick.sidekick_player {
+  left: 0px;
+  bottom: 0px;
+  display: block;
+}
+div#sidekick.composer_on {
+  bottom: -50px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick.composer_button_on div#sk_taskbar div.sk_toggles button#toggle_composer {
+  display: block;
+}
+div#sidekick.open {
+  width: 100%;
+  -webkit-transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  -o-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+}
+div#sidekick.open div#sk_taskbar button.sk_toggle {
+  background: url('../images/sprides_v13.png?v=1.3.4') -1px -359px;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  outline: 0;
+}
+div#sidekick.open div#sk_taskbar button {
+  outline: 0;
+}
+div#sidekick.open div#sk_taskbar div.sk_controls {
+  display: block;
+}
+div#sidekick.open div#sk_taskbar div.sk_info,
+div#sidekick.open div#sk_taskbar div.sk_toggle,
+div#sidekick.open div#sk_taskbar div.sk_toggles {
+  display: block;
+}
+div#sidekick.drawer_open #sk_drawer ul.sk_bucketContainer ul#sk_upgrade {
+  -webkit-transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  -o-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+  bottom: 39px;
+}
+div#sidekick.paused div#sk_taskbar div.sk_toggles #toggle_drawer {
+  display: none;
+}
+div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background-position: 17px -178px;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+  background-position: 17px -718px;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause:hover {
+  background-position: 17px -718px;
+}
+div#sidekick.playing,
+div#sidekick.paused {
+  width: 100%;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls,
+div#sidekick.paused div#sk_taskbar div.sk_controls {
+  display: block;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button,
+div#sidekick.paused div#sk_taskbar div.sk_controls button {
+  opacity: 1;
+  background-color: #d9763b;
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button:hover,
+div#sidekick.paused div#sk_taskbar div.sk_controls button:hover {
+  background-color: #df6226;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_play_pause,
+div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  cursor: pointer;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_restart,
+div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_restart {
+  cursor: pointer;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_restart:hover,
+div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_restart:hover {
+  background-position: 17px -140px;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_stop,
+div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_stop {
+  cursor: pointer;
+}
+div#sidekick.playing div#sk_taskbar div.sk_controls button.sidekick_stop:hover,
+div#sidekick.paused div#sk_taskbar div.sk_controls button.sidekick_stop:hover {
+  background-position: 17px -210px;
+}
+div#sidekick.playing div#sk_taskbar div.sk_info,
+div#sidekick.paused div#sk_taskbar div.sk_info {
+  display: block;
+}
+div#sidekick.playing div#sk_taskbar div.sk_info div.sk_time,
+div#sidekick.paused div#sk_taskbar div.sk_info div.sk_time,
+div#sidekick.playing div#sk_taskbar div.sk_info div.sk_title,
+div#sidekick.paused div#sk_taskbar div.sk_info div.sk_title {
+  opacity: 1;
+  display: block;
+}
+div#sidekick.playing div#sk_taskbar div.sk_info .sk_divider,
+div#sidekick.paused div#sk_taskbar div.sk_info .sk_divider {
+  float: left;
+}
+div#sidekick.playing div#sk_taskbar button.sk_toggle,
+div#sidekick.paused div#sk_taskbar button.sk_toggle {
+  background: url('../images/sprides_v13.png?v=1.3.4') -1px -359px;
+  transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -webkit-transform: rotate(0deg);
+}
+div#sidekick.playing div#sk_taskbar div.sk_toggles,
+div#sidekick.paused div#sk_taskbar div.sk_toggles {
+  display: block;
+  /*margin-top: 100px;*/
+  width: 1px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick.playing div#sk_taskbar div.sk_toggles #toggle_drawer,
+div#sidekick.paused div#sk_taskbar div.sk_toggles #toggle_drawer {
+  display: none;
+}
+div#sidekick button {
+  cursor: pointer;
+  cursor: hand;
+  padding: 0px;
+}
+div#sidekick #click_warning {
+  width: 50%;
+  min-width: 880px;
+  min-height: 57px;
+  background-color: #EB6125;
+  color: white;
+  position: absolute;
+  top: 100px;
+  min-height: 45px;
+  text-align: center;
+  z-index: 1000002;
+  left: 50%;
+  margin-left: -440px;
+  font-weight: normal;
+  font-size: 18px;
+}
+div#sidekick #click_warning.show {
+  top: -60px;
+  /*.animate;*/
+  -webkit-animation: warning 1s 1 ease-in-out;
+  -moz-animation: warning 1s 1 ease-in-out;
+  -o-animation: warning 1s 1 ease-in-out;
+}
+@-webkit-keyframes warning {
+  0% {
+    -webkit-transform: translateY(100px);
+  }
+  30% {
+    -webkit-transform: translateY(10px);
+  }
+  60% {
+    -webkit-transform: translateY(50px);
+  }
+  100% {
+    -webkit-transform: translateY(0px);
+  }
+}
+@-moz-keyframes warning {
+  0% {
+    -moz-transform: translateY(100px);
+  }
+  30% {
+    -moz-transform: translateY(-30px);
+  }
+  60% {
+    -moz-transform: translateY(-20px);
+  }
+  100% {
+    -moz-transform: translateY(-60px);
+  }
+}
+@-o-keyframes warning {
+  0% {
+    -o-transform: translateY(100px);
+  }
+  30% {
+    -o-transform: translateY(-30px);
+  }
+  60% {
+    -o-transform: translateY(-20px);
+  }
+  100% {
+    -o-transform: translateY(-60px);
+  }
+}
+div#sidekick #click_warning h3 {
+  background-color: #833512;
+  margin: 0px;
+  font-size: 1px;
+  text-align: left;
+  color: white;
+  padding: 1px 5px;
+  min-height: 5px;
+}
+div#sidekick #click_warning span {
+  padding: 15px 5px 20px;
+  display: block;
+}
+div#sidekick div#sk_taskbar {
+  width: 100%;
+  height: 100%;
+  z-index: 1000003;
+  position: relative;
+  background: #ff712b;
+  /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmNzEyYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlZDVmMTkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top, #ff712b 0%, #ed5f19 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff712b), color-stop(100%, #ed5f19));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ff712b 0%, #ed5f19 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ff712b 0%, #ed5f19 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ff712b 0%, #ed5f19 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, #ff712b 0%, #ed5f19 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff712b', endColorstr='#ed5f19', GradientType=0);
+  /* IE6-8 */
+}
+div#sidekick div#sk_taskbar button {
+  border: none;
+  height: 100%;
+  min-width: 26px;
+  float: left;
+}
+div#sidekick div#sk_taskbar div.sk_powered_by {
+  float: right;
+  color: white;
+  font-size: 12px;
+  padding: 12px;
+}
+div#sidekick div#sk_taskbar div.sk_powered_by a {
+  color: white;
+  text-decoration: none;
+}
+div#sidekick div#sk_taskbar div#logo {
+  float: left;
+  height: 100%;
+  width: 125px;
+  /*width:  124px; wp 3.8+ */
+  background: url('../images/sprides_v13.png?v=1.3.4') 5px 0px no-repeat;
+  cursor: pointer;
+}
+div#sidekick div#sk_taskbar button.sk_toggle {
+  float: left;
+  height: 100%;
+  width: 32px;
+  margin-left: 3px;
+  background: url('../images/sprides_v13.png?v=1.3.4') 0px -358px;
+  border: none;
+}
+div#sidekick div#sk_taskbar div.sk_debug {
+  display: block;
+  float: right;
+  height: 100%;
+  display: none;
+}
+div#sidekick div#sk_taskbar div.sk_debug div.step_count {
+  padding: 11px;
+}
+div#sidekick div#sk_taskbar div.sk_debug input {
+  margin: 7px;
+  width: 86px;
+  float: left;
+}
+div#sidekick div#sk_taskbar div.sk_debug div {
+  float: left;
+  color: white;
+  padding: 0px;
+}
+div#sidekick div#sk_taskbar div.sk_info {
+  display: none;
+  float: left;
+  height: 100%;
+}
+div#sidekick div#sk_taskbar div.sk_info .sk_time {
+  float: left;
+  height: 100%;
+  font-size: 16px;
+  color: white;
+  margin: 13px 30px;
+  /*opacity: 0.3;*/
+  display: none;
+}
+div#sidekick div#sk_taskbar div.sk_info .sk_title {
+  border-right: solid 1px white;
+  float: left;
+  height: 100%;
+  font-size: 16px;
+  color: white;
+  opacity: 0.3;
+  display: none;
+}
+div#sidekick div#sk_taskbar div.sk_info .sk_title label {
+  font-size: 10px;
+  display: block;
+}
+div#sidekick div#sk_taskbar div.sk_info .sk_title span,
+div#sidekick div#sk_taskbar div.sk_info .sk_title label {
+  margin: 1px 30px 0px;
+}
+div#sidekick div#sk_taskbar div.sk_controls {
+  float: left;
+  height: 100%;
+  border-right: solid 1px white;
+  border-left: solid 1px white;
+  display: none;
+  position: relative;
+  width: 210px;
+  background: #fb985f;
+  /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZiOTg1ZiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlZDZjMjAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top, #fb985f 0%, #ed6c20 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fb985f), color-stop(100%, #ed6c20));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #fb985f 0%, #ed6c20 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #fb985f 0%, #ed6c20 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #fb985f 0%, #ed6c20 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, #fb985f 0%, #ed6c20 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fb985f', endColorstr='#ed6c20', GradientType=0);
+  /* IE6-8 */
+}
+div#sidekick div#sk_taskbar div.sk_controls button {
+  width: 70px;
+  opacity: 0.3;
+  position: absolute;
+  top: 0px;
+  outline: 0;
+}
+div#sidekick div#sk_taskbar div.sk_controls button.sidekick_restart {
+  left: 0px;
+  background: url('../images/sprides_v13.png?v=1.3.4') 17px -140px;
+  cursor: default;
+}
+div#sidekick div#sk_taskbar div.sk_controls button.sidekick_play_pause {
+  background: url('../images/sprides_v13.png?v=1.3.4') 17px -178px;
+  left: 70px;
+  border-right: solid 1px white;
+  border-left: solid 1px white;
+  cursor: default;
+}
+div#sidekick div#sk_taskbar div.sk_controls button.sidekick_stop {
+  background: url('../images/sprides_v13.png?v=1.3.4') 17px -210px;
+  left: 140px;
+  cursor: default;
+}
+div#sidekick div#sk_taskbar div.sk_caption {
+  width: 50%;
+  min-width: 880px;
+  min-height: 57px;
+  background-color: #EB6125;
+  color: white;
+  position: absolute;
+  top: 100px;
+  min-height: 45px;
+  text-align: center;
+  z-index: 1000002;
+  left: 50%;
+  margin-left: -440px;
+  font-weight: normal;
+  font-size: 18px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick div#sk_taskbar div.sk_caption.show {
+  top: -60px;
+}
+div#sidekick div#sk_taskbar div.sk_caption .text {
+  padding: 20px 5px 20px;
+  display: block;
+  font-size: 21px;
+  -webkit-border-top-left-radius: 10px;
+  -moz-border-top-left-radius: 10px;
+  -ms-border-top-left-radius: 10px;
+  -o-border-top-left-radius: 10px;
+  border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
+  -moz-border-top-right-radius: 10px;
+  -ms-border-top-right-radius: 10px;
+  -o-border-top-right-radius: 10px;
+  border-top-right-radius: 10px;
+}
+div#sidekick div#sk_taskbar div.sk_caption .text b {
+  color: yellow;
+}
+div#sidekick div#sk_taskbar div.sk_toggle {
+  float: left;
+  height: 100%;
+  min-width: 400px;
+  display: none;
+  outline: 0;
+}
+div#sidekick div#sk_taskbar div.sk_toggles {
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+  margin-top: 0px;
+  /*display:    none;*/
+  float: right;
+  height: 100%;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button {
+  height: 40px;
+  width: 70px;
+  display: block;
+  float: left;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_composer {
+  display: none;
+  background: #f1631d url('../images/sprides_v13.png?v=1.3.4') 17px -475px;
+  /*border-right: solid 1px white;*/
+  border-left: solid 1px white;
+  width: 74px;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_composer:hover {
+  background: #fa8c00 url('../images/sprides_v13.png?v=1.3.4') 17px -475px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots {
+  /*display:   none;*/
+  /*visibility: hidden;*/
+  /*width: 1px; */
+  border-left: solid 1px white;
+  background: #f1631d url('../images/sprides_v13.png?v=1.3.4') 10px -248px;
+  padding-left: 24px;
+  font-size: 18px;
+  color: white;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots.on {
+  background: #fa8c00 url('../images/sprides_v13.png?v=1.3.4') 10px -248px;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_hotspots:hover {
+  background: #fa8c00 url('../images/sprides_v13.png?v=1.3.4') 10px -248px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback {
+  display: none;
+  background: #f1631d url('../images/sprides_v13.png?v=1.3.4') 17px -287px;
+  /*border-right: solid 1px white;*/
+  border-left: solid 1px white;
+  width: 74px;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_feedback:hover {
+  background: #fa8c00 url('../images/sprides_v13.png?v=1.3.4') 17px -287px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences {
+  background: #f1631d url('../images/sprides_v13.png?v=1.3.4') 17px -33px;
+  border-right: solid 1px white;
+  border-left: solid 1px white;
+  width: 74px;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_preferences:hover {
+  background: #fa8c00 url('../images/sprides_v13.png?v=1.3.4') 17px -33px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer {
+  background: #f1631d url('../images/sprides_v13.png?v=1.3.4') 17px -431px;
+  position: relative;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer:hover {
+  background: #fa8c00 url('../images/sprides_v13.png?v=1.3.4') 17px -431px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on {
+  background-color: #FA8C00;
+}
+div#sidekick div#sk_taskbar div.sk_toggles button#toggle_drawer.on i {
+  position: absolute;
+  left: 26px;
+  top: -10px;
+  width: 20px;
+  height: 20px;
+  background: url('../images/sprides_v13.png?v=1.3.4') -9px -696px;
+}
+div#sidekick #sk_drawer {
+  background-color: #fff;
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(83, 83, 83, 0.6);
+  box-shadow: 0px 0px 15px 0px rgba(83, 83, 83, 0.6);
+  border: solid 1px #c6c6c6;
+  z-index: 100002;
+  position: absolute;
+  right: 0px;
+  bottom: 38px;
+  width: 300px;
+  height: 0px;
+}
+div#sidekick #sk_drawer h2 {
+  text-transform: uppercase;
+  background-color: #2A909A;
+  color: white;
+  padding: 20px 10px;
+  margin: 0px;
+  font-size: 1.5em;
+  line-height: 18px;
+  letter-spacing: normal;
+  text-align: left;
+}
+div#sidekick #sk_drawer h2 button {
+  background: url('../images/sprides_v13.png?v=1.3.4') -8px -656px no-repeat;
+  width: 20px;
+  height: 20px;
+  border: none;
+  right: 18px;
+  top: 18px;
+  cursor: pointer;
+  position: absolute;
+}
+div#sidekick #sk_drawer div.warning {
+  background-color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 34px;
+}
+div#sidekick #sk_drawer div.warning div.padder {
+  padding: 20px 10px 100px;
+}
+div#sidekick #sk_drawer input.error {
+  border: solid 2px red;
+  background-color: #fae3de;
+}
+div#sidekick #sk_drawer ul {
+  margin: 0px;
+  padding: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer {
+  position: relative;
+  overflow-x: hidden;
+  margin: 0px;
+  padding: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .heading.goprev {
+  background-color: white;
+  text-align: center;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .heading.goprev span {
+  padding: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .heading.goprev i {
+  left: 6px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.related_walkthroughs_heading.heading {
+  text-align: center;
+  cursor: default;
+  border-bottom-color: transparent;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.related_walkthroughs_heading.heading:hover {
+  background-color: #ebebeb;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.related_walkthroughs_heading.heading span {
+  font-weight: bold;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul {
+  margin: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.pull_left {
+  position: absolute;
+  left: -300px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.pull_right {
+  position: absolute;
+  left: 300px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul li {
+  padding: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul#sk_upgrade {
+  position: fixed;
+  text-align: center;
+  bottom: -300px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul#sk_upgrade .sk_turn_off_composer_upgrade {
+  background: url('../images/sprides_v13.png?v=1.3.4') -8px -656px no-repeat;
+  border: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: white;
+  margin: 0px;
+  border-radius: 10px;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  font-weight: bold;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul#sk_upgrade li {
+  -webkit-transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  -o-transition: all 0.5s ease-out;
+  transition: all 0.5s ease-out;
+  background-color: #dddddd;
+  border-bottom: solid 1px #cbcbcb;
+  border-top: solid 1px #fff;
+  color: #353939;
+  overflow: hidden;
+  color: black;
+  background: #F3F3F3;
+  max-height: none;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul#sk_upgrade li button {
+  margin: 20px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul#sk_upgrade li button.upgrade_composer {
+  background: none;
+  color: gray;
+  border: none;
+  text-decoration: underline;
+  margin: 5px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer input[type="button"],
+div#sidekick #sk_drawer ul.sk_bucketContainer input[type="submit"],
+div#sidekick #sk_drawer ul.sk_bucketContainer button {
+  border: none;
+  padding: 10px;
+  margin-left: 5px;
+  color: white;
+  font-size: 16px;
+  border: solid 2px white;
+  border-radius: 5px;
+  background-color: #fa6c26;
+  cursor: pointer;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer input[type="button"]:hover,
+div#sidekick #sk_drawer ul.sk_bucketContainer input[type="submit"]:hover,
+div#sidekick #sk_drawer ul.sk_bucketContainer button:hover {
+  background-color: #fb7d3f;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.login {
+  position: absolute;
+  left: 0px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.login.hide {
+  position: absolute;
+  left: 300px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.login li.heading {
+  margin: 0;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.login a {
+  font-size: 14px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#advanced {
+  display: none ;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate li.heading {
+  margin: 0;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate li {
+  cursor: default;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate ul#progress {
+  list-style: none;
+  width: 125px;
+  margin: 0 auto;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content {
+  font-weight: 400;
+  background: #fff;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+  padding-bottom: 10px;
+  margin: 0px;
+  width: 100%;
+  background: -webkit-radial-gradient(center, ellipse cover, #1c848f 0%, #156d79 100%);
+  background: -o-radial-gradient(center, ellipse cover, #1c848f 0%, #156d79 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #1c848f 0%, #156d79 100%);
+  background: radial-gradient(ellipse at center, #1c848f 0%, #156d79 100%);
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content div#buttons {
+  clear: both;
+  /*margin: 10px 0;*/
+  height: 40px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content div#buttons input[type="button"],
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content div#buttons input[type="submit"],
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content div#buttons button {
+  float: right;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content input[name="activation_id"] {
+  font-size: 15px;
+  text-align: center;
+  padding-top: 6px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder {
+  padding: 10px;
+  text-align: center;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder h3 {
+  margin: 10px 0px 20px 0;
+  color: white;
+  line-height: 26px;
+  text-transform: uppercase;
+  text-shadow: 2px 2px #000;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder button {
+  font-weight: bold;
+  font-size: 32px;
+  background-color: #E84B17;
+  padding: 5px 60px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder button span {
+  font-weight: normal;
+  font-size: 16px;
+  margin: 0px;
+  padding: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder button:hover {
+  background-color: #fa5119;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder label {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 6px;
+  display: block;
+  text-shadow: 2px 2px #000;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content .padder input {
+  border-radius: 5px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits h3 {
+  background-color: #EBEBEB;
+  color: #535a5a;
+  text-transform: uppercase;
+  padding: 10px;
+  font-weight: normal;
+  margin-bottom: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul {
+  background-color: #F6F6F6;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li {
+  padding-top: 10px;
+  /*padding-left: 70px;*/
+  color: #535a5a;
+  min-height: 70px;
+  width: 100%;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li h4 {
+  color: black;
+  margin: 0px;
+  margin-bottom: 5px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li p {
+  padding: 0px;
+  margin: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li i {
+  width: 70px;
+  height: 70px;
+  display: block;
+  float: left;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#more i {
+  background: #f6f6f6 url('../images/sprides_v13.png?v=1.3.4') -431px -22px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.activate div#content #benefits ul li#types i {
+  background: #f6f6f6 url('../images/sprides_v13.png?v=1.3.4') -494px -22px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer input[type='text'],
+div#sidekick #sk_drawer ul.sk_bucketContainer input[type='password'] {
+  font-size: 24px;
+  line-height: 1;
+  width: 100%;
+  padding: 3px;
+  margin: 2px 6px 16px 0;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer label {
+  color: #777;
+  font-size: 14px;
+  vertical-align: middle;
+  font-weight: 400;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer div > ul.hide {
+  position: absolute;
+  left: -300px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .buckets {
+  position: absolute;
+  left: 0px;
+  margin: 0px;
+  padding: 0px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .buckets a {
+  text-decoration: none;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .buckets .bucket_heading {
+  text-align: left;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .buckets .bucket_heading i {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_buckets {
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+  left: 0px;
+  position: absolute;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer ul.sub_bucket_inner {
+  height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_bucket {
+  /*display:    none;*/
+  /*left:       300px;*/
+  position: absolute;
+  top: 0px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_bucket.show {
+  /*display: block;*/
+  /*left:      0px;*/
+  /*.animate;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_bucket.hide {
+  /*left: -300px;*/
+  /*.animate;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_bucket li.heading {
+  text-align: center;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_bucket li.sub_bucket_heading {
+  text-align: left;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .sub_bucket li.sub_bucket_heading i {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs {
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs ul.current_page_walkthroughs {
+  left: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading {
+  border-bottom: solid 1px #17909b;
+  margin-bottom: 10px;
+  cursor: default;
+  text-align: left;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs li.sub_heading span {
+  display: inline;
+  font-size: 12px;
+  color: white;
+  background-color: #17909b;
+  text-align: center;
+  margin-left: 10px;
+  top: 1px;
+  position: relative;
+  padding: 1px 4px;
+  text-transform: uppercase;
+  height: 20px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough {
+  padding: 0px;
+  margin: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner {
+  padding: 0px;
+  margin: 0px;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li {
+  background-image: url('../images/sprides_v13.png?v=1.3.4');
+  background-position: 257px -861px;
+  text-align: left;
+  display: block;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li span {
+  margin: 0;
+  font-size: 14px;
+  color: #988c8f;
+  padding: 0 5px 0 0;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li .edit {
+  color: orange;
+  display: inline;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li .edit:hover {
+  color: black;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li.subscribed {
+  background-image: none;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .walkthroughs_inner a li.subscribed span {
+  color: #3e3e3e;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .overview {
+  /*font-weight: bold;*/
+  /*position:    relative;*/
+  /*span.{
+						display:          inline;
+						font-size:        10px;
+						color:            white;
+						background-color: @brand_blue;
+						text-align:       center;
+						margin-right:     5px;
+						top:              -1px;
+						position:         relative;
+						padding:          1px 2px;
+						text-transform:   uppercase;
+						height:           20px;
+						.rounded-corners(5px);
+						}*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough {
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  background-color: white;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough .heading {
+  margin-bottom: 10px;
+  text-align: center;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a {
+  text-decoration: none;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a li {
+  padding: 0px 0px 10px 10px;
+  height: auto;
+  font-size: 14px;
+  line-height: 22px;
+  color: #3e3e3e;
+  width: 90%;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough a:hover li {
+  color: #17909B;
+  margin-left: 10px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .walkthroughs .walkthrough.show {
+  /*left:    0px;*/
+  /*.animate;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer .user .heading {
+  margin-bottom: 10px;
+  text-align: center;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li {
+  width: 300px;
+  left: 0px;
+  font-size: 16px;
+  color: white;
+  margin: 0;
+  position: relative;
+  cursor: pointer;
+  cursor: hand;
+  max-height: 57px;
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  /*-moz-transition:    width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -moz-transform 0.3s ease-out;*/
+  /*-webkit-transition: width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.3s ease-out;*/
+  /*-o-transition:      width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, -o-transform 0.3s ease-out;*/
+  /*transition:         width 0.3s ease-out, max-height 0.3s ease-out, background-color 0.3s ease-out, transform 0.3s ease-out;*/
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.heading {
+  background-color: #dddddd;
+  border-bottom: solid 1px #cbcbcb;
+  border-top: solid 1px #fff;
+  color: #353939;
+  overflow: hidden;
+  color: black;
+  background: #F3F3F3;
+  cursor: pointer;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.heading:hover {
+  color: #17909B;
+  background: #ebebeb;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.heading:hover i {
+  background: url('../images/sprides_v11.png') -7px -116px no-repeat;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li.heading i {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg);
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 15px;
+  top: 17px;
+  background: url('../images/sprides_v11.png') -7px -80px no-repeat;
+}
+div#sidekick #sk_drawer ul.sk_bucketContainer li span {
+  margin: 19px 0 16px;
+  display: block;
+  padding-left: 20px;
+}
