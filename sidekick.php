@@ -4,9 +4,9 @@
 Plugin Name: Sidekick
 Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
-Requires at least: 3.7
-Tested up to: 3.9.1
-Version: 1.5.4
+Requires at least: 3.8
+Tested up to: 4.0
+Version: 1.5.5
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -201,6 +201,7 @@ class Sidekick{
 
 		require_once('libs/sk_config_data.php');
 
+		$plugin_data              = get_plugin_data(plugin_dir_path( dirname( __FILE__ ) ) . 'sidekick/sidekick.php');
 		$sk_config_data           = new sk_config_data;
 		$current_user             = wp_get_current_user();
 		$sk_just_activated        = get_option( 'sk_just_activated' );
@@ -210,7 +211,10 @@ class Sidekick{
 		$autostart_walkthrough_id = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : 'null' );
 		$theme                    = wp_get_theme();
 		$not_supported_ie         = false;
-		// $sk_composer_button       = true; // BETA
+		$user_email               = '';
+		if ($sk_track_data) {
+			$user_email = $current_user->user_email;
+		}
 
 		$user_role               = $sk_config_data->get_user_role();
 		$site_url                = $sk_config_data->get_domain();
@@ -225,11 +229,9 @@ class Sidekick{
 		$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
 		$number_of_themes        = $sk_config_data->get_themes();
 
-
-		$plugin_data = get_plugin_data(plugin_dir_path( dirname( __FILE__ ) ) . 'sidekick/sidekick.php');
+		// $sk_composer_button = true; // BETA
 
 		delete_option( 'sk_just_activated' );
-
 		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])) $not_supported_ie = true;
 
 		?>
@@ -243,6 +245,7 @@ class Sidekick{
 					show_powered_by_link:     true,
 					use_native_controls:      false,
 					main_soft_name:           'WordPress',
+					domain_used:              '<?php echo SK_DOMAIN_USED ?>',
 					domain:                   '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
 					base_url:                 '<?php echo site_url() ?>',
 					site_url:                 '<?php echo $site_url ?>',
@@ -259,7 +262,7 @@ class Sidekick{
 					platform_version:         '<?php echo get_transient("sk_platform_version") ?>',
 					track_data:               '<?php echo $sk_track_data ?>',
 					user_level:               '<?php echo $user_role ?>',
-					user_email:               '<?php echo $current_user->user_email ?>',
+					user_email:               '<?php echo $user_email ?>',
 					activation_id:            '<?php echo $activation_id ?>',
 					autostart_walkthrough_id: <?php echo $autostart_walkthrough_id ?>,
 					sk_composer_button:       <?php echo ($sk_composer_button ? "true" : "false") ?>,
