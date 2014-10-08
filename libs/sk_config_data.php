@@ -12,8 +12,9 @@ class sk_config_data{
 
 	function get_post_types(){
 		global $wpdb;
-		$query = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
+		$query  = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
 		$counts = $wpdb->get_results($query);
+		$output = '';
 
 		foreach ($counts as $key => $type) {
 			$type->post_type = str_replace('-', '_', $type->post_type);
@@ -29,8 +30,9 @@ class sk_config_data{
 
 	function get_post_types_and_statuses(){
 		global $wpdb;
-		$query = "SELECT post_type, post_status, count(distinct ID) as count from wp_posts group by post_type, post_status";
+		$query  = "SELECT post_type, post_status, count(distinct ID) as count from wp_posts group by post_type, post_status";
 		$counts = $wpdb->get_results($query);
+		$output = '';
 
 		foreach ($counts as $key => $type) {
 			$type->post_type   = str_replace('-', '_', $type->post_type);
@@ -43,8 +45,9 @@ class sk_config_data{
 
 	function get_taxonomies(){
 		global $wpdb;
-		$query = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+		$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
 		$counts = $wpdb->get_results($query);
+		$output = '';
 
 		foreach ($counts as $key => $taxonomy) {
 			$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
@@ -63,8 +66,9 @@ class sk_config_data{
 
 	function get_post_statuses(){
 		global $wpdb;
-		$query = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
+		$query  = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
 		$counts = $wpdb->get_results($query);
+		$output = '';
 
 		foreach ($counts as $key => $type) {
 			$type->post_status = str_replace('-', '_', $type->post_status);
@@ -75,8 +79,10 @@ class sk_config_data{
 
 	function get_user_data(){
 		global $current_user;
-		$data = get_userdata($current_user->ID);
-		$output .= "\n 						user_id : $current_user->ID,";
+
+		$data   = get_userdata($current_user->ID);
+		$output = "\n 						user_id : $current_user->ID,";
+
 		foreach ($data->allcaps as $cap => $val) {
 			$cap = sanitize_title($cap);
 			$cap = str_replace('-', '_', $cap);
@@ -114,7 +120,7 @@ class sk_config_data{
 
 		$printed = false;
 
-		$output .= '[';
+		$output = '[';
 
 		if (is_array($active_plugins)) {
 			foreach ($active_plugins as $plugins_key => $plugin) {

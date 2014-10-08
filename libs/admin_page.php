@@ -157,7 +157,7 @@
 <script type="text/javascript">
 
 	function sk_populate(data){
-		var passed_walkthroughs = window.sidekickWP.get('passed_walkthroughs');
+		var passed_walkthroughs = window.sidekick.compatibilityModel.get('passed_walkthroughs');
 		var already_done = [];
 
 		_.each(passed_walkthroughs,function(item,key){
@@ -172,6 +172,7 @@
 				if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id == item.id) {
 					selected = 'SELECTED';
 				};
+
 				jQuery('.sk_walkthrough_list').append('<div class="box"><span><input type="checkbox" ' + checked + ' value="' + item.id + '" name="disable_wts[]">' + item.title + '<span></div>');
 				jQuery('[name="sk_autostart_walkthrough_id"]').append('<option ' + selected + ' value="' + item.id + '">' + item.title + '</option>');
 			};
@@ -190,12 +191,14 @@
 					jQuery('.sk_upgrade').show();
 				},
 				success: function(data){
-					if (_.size(sk_paid_library.buckets) > 0) {
-						jQuery('.sk_license_status').html('Valid').css({color: 'green'});
-					} else {
-						jQuery('.sk_license_status span').html('Expired').css({color: 'orange'});
-						jQuery('.sk_upgrade').show();
-					}
+					if (typeof sk_paid_library !== 'undefined') {
+						if (_.size(sk_paid_library.buckets) > 0) {
+							jQuery('.sk_license_status').html('Valid').css({color: 'green'});
+						} else {
+							jQuery('.sk_license_status span').html('Expired').css({color: 'orange'});
+							jQuery('.sk_upgrade').show();
+						}
+					};
 				}
 			});
 		} else {
@@ -298,7 +301,7 @@
 							<li>Clicking the check-box above will allow us to link your email address to the stats we collect so we can contact you if we have a question or notice an issue. It’s not mandatory, but it would help us out.</li>
 							<li>Your Activation ID is unique and limited to your production, staging, and development urls.</li>
 							<li>The Sidekick team adheres strictly to CANSPAM. From time to time we may send critical updates (such as security notices) to the email address setup as the Administrator on this site.</li>
-							<li>If you have any questions, bug reports or feedback, please send them to <a target="_blank" href="mailto:info@sidekick.pro">us</a> </li>
+							<li>If you have any questions, bug reports or feedback, please send them to <a target="_blank" href="mailto:support@sidekick.pro">us</a> </li>
 							<li>You can find our terms of use <a target="_blank" href="http://www.sidekick.pro/terms-of-use/">here</a></li>
 						</ul>
 					</div>
@@ -328,6 +331,7 @@
 						<p>Below you can turn off specific Walkthroughs for this website.</p>
 						<div class='sk_walkthrough_list wrapper_wts'></div>
 						<input class='button button-primary' type='submit' value='Save'/>
+						<?php wp_nonce_field( 'update_sk_settings' ); ?>
 					</form>
 				</div>
 			</div>

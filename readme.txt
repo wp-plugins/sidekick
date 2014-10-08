@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 1.5.5
+Stable tag: 1.6.0
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,8 +130,13 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
+= 1.5.7 =
+* Audio Fallback Mode added
+* Sidekick won't show when no compatible walkthroughs are found
+
 = 1.5.5 =
 * 4.0 Readiness
+* Fixed conflict with caused by jquery-show
 
 = 1.5.4 =
 * Fixed incompatibility with iThemes Builder and For Loop JS Loops
