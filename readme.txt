@@ -130,9 +130,13 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
-= 1.5.7 =
+= 1.6.0 =
 * Audio Fallback Mode added
 * Sidekick won't show when no compatible walkthroughs are found
+* Console messages turned off while not in debug mode
+* Much improved cache invalidation
+* Fixed a bug that on certain pages Sidekick wouldn't properly stop
+* Fixed a bug with Sidekick blocking clicks after it's been stopped
 
 = 1.5.5 =
 * 4.0 Readiness
