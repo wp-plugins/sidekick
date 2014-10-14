@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 1.6.0
+Stable tag: 1.6.4
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,7 +130,14 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
-= 1.6.0 =
+= 1.6.4 =
+* Fixed Composer Preview Bug
+* Prefixed All Class Names
+
+= 1.6.2 =
+* Made the move target step optional
+
+= 1.6.1 =
 * Audio Fallback Mode added
 * Sidekick won't show when no compatible walkthroughs are found
 * Console messages turned off while not in debug mode
