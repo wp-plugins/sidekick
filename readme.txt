@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 1.6.4
+Stable tag: 1.6.15
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,7 +52,7 @@ With the user’s permission, Sidekick will collect anonymous data to track walk
 
 1. In /wp-admin/, go to Plugins > Add New.
 2. Search for "Sidekick".
-3. Look for "Sidekick” (should be the only result).
+3. Look for "Sidekick” (should be the only result) .
 4. Click Install Now.
 5. After installation has completed, click Activate Plugin.
 
@@ -129,6 +129,16 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 1.6.16 =
+* Fixes hotspots not showing up in certain cases
+* Fixes harcoded issue with db table prefix
+* Style fixes on audio only mode
+* Fixes issue with returning back to regular playback mode from audio only mode
+* Fixes issue with audio player being muted in certain situations
+
+= 1.6.5 =
+* Fixed issue with Hotspot playback
 
 = 1.6.4 =
 * Fixed Composer Preview Bug

@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.8
 Tested up to: 4.0
-Version: 1.6.4
+Version: 1.6.15
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -15,7 +15,7 @@ define('SK_LIBRARY_VERSION',6);
 define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
 define('SK_PATH','sidekick/latest/wordpress');
 define('COMPOSER_PATH','cdn/composer');
-define('SK_USE_CDN',true);
+if (!defined('SK_USE_CDN'))	define('SK_USE_CDN',true);
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -30,20 +30,20 @@ class Sidekick{
 		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE, $SK_GLOBAL_VERSION;
 
 		if ($this->is_https()) {
-			define('SK_TRACKING_API','https://api.sidekick.pro/');
-			define('SK_COMPOSER_API','https://library.sidekick.pro/api');
+			if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','https://api.sidekick.pro/');
+			if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','https://library.sidekick.pro/api');
 			if (defined('SK_USE_CDN') && SK_USE_CDN) {
-				define('SK_DOMAIN','https://pullvod-flowpress.netdna-ssl.com/');
+				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','https://pullvod-flowpress.netdna-ssl.com/');
 			} else {
-				define('SK_DOMAIN','https://library.sidekick.pro/');
+				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','https://library.sidekick.pro/');
 			}
 		} else {
-			define('SK_TRACKING_API','http://api.sidekick.pro/');
-			define('SK_COMPOSER_API','http://library.sidekick.pro/api');
+			if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','http://api.sidekick.pro/');
+			if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','http://library.sidekick.pro/api');
 			if (defined('SK_USE_CDN') && SK_USE_CDN) {
-				define('SK_DOMAIN','http://pullvod.flowpress.netdna-cdn.com/');
+				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','http://pullvod.flowpress.netdna-cdn.com/');
 			} else {
-				define('SK_DOMAIN','http://library.sidekick.pro/');
+				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','http://library.sidekick.pro/');
 			}
 		}
 

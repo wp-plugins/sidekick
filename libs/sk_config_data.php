@@ -30,7 +30,7 @@ class sk_config_data{
 
 	function get_post_types_and_statuses(){
 		global $wpdb;
-		$query  = "SELECT post_type, post_status, count(distinct ID) as count from wp_posts group by post_type, post_status";
+		$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
 		$counts = $wpdb->get_results($query);
 		$output = '';
 
