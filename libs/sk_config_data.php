@@ -121,6 +121,7 @@ class sk_config_data{
 		$printed = false;
 
 		$output = '[';
+		$count = 0;
 
 		if (is_array($active_plugins)) {
 			foreach ($active_plugins as $plugins_key => $plugin) {
@@ -131,6 +132,7 @@ class sk_config_data{
 				$data['Name'] = addslashes($data['Name']);
 				$output .= "{'{$data['Name']}' : '{$data['Version']}'}";
 				$printed = true;
+				$count++;
 			}
 		}
 
@@ -141,10 +143,11 @@ class sk_config_data{
 				$plugin['Name'] = addslashes($plugin['Name']);
 				$output .= "{'{$plugin['Name']}' : '{$plugin['Version']}'}";
 				$printed = true;
+				$count++;
 			}
 		}
 		$output .= ']';
-		return $output;
+		return array('plugins' => $output, 'count' => $count);
 	}
 
 	function get_user_role(){

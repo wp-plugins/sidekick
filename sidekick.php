@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.8
 Tested up to: 4.0
-Version: 1.6.15
+Version: 1.6.16
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -111,12 +111,6 @@ class Sidekick{
 
 			if (isset($_POST['option_page']) && $_POST['option_page'] == 'sk_license') {
 
-				if (isset($_POST['first_name']) && $_POST['first_name'])
-					update_option('sk_first_name',$_POST['first_name']);
-
-				if (isset($_POST['email']) && $_POST['email'])
-					update_option('sk_email',$_POST['email']);
-
 				if (isset($_POST['activation_id']) && $_POST['activation_id']){
 					$result = $this->activate(true);
 				} else {
@@ -145,8 +139,6 @@ class Sidekick{
 		}
 
 		$activation_id = get_option( 'sk_activation_id' );
-		$email         = get_option( 'sk_email' );
-		$first_name    = get_option( 'sk_first_name' );
 		$sk_track_data = get_option( 'sk_track_data' );
 		$current_user  = wp_get_current_user();
 		$status        = 'Free';
@@ -157,9 +149,6 @@ class Sidekick{
 			$check_activation       = $this->activate(true);
 			$status = 'Checking...';
 		}
-
-		if (!$first_name) $first_name = $current_user->user_firstname;
-		if (!$email) $email           = $current_user->user_email;
 
 		global $wp_version;
 		if (version_compare($wp_version, '3.7', '<=')) {
@@ -217,7 +206,7 @@ class Sidekick{
 
 		$user_role               = $sk_config_data->get_user_role();
 		$site_url                = $sk_config_data->get_domain();
-		$installed_plugins       = $sk_config_data->get_plugins();
+		$plugin_data             = $sk_config_data->get_plugins();
 		$disabled_wts            = $sk_config_data->get_disabled_wts();
 		$current_url             = $sk_config_data->get_current_url();
 		$post_types              = $sk_config_data->get_post_types();
@@ -227,6 +216,9 @@ class Sidekick{
 		$post_statuses           = $sk_config_data->get_post_statuses();
 		$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
 		$number_of_themes        = $sk_config_data->get_themes();
+
+		$installed_plugins       = $plugin_data['plugins'];
+		$plugin_count            = $plugin_data['count'];
 
 		// $sk_composer_button = true; // BETA
 
@@ -247,6 +239,7 @@ class Sidekick{
 					<?php                     	echo $comments ?>
 					<?php                     	echo $post_statuses ?>
 					<?php                     	echo $post_types_and_statuses ?>
+					plugin_count: 				<?php echo $plugin_count ?>,
 					disable_wts:              	<?php echo $disabled_wts ?>,
 					installed_plugins:        	<?php echo $installed_plugins ?>,
 					is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
@@ -412,9 +405,6 @@ class Sidekick{
 			window._gaq.push(['sk._trackEvent', 'Plugin - Deactivate', '', <?php echo plugin_version ?>, 0,true]);
 		</script>
 		<?php
-		delete_option( 'sk_activation_id' );
-		delete_option( 'sk_first_name' );
-		delete_option( 'sk_email' );
 		delete_option( 'sk_activated' );
 	}
 }
