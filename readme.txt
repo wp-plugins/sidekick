@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 1.6.16
+Stable tag: 1.6.17
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
