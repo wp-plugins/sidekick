@@ -271,7 +271,7 @@ class Sidekick{
 					// Generic Info
 					just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 					platform_version:         	null,
-					plugin_version:           	'<?php echo $plugin_data["Version"] ?>',
+					plugin_version:           	'1.6.16',
 					show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 					// URLS

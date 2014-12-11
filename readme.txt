@@ -130,6 +130,9 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
+= 1.6.17 =
+* Fixed PHP warning on plugin version
+
 = 1.6.16 =
 * Changed deactivation flow so user gets to keep their activation id
 
