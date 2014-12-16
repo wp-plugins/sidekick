@@ -86,6 +86,7 @@ class sk_config_data{
 		foreach ($data->allcaps as $cap => $val) {
 			$cap = sanitize_title($cap);
 			$cap = str_replace('-', '_', $cap);
+			if (!$val) $val = 0;
 			$output .= "\n 						cap_{$cap} : $val,";
 		}
 		return $output;
