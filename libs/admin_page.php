@@ -1,5 +1,3 @@
-<?php global $SK_PAID_LIBRARY_FILE, $SK_FREE_LIBRARY_FILE ?>
-
 <style type="text/css">
 
 	.wrapper_main{
@@ -22,12 +20,12 @@
 		margin: 0;
 	}
 
-	.wrapper_main .box{
-		-webkit-box-flex: 1;      /* OLD - iOS 6-, Safari 3.1-6 */
-		-moz-box-flex:    1;         /* OLD - Firefox 19- */
-		-webkit-flex:     1;          /* Chrome */
-		-ms-flex:         1;              /* IE 10 */
-		flex:             1;                  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+	.wrapper_main .sk_box{
+		-webkit-box-flex: 1;
+		-moz-box-flex:    1;
+		-webkit-flex:     1;
+		-ms-flex:         1;
+		flex:             1;
 		max-width:        50%;
 	}
 
@@ -38,7 +36,7 @@
 		flex-direction: column;
 	}
 
-	.wrapper_left .box{
+	.wrapper_left .sk_box{
 		max-width:  100%;
 	}
 
@@ -49,7 +47,7 @@
 		flex-direction:         column;
 	}
 
-	.wrapper_right .box{
+	.wrapper_right .sk_box{
 		max-width:  100%;
 	}
 
@@ -69,17 +67,46 @@
 		flex-wrap:              wrap;
 	}
 
-	.wrapper_wts .box{
-		-webkit-flex-grow: 1;
-		-moz-flex-grow:    1;
-		-ms-flex-grow:     1;
-		flex-grow:         1;
-		min-width:         50%;
+	.sk_bucket ul{
+		display:                -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+		display:                -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+		display:                -ms-flexbox;      /* TWEENER - IE 10 */
+		display:                -webkit-flex;     /* NEW - Chrome */
+		display:                flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
+		-webkit-flex-direction: row;
+		-moz-flex-direction:    row;
+		-ms-flex-direction:     row;
+		flex-direction:         row;
+		-webkit-flex-wrap:      wrap;
+		-moz-flex-wrap:         wrap;
+		-ms-flex-wrap:          wrap;
+		flex-wrap:              wrap;
 	}
 
-	.wrapper_wts .box span{
+	.sk_bucket ul div{
+		-webkit-flex-grow: 2;
+		-moz-flex-grow:    2;
+		-ms-flex-grow:     2;
+		flex-grow:         2;
+		min-width:         50%;
+		max-width:         50%;
+	}
+
+
+
+	.wrapper_wts .sk_product{
+		min-width: 100%;
+	}
+
+	.configure{
+		display: none;
+	}
+
+
+
+	.wrapper_wts .sk_box span{
 		padding: 3px;
-		display: block;
+		/*display: block;*/
 	}
 
 	.well{
@@ -93,6 +120,10 @@
 		overflow:         hidden;
 	}
 
+	.advanced{
+		display: none;
+	}
+
 	.sidekick_admin a{
 		color: #F2641E;
 	}
@@ -100,6 +131,8 @@
 	.sidekick_admin ul{
 		margin-left: 20px;
 	}
+
+
 
 	.sidekick_admin ul li{
 		list-style-type: disc;
@@ -151,59 +184,197 @@
 		width: 100%;
 	}
 
+	span.select_all{
+		cursor:          pointer;
+		color:           #F2641E;
+		text-decoration: underline;
+	}
+
+	.sk_bucket{
+		margin-top:       5px;
+		background-color: #F1F1F1;
+		padding:          5px;
+		list-style-type:  none;
+	}
+
+	.sidekick_admin ul li.sk_walkthrough{
+		list-style-type: none;
+		padding-left:    0px;
+		margin:          0px;
+		min-width:       47%;
+		max-width:       47%;
+		margin-bottom:   5px;
+	}
+
+	.sidekick_admin ul li.sk_walkthrough span{
+		margin-left: -20px;
+	}
+
+	.sidekick_admin ul li.sk_walkthrough span.title{
+		margin-left: 0px;
+		padding-right: 20px;
+	}
+
 </style>
 
 
 <script type="text/javascript">
 
 	function sk_populate(data){
-		var passed_walkthroughs = window.sidekick.compatibilityModel.get('passed_walkthroughs');
-		var already_done = [];
 
-		_.each(passed_walkthroughs,function(item,key){
-			var checked = false;
-			var selected = false;
+		jQuery('.sk_walkthrough_list').html('');
 
-			if (!already_done[item.id]) {
-				already_done[item.id] = true;
-				if (jQuery.inArray(item.id,sk_config.disable_wts) > -1) {
-					checked = 'CHECKED'
-				};
-				if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id == item.id) {
-					selected = 'SELECTED';
-				};
+		var sk_prod_counter = 1;
 
-				jQuery('.sk_walkthrough_list').append('<div class="box"><span><input type="checkbox" ' + checked + ' value="' + item.id + '" name="disable_wts[]">' + item.title + '<span></div>');
-				jQuery('[name="sk_autostart_walkthrough_id"]').append('<option ' + selected + ' value="' + item.id + '">' + item.title + '</option>');
+
+		_.each(data.products,function(item,key){
+
+			var last = false;
+			sk_prod_counter++;
+
+			if (!item.cacheId) {
+				return false;
 			};
-		})
 
-	}
+			console.log('data.products %o', data.products);
 
-	jQuery(document).ready(function($) {
-		sk_populate();
-		if (sk_config.library_paid_file) {
+			console.log('sk_prod_counter %o', sk_prod_counter);
+
+
+			if (_.size(data.products) == sk_prod_counter) {
+				last = true;
+			};
+
+			jQuery('.sk_walkthrough_list').append('<div class="sk_product" id="' + item.cacheId + '"><b>' + item.name + '</b> (<span class="select_all">Toggle All</span>)</div>');
+
 			jQuery.ajax({
-				url:'<?php echo $SK_PAID_LIBRARY_FILE ?>',
-				type:'HEAD',
-				error: function(data){
-					jQuery('.sk_license_status span').html('Invalid Key').css({color: 'red'});
-					jQuery('.sk_upgrade').show();
-				},
-				success: function(data){
-					if (typeof sk_paid_library !== 'undefined') {
-						if (_.size(sk_paid_library.buckets) > 0) {
-							jQuery('.sk_license_status').html('Valid').css({color: 'green'});
-						} else {
-							jQuery('.sk_license_status span').html('Expired').css({color: 'orange'});
-							jQuery('.sk_upgrade').show();
-						}
+				url:sk_config.library + 'products/cache?cacheId=' + item.cacheId,
+				cacheId: item.cacheId,
+				last: last,
+				success: function(data,cacheId){
+
+					if (data.payload.buckets) {
+
+						// Clear out disabled wts so that compatibility doesn't screen out wts from this screen. Put it back after we're done.
+						var currently_disabled_wts = sk_config.disable_wts;
+						sk_config.disable_wts = null;
+
+						console.groupCollapsed('Checking Compatibilities');
+
+						_.each(data.payload.buckets,function(bucket,key){
+
+							jQuery('#' + item.cacheId).append("<li class='sk_bucket' id='sk_bucket_" + bucket.id + "'>" + bucket.name + " (<span class=\"select_all\">Toggle All</span>)<ul></ul></li>");
+
+							_.each(bucket.walkthroughs,function(walkthrough,key){
+								if (sidekick.compatibilityModel.check_compatiblity_array(this.all_walkthroughs[key])){
+									var checked = false;
+									var selected = false;
+
+									if (jQuery.inArray(parseInt(key),currently_disabled_wts) > -1) {
+										checked = 'CHECKED'
+									};
+
+									if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id == parseInt(key)) {
+										selected = 'SELECTED';
+									};
+
+									jQuery('#sk_bucket_' + this.bucket_id).find('ul').append("<li class=\" sk_walkthrough\"><span><input type=\"checkbox\" " + checked + " value='" + key + "' name=\"disable_wts[]\"></span><span class='title'>" + this.all_walkthroughs[key].title + "</span></li>");
+									jQuery('[name="sk_autostart_walkthrough_id"]').append('<option ' + selected + ' value="' + key + '">' + this.all_walkthroughs[key].title + '</option>');
+
+								}
+							},{bucket_id: bucket.id,all_walkthroughs: data.payload.walkthroughs})
+						}); //
+
+						console.groupEnd();//
+
+					} else { //
+						jQuery('#' + this.cacheId).remove();
+					}
+
+					console.log('last %o', last);
+
+
+					if (last) {
+						jQuery('.sk_bucket').not(':has(li)').remove();
+
+						jQuery('.select_all').click(function(){
+							var checkBoxes = jQuery(this).parent().find('input[type="checkbox"]');
+							_.each(checkBoxes,function(item,key){
+								jQuery(item).attr("checked", !jQuery(item).attr("checked"));
+							});
+						});
+
+						jQuery('[name="disable_wts[]"]').click(function(e){
+
+							if (e.currentTarget.checked) {
+								jQuery('input[value="' + e.currentTarget.value + '"]').attr('checked',true);
+							} else {
+								jQuery('input[value="' + e.currentTarget.value + '"]').attr('checked',false);
+							}
+
+						});
+
+						jQuery('.configure').show();
+
+						// Set the disable_wts back to original state
+						sk_config.disable_wts = currently_disabled_wts;
+
 					};
 				}
 			});
+		}); //
+	} //
+
+	function load_sk_library($key){
+
+		if ($key) {
+			var sk_url = sk_config.library + 'domains/cache?domainKey=' + sk_config.activation_id;
+		} else {
+			var sk_url = sk_config.library + 'platform/cache?platformId=1';
+		}
+
+		jQuery.ajax({
+			url: sk_url,
+			error: function(data){
+				jQuery('.sk_license_status span').html('Invalid Key').css({color: 'red'});
+				jQuery('.sk_upgrade').show();
+			},
+			success: function(data){
+
+				if (sk_config.library + 'domains/cache?domainKey=' + sk_config.activation_id == sk_url) {
+					if (!data.payload) {
+						jQuery('.sk_license_status').html('Invalid Key').css({color: 'red'});
+					} else {
+						jQuery('.sk_license_status').html('Valid').css({color: 'green'});
+					}
+				}
+
+				if (!data.payload) {
+					load_sk_library();
+					return false;
+				}
+
+				if (data.payload) {
+					sk_populate(data.payload);
+				}
+			}
+		})
+	}
+
+	jQuery(document).ready(function($) {
+		if (sk_config.activation_id) {
+			load_sk_library(sk_config.activation_id);
 		} else {
 			jQuery('.sk_upgrade').show();
+			jQuery('.configure').hide();
 		}
+
+		jQuery('h3:contains(Configure)').click(function(e){
+			if (e.shiftKey) {
+				jQuery('.advanced').show();
+			};
+		})
+
 	});
 
 </script>
@@ -233,9 +404,9 @@
 
 <div class="sidekick_admin wrapper_main">
 
-	<div class="box left">
+	<div class="sk_box left">
 		<div class="wrapper_left">
-			<div class="box license">
+			<div class="sk_box license">
 				<div class="well">
 					<?php if (!$error): ?>
 						<h3>My Sidekick Account</h3>
@@ -282,18 +453,18 @@
 				</div>
 			</div>
 
-			<div class="box composer">
+			<div class="sk_box composer">
 				<div class="well">
 					<h3>Build Your Own Walkthroughs - Get Composer</h3>
-					<a href='http://www.sidekick.pro/plans/?utm_source=plugin&utm_medium=settings&utm_campaign=composerbeta' target='_blank'><div class='composer_beta_button'>Join the<br/>Composer Beta</div></a>
+					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Get<br/>Composer</div></a>
 					<ul>
-						<li>Join the <a href='http://www.sidekick.pro/plans/' target='_blank'>Composer Beta</a> now!</li>
-						<li><a href="http://www.sidekick.pro/plans/" target="_blank">Check out our Composer Plans</a></li>
+						<li>Get more info about <a href='http://www.sidekick.pro/composer' target='_blank'>Composer</a> now!</li>
+						<li><a href="http://www.sidekick.pro/plans/create_wp_walkthroughs/" target="_blank">Check out our Composer Plans</a></li>
 					</ul>
 				</div>
 			</div>
 
-			<div class="box you_should_know">
+			<div class="sk_box you_should_know">
 				<div class="well">
 					<h3>Few Things you should know:</h3>
 					<div class="">
@@ -307,12 +478,43 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="sk_box advanced">
+				<div class="well">
+					<h3>Advanced</h3>
+					<form method="post">
+						<table class="form-table">
+							<tbody>
+								<tr valign="top">
+									<th scope="row" valign="top">API</th>
+									<td>
+										<select name='sk_api'>
+											<?php if (get_option('sk_api') == 'production'): ?>
+												<option value='production' SELECTED>Production</option>
+												<option value='staging'>Staging</option>
+											<?php else: ?>
+												<option value='production' >Production</option>
+												<option value='staging' SELECTED>Staging</option>
+											<?php endif ?>
+										</select>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<?php wp_nonce_field( 'update_sk_settings' ); ?>
+						<input class='button button-primary' type='submit' value='Save'/>
+					</form>
+
+				</div>
+			</div>
+
 		</div>
 	</div>
 
-	<div class="box right">
+	<div class="sk_box right">
 		<div class="wrapper_right">
-			<div class="box">
+			<div class="sk_box configure">
 				<div class="well">
 					<h3>Configure</h3>
 
@@ -329,14 +531,17 @@
 						<h4>Turn Off Walkthroughs</h4>
 
 						<p>Below you can turn off specific Walkthroughs for this website.</p>
-						<div class='sk_walkthrough_list wrapper_wts'></div>
+						<div class='sk_walkthrough_list wrapper_wts'>
+							Loading...
+						</div>
 						<input class='button button-primary' type='submit' value='Save'/>
+						<input type='hidden' name='setting_disabled' value='true'/>
 						<?php wp_nonce_field( 'update_sk_settings' ); ?>
 					</form>
 				</div>
 			</div>
 
-			<div class="box love">
+			<div class="sk_box love">
 				<div class="well">
 					<h3>Love the Sidekick plugin?</h3>
 					<ul>

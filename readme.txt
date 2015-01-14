@@ -1,10 +1,10 @@
 === Sidekick ===
-Contributors: raptor235,benfox,andymci
+Contributors: raptor235,benfox,kyle_white,bitwit,riavalon,JeffLam
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.0
-Stable tag: 1.6.19
+Stable tag: 2.0.0
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,7 +52,7 @@ With the user’s permission, Sidekick will collect anonymous data to track walk
 
 1. In /wp-admin/, go to Plugins > Add New.
 2. Search for "Sidekick".
-3. Look for "Sidekick” (should be the only result).
+3. Look for "Sidekick” (should be the only result) .
 4. Click Install Now.
 5. After installation has completed, click Activate Plugin.
 
@@ -130,8 +130,8 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 
 == Changelog ==
 
-= 1.6.19 =
-* Fixed PHP null vlaue capability
+= 2.0.0 =
+* Major Composer Release
 
 = 1.6.17 =
 * Fixed PHP warning on plugin version

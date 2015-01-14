@@ -6,16 +6,15 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 3.8
 Tested up to: 4.0
-Version: 1.6.19
+Version: 2.0.0
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
 define('SK_LIBRARY_VERSION',6);
-define('DEFAULT_ACTIVATION_ID','xxxxxxxx-xxxx-xxxx-xxxx-xxxxfree');
-define('SK_PATH','sidekick/latest/wordpress');
-define('COMPOSER_PATH','cdn/composer');
-if (!defined('SK_USE_CDN'))	define('SK_USE_CDN',true);
+define('PLAYER_PATH','tag/latest');
+define('COMPOSER_PATH','tag/latest');
+define('DEFAULT_ACTIVATION_ID','');
 
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -27,32 +26,15 @@ if ( ! function_exists('mlog')) {
 class Sidekick{
 
 	function __construct(){
-		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE, $SK_GLOBAL_VERSION;
+		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE;
 
-		if ($this->is_https()) {
-			if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','https://api.sidekick.pro/');
-			if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','https://library.sidekick.pro/api');
-			if (defined('SK_USE_CDN') && SK_USE_CDN) {
-				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','https://pullvod-flowpress.netdna-ssl.com/');
-			} else {
-				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','https://library.sidekick.pro/');
-			}
-		} else {
-			if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','http://api.sidekick.pro/');
-			if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','http://library.sidekick.pro/api');
-			if (defined('SK_USE_CDN') && SK_USE_CDN) {
-				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','http://pullvod.flowpress.netdna-cdn.com/');
-			} else {
-				if (!defined('SK_DOMAIN')) define('SK_DOMAIN','http://library.sidekick.pro/');
-			}
-		}
+		if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','//tracking.sidekick.pro/');
+		if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','//apiv2.sidekick.pro');
+		if (!defined('SK_API')) define('SK_API','//apiv2.sidekick.pro/');
+		if (!defined('SK_LIBRARY')) define('SK_LIBRARY','//librarycache.sidekick.pro/');
+		if (!defined('SK_ASSETS')) define('SK_ASSETS','//assets.sidekick.pro/');
+		if (!defined('SK_AUDIO')) define('SK_AUDIO','//audio.sidekick.pro/');
 
-		$SK_GLOBAL_VERSION    = (strpos($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'], '.sidekick')) ? intval($_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'],36) . '&d=' . date('m-d-y-G'): date('m-d-y-G');
-		$SK_FREE_LIBRARY_FILE = SK_DOMAIN . "library/v" . SK_LIBRARY_VERSION . "/releases/" . DEFAULT_ACTIVATION_ID . "/library.js";
-
-		if ($activation_id = get_option("sk_activation_id")) {
-			$SK_PAID_LIBRARY_FILE = SK_DOMAIN . "library/v" . SK_LIBRARY_VERSION . "/releases/{$activation_id}/library.js";
-		}
 	}
 
 	function enqueue_required(){
@@ -76,18 +58,8 @@ class Sidekick{
 	}
 
 	function enqueue(){
-		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE, $SK_GLOBAL_VERSION;
-
-		$activation_id = get_option("sk_activation_id");
-
-		if ($activation_id) {
-			wp_enqueue_script("sk_paid_library" , $SK_PAID_LIBRARY_FILE,null,$SK_GLOBAL_VERSION);
-			wp_enqueue_script("sk_free_library" , $SK_FREE_LIBRARY_FILE,array('sk_paid_library'),$SK_GLOBAL_VERSION);
-		} else {
-			wp_enqueue_script("sk_free_library" , $SK_FREE_LIBRARY_FILE,array(),$SK_GLOBAL_VERSION);
-		}
-
-		wp_enqueue_script('sidekick'   		,SK_DOMAIN . "cdn/" . SK_PATH . "/sidekick.min.js",	array('sk_free_library','backbone','jquery','underscore','jquery-effects-highlight'), $SK_GLOBAL_VERSION);
+		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE;
+		wp_enqueue_script('sidekick'   		,"//player.sidekick.pro/" . PLAYER_PATH . "/sidekick.min.js",	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
 		wp_enqueue_style('wp-pointer');
 		wp_enqueue_script('wp-pointer');
 	}
@@ -133,12 +105,18 @@ class Sidekick{
 				die('<script>window.open("' . get_site_url() . '/wp-admin/options-general.php?page=sidekick","_self")</script>');
 			}
 
+			if (isset($_POST['sk_api'])) {
+				update_option( 'sk_api', $_POST['sk_api'] );
+			} else {
+				delete_option('sk_api');
+			}
+
 			if (isset($_POST['sk_autostart_walkthrough_id'])){
 				update_option('sk_autostart_walkthrough_id',$_POST['sk_autostart_walkthrough_id']);
 			}
 		}
 
-		$activation_id = get_option( 'sk_activation_id' );
+		$activation_id = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : '');
 		$sk_track_data = get_option( 'sk_track_data' );
 		$current_user  = wp_get_current_user();
 		$status        = 'Free';
@@ -185,7 +163,7 @@ class Sidekick{
 	}
 
 	function footer(){
-		global $current_user, $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE, $SK_GLOBAL_VERSION;
+		global $current_user, $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE;
 
 		require_once('libs/sk_config_data.php');
 
@@ -233,75 +211,116 @@ class Sidekick{
 
 				var sk_config = {
 					// Compatibility
+
+					compatibilities: {
+						<?php                     	echo $post_types ?>
+						<?php                     	echo $taxonomies ?>
+						<?php                     	echo $user_data ?>
+						<?php                     	echo $comments ?>
+						<?php                     	echo $post_statuses ?>
+						<?php                     	echo $post_types_and_statuses ?>
+						installed_plugins:        	<?php echo $installed_plugins ?>,
+						plugin_count: 				<?php echo $plugin_count ?>,
+						is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
+						number_of_themes:         	<?php echo $number_of_themes ?>,
+						installed_theme:          	'<?php echo $theme->Name ?>',
+						main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
+						theme_version:            	'<?php echo $theme->Version ?>',
+						user_level:               	'<?php echo $user_role ?>',
+						main_soft_name: 'WordPress',
+						role:               		'<?php echo $user_role ?>'
+					},
+
 					<?php                     	echo $post_types ?>
 					<?php                     	echo $taxonomies ?>
 					<?php                     	echo $user_data ?>
 					<?php                     	echo $comments ?>
 					<?php                     	echo $post_statuses ?>
 					<?php                     	echo $post_types_and_statuses ?>
-					plugin_count: 				<?php echo $plugin_count ?>,
-					disable_wts:              	<?php echo $disabled_wts ?>,
 					installed_plugins:        	<?php echo $installed_plugins ?>,
 					is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
 					number_of_themes:         	<?php echo $number_of_themes ?>,
 					installed_theme:          	'<?php echo $theme->Name ?>',
-					main_soft_name:           	'WordPress',
 					main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
 					theme_version:            	'<?php echo $theme->Version ?>',
 					user_level:               	'<?php echo $user_role ?>',
+					role:               		'<?php echo $user_role ?>',
+
+					disable_wts:              	<?php echo $disabled_wts ?>,
+					main_soft_name:           	'WordPress',
 
 					// User Settings
-					activation_id:            	'<?php echo $activation_id ?>',
-					auto_open_root_bucket_id: 	79,
+					activation_id:                  '<?php echo $activation_id ?>',
+					auto_open_root_bucket_id:       79,
+					auto_open_product:              'default',
+					disable_wts_in_root_bucket_ids: [5],
+
 					autostart_walkthrough_id: 	<?php echo $autostart_walkthrough_id ?>,
 					sk_composer_button:       	<?php echo ($sk_composer_button ? "true" : "false") ?>,
 					track_data:               	'<?php echo $sk_track_data ?>',
 					user_email:               	'<?php echo $user_email ?>',
 
 					// Toggles
-					path_not_found_continue:  	true,
-					show_powered_by:          	true,
-					show_powered_by_link:     	true,
-					sk_autostart_only_once:   	true,
-					use_native_controls:      	false,
+					path_not_found_continue: true,
+					show_powered_by:         true,
+					show_powered_by_link:    true,
+					sk_autostart_only_once:  true,
+					use_native_controls:     false,
+					composer_upgrade_off:    false,
+					basics_upgrade:          true,
 
 					// Platform Info
-					library_version:          	'<?php echo (defined("SK_LIBRARY_VERSION") ? SK_LIBRARY_VERSION : '') ?>',
+					library_version: 			2,
 
 					// Generic Info
 					just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 					platform_version:         	null,
-					plugin_version:           	'1.6.19',
+					plugin_version:           	'2.0.0',
 					show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
+					// SIDEKICK URLS
+					assets:       				'<?php echo SK_ASSETS ?>',
+					api:          				'<?php echo SK_API ?>',
+					tracking_api: 				'<?php echo SK_TRACKING_API ?>',
+					sk_path:      				'<?php echo PLAYER_PATH ?>',
+					audio:        				'<?php echo SK_AUDIO ?>',
+					library: 					'<?php echo SK_LIBRARY ?>',
+
 					// URLS
-					site_url:                 	'<?php echo $site_url ?>',
-					domain:            			'<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
-					domain_used:       			'<?php echo SK_DOMAIN ?>',
-					plugin_url:        			'<?php echo admin_url("admin.php?page=sidekick") ?>',
-					base_url:          			'<?php echo site_url() ?>',
-					current_url:       			'<?php echo $current_url ?>',
-					tracking_api:      			'<?php echo SK_TRACKING_API ?>',
-					sk_path:           			'<?php echo SK_PATH ?>',
-					library_free_file: 			'<?php echo (isset($SK_FREE_LIBRARY_FILE) ? $SK_FREE_LIBRARY_FILE : '') ?>',
-					library_paid_file: 			'<?php echo (isset($SK_PAID_LIBRARY_FILE) ? $SK_PAID_LIBRARY_FILE : '') ?>',
-					rand_file_version:        	'<?php echo $SK_GLOBAL_VERSION ?>'
+					site_url:                 '<?php echo $site_url ?>',
+					domain:                   '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
+					domain_used:              '//player.sidekick.pro/',
+					plugin_url:               '<?php echo admin_url("admin.php?page=sidekick") ?>',
+					base_url:                 '<?php echo site_url() ?>',
+					current_url:              '<?php echo $current_url ?>',
+					// library_free_file:     '<?php echo (isset($SK_FREE_LIBRARY_FILE) ? $SK_FREE_LIBRARY_FILE : '') ?>',
+					// library_paid_file:     '<?php echo (isset($SK_PAID_LIBRARY_FILE) ? $SK_PAID_LIBRARY_FILE : '') ?>',
+					//,
+					// fallback_notfication_mp3: '//assets.sidekick.pro/fallback.mp3'
 				}
 
 				var skc_config = {
-					js:          '<?php echo SK_DOMAIN . COMPOSER_PATH ?>/composer.source.js?<?php echo $SK_GLOBAL_VERSION ?>',
-					css:         '<?php echo SK_DOMAIN . COMPOSER_PATH ?>/style.css?<?php echo $SK_GLOBAL_VERSION ?>',
-					apiUrl:      '<?php echo SK_COMPOSER_API ?>',
-					baseSiteUrl: sk_config.base_url
+					js:                  '//composer.sidekick.pro/<?php echo COMPOSER_PATH ?>/sidekick-composer.js',
+					css:                 '//composer.sidekick.pro/<?php echo COMPOSER_PATH ?>/sidekick-composer.css',
+					apiUrl:              '<?php echo SK_COMPOSER_API ?>',
+					baseSiteUrl:         sk_config.base_url,
+					compatibilities:     sk_config.compatibilities,
+					audioBaseUrl:        '<?php echo SK_AUDIO ?>',
+					audioPlaceholderUrl: '//assets.sidekick.pro/walkthrough-audio-placeholder.mp3',
+					siteAjaxUrl:         window.ajaxurl || '',
+					trackingUrl:         '//tracking.sidekick.pro/'
 				}
 
 			</script>
 		<?php endif ?>
+
+
+
 		<?php
 	}
 
 	function track($data){
-		$response = wp_remote_post( SK_TRACKING_API . "v3/events/", array(
+		$response = wp_remote_post( SK_TRACKING_API . 'event', array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'redirection' => 5,
@@ -315,26 +334,8 @@ class Sidekick{
 	}
 
 	function activate($return = false){
-		if ($_POST['activation_id']) {
-
-			$library_file = SK_DOMAIN . "library/v" . SK_LIBRARY_VERSION . "/releases/{$_POST['activation_id']}/library.js";
-			$ch = curl_init($library_file);
-			curl_setopt($ch, CURLOPT_NOBODY, true);
-			curl_exec($ch);
-			$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
+		if (isset($_POST['activation_id'])) {
 			update_option('sk_activation_id',$_POST['activation_id']);
-			if ($retcode == 200) {
-				if ($return)
-					return 1;
-				die(json_encode(array('success' => 1)));
-			} else {
-				if ($return)
-					return $retcode;
-				die(json_encode(array('error' => $retcode)));
-			}
-		} else {
-			die(json_encode(array('error' => 'No Activation ID')));
 		}
 	}
 
@@ -420,7 +421,7 @@ add_action('wp_ajax_sk_save', array($sidekick,'ajax_save'));
 add_action('admin_notices', array($sidekick,'admin_notice'));
 add_action('admin_init', array($sidekick,'admin_notice_ignore'));
 
-if (isset($_POST['disable_wts'])) {
+if (isset($_POST['setting_disabled'])) {
 	$sidekick->set_disabled_wts();
 }
 
@@ -431,3 +432,4 @@ if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('
 	add_action('admin_footer', array($sidekick,'footer'));
 	add_action('customize_controls_print_footer_scripts', array($sidekick,'footer'));
 }
+
