@@ -285,6 +285,8 @@
 							},{bucket_id: bucket.id,all_walkthroughs: data.payload.walkthroughs})
 						}); //
 
+						jQuery('.configure').show(); //
+
 						console.groupEnd();//
 
 					} else { //
@@ -314,7 +316,7 @@
 
 						});
 
-						jQuery('.configure').show();
+
 
 						// Set the disable_wts back to original state
 						sk_config.disable_wts = currently_disabled_wts;
@@ -369,7 +371,7 @@
 			jQuery('.configure').hide();
 		}
 
-		jQuery('h3:contains(Configure)').click(function(e){
+		jQuery('h3:contains(My Sidekick Account)').click(function(e){
 			if (e.shiftKey) {
 				jQuery('.advanced').show();
 			};
@@ -455,11 +457,11 @@
 
 			<div class="sk_box composer">
 				<div class="well">
-					<h3>Build Your Own Walkthroughs - Get Composer</h3>
-					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Get<br/>Composer</div></a>
+					<h3>Build Your Own Walkthroughs</h3>
+					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>
 					<ul>
-						<li>Get more info about <a href='http://www.sidekick.pro/composer' target='_blank'>Composer</a> now!</li>
-						<li><a href="http://www.sidekick.pro/plans/create_wp_walkthroughs/" target="_blank">Check out our Composer Plans</a></li>
+						<li>Get more info about <a href='http://www.sidekick.pro/how-it-works/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'>Custom Walkthroughs</a> now!</li>
+						<li><a href="http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer" target="_blank">Check out our custom walkthroughs plans</a></li>
 					</ul>
 				</div>
 			</div>
@@ -548,8 +550,8 @@
 						<li>Please help spread the word!</li>
 						<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://sidekick.pro" data-text="I use @sidekickhelps for the fastest and easiest way to learn WordPress." data-via="sidekickhelps" data-size="large">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li>
 						<li>Like SIDEKICK? Please leave us a 5 star rating on <a href='http://WordPress.org' target='_blank'>WordPress.org</a></li>
-						<li><a href="http://www.sidekick.pro/wordpress/modules/wordpress-core-module-premium/">Check out the full WordPress Core Premium (150+ Walkthroughs)</a></li>
-						<li><a href="http://wordpress.org/support/plugin/sidekick" target="_blank"><strong>Visit the plugin Help &amp; Support page</strong></a>.</li>
+						<li><a href="http://www.sidekick.pro/plans/wordpress-basics/">Sign up for a full WordPress Basics package</a></li>
+						<li><a href="http://support.sidekick.pro/category/85-getting-started" target="_blank"><strong>Visit the SIDEKICK Quick Start guides</strong></a>.</li>
 					</ul>
 				</div>
 			</div>

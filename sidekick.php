@@ -4,9 +4,9 @@
 Plugin Name: Sidekick
 Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
-Requires at least: 3.8
-Tested up to: 4.0
-Version: 2.0.0
+Requires at least: 3.3
+Tested up to: 4.1
+Version: 2.0.1
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -129,12 +129,12 @@ class Sidekick{
 		}
 
 		global $wp_version;
-		if (version_compare($wp_version, '3.7', '<=')) {
-			$error = "Sorry, Sidekick requires WordPress 3.7 or higher to function.";
+		if (version_compare($wp_version, '3.9', '<=')) {
+			$error = "Sorry, Sidekick requires WordPress 3.9 or higher to function.";
 		}
 
 		if (!$activation_id) {
-			$warn = "You're using the <b>free</b> version of Sidekick, to gain full access to the walkthrough library please <a target='_blank' href='http://www.sidekick.pro/wordpress/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>upgrade</a> to the full module.";
+			$warn = "You're using the <b>free</b> version of Sidekick, to upgrade or get your license key, visit your <a target='_blank' href='http://www.sidekick.pro/plans/#/login?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>sign-up</a> or <a target='_blank' href='http://www.sidekick.pro/plans/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>sign-up</a> for a paid plan.";
 		}
 
 		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
@@ -275,7 +275,7 @@ class Sidekick{
 					// Generic Info
 					just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 					platform_version:         	null,
-					plugin_version:           	'2.0.0',
+					plugin_version:           	'2.0.1',
 					show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 					// SIDEKICK URLS
