@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.1
-Stable tag: 2.0.1
+Stable tag: 2.1.0
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,16 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 2.1.0 =
+* Multisite Walkthrough Management Support
+* Multisite Auto Activations
+* Multisite Mass Activations
+* Genesis Framework Support
+* Fixes issues with composer mode and auto play of walkthroughs
+* Fixes issues with select all walkthroughs in settings screen
+* Fixes issues with download of file would resume a walkthrough on click event
+* Fixes issues playing back hotspots in certain cases
 
 = 2.0.1 =
 * Fix walkthrough autostart feature

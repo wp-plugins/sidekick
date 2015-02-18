@@ -4,18 +4,17 @@
 Plugin Name: Sidekick
 Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
-Requires at least: 3.3
-Tested up to: 4.1
-Version: 2.0.1
+Requires at least: 3.8
+Tested up to: 4.0
+Version: 2.1.0
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
 
-define('SK_LIBRARY_VERSION',6);
-define('PLAYER_PATH','tag/latest');
-define('COMPOSER_PATH','tag/latest');
-define('DEFAULT_ACTIVATION_ID','');
 
+if ( ! defined( 'PLAYER_PATH' ) ) define( 'PLAYER_PATH', 'tag/latest' );
+if ( ! defined( 'PLAYER_FILE' ) ) define( 'PLAYER_FILE', 'sidekick.min.js' );
+if ( ! defined( 'COMPOSER_PATH' ) ) define( 'COMPOSER_PATH', 'tag/latest' );
 if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_FILE' ) ) define( 'SK_SL_PLUGIN_FILE', __FILE__ );
@@ -26,15 +25,12 @@ if ( ! function_exists('mlog')) {
 class Sidekick{
 
 	function __construct(){
-		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE;
-
 		if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','//tracking.sidekick.pro/');
 		if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','//apiv2.sidekick.pro');
 		if (!defined('SK_API')) define('SK_API','//apiv2.sidekick.pro/');
 		if (!defined('SK_LIBRARY')) define('SK_LIBRARY','//librarycache.sidekick.pro/');
 		if (!defined('SK_ASSETS')) define('SK_ASSETS','//assets.sidekick.pro/');
 		if (!defined('SK_AUDIO')) define('SK_AUDIO','//audio.sidekick.pro/');
-
 	}
 
 	function enqueue_required(){
@@ -47,6 +43,7 @@ class Sidekick{
 		wp_enqueue_script('jquery-ui-droppable'			, null, array('jquery-ui-core') );
 		wp_enqueue_script('jquery-effects-scale'		, null, array('jquery-ui-core') );
 		wp_enqueue_script('jquery-effects-highlight'	, null, array('jquery-ui-core') );
+		wp_enqueue_script('sidekick-admin'				,plugins_url( '/js/sidekick_admin.js' , __FILE__ ),array( 'jquery' ));
 	}
 
 	function is_https() {
@@ -58,8 +55,7 @@ class Sidekick{
 	}
 
 	function enqueue(){
-		global $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE;
-		wp_enqueue_script('sidekick'   		,"//player.sidekick.pro/" . PLAYER_PATH . "/sidekick.min.js",	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
+		wp_enqueue_script('sidekick'   		,"//player.sidekick.pro/" . PLAYER_PATH . "/" . PLAYER_FILE,	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
 		wp_enqueue_style('wp-pointer');
 		wp_enqueue_script('wp-pointer');
 	}
@@ -77,15 +73,13 @@ class Sidekick{
 	}
 
 	function admin_page(){
-		global $SK_PAID_LIBRARY_FILE, $SK_FREE_LIBRARY_FILE ;
-
 		if ( empty( $_POST ) || check_admin_referer( 'update_sk_settings' ) ) {
 
 			if (isset($_POST['option_page']) && $_POST['option_page'] == 'sk_license') {
 
-				if (isset($_POST['activation_id']) && $_POST['activation_id']){
+				if (isset($_POST['activation_id']) && $_POST['activation_id'] && strpos($_POST['activation_id'], '-xxxx-xxxx') === false){
 					$result = $this->activate(true);
-				} else {
+				} else if (isset($_POST['activation_id']) && strpos($_POST['activation_id'], '-xxxx-xxxx') === false) {
 					delete_option('sk_activation_id');
 				}
 
@@ -110,10 +104,6 @@ class Sidekick{
 			} else {
 				delete_option('sk_api');
 			}
-
-			if (isset($_POST['sk_autostart_walkthrough_id'])){
-				update_option('sk_autostart_walkthrough_id',$_POST['sk_autostart_walkthrough_id']);
-			}
 		}
 
 		$activation_id = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : '');
@@ -134,7 +124,7 @@ class Sidekick{
 		}
 
 		if (!$activation_id) {
-			$warn = "You're using the <b>free</b> version of Sidekick, to upgrade or get your license key, visit your <a target='_blank' href='http://www.sidekick.pro/plans/#/login?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>sign-up</a> or <a target='_blank' href='http://www.sidekick.pro/plans/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>sign-up</a> for a paid plan.";
+			$warn = "You're using the <b>free</b> version of Sidekick, to upgrade or get your license key, visit your <a target='_blank' href='http://www.sidekick.pro/plans/#/login?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>account page</a> or <a target='_blank' href='http://www.sidekick.pro/plans/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade_nag'>sign-up</a> for a paid plan.";
 		}
 
 		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])){
@@ -159,25 +149,42 @@ class Sidekick{
 	}
 
 	function set_disabled_wts(){
-		update_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
+		if (isset($_POST['disable_wts']) && $_POST['disable_wts']) {
+			update_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
+			update_site_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
+		} else {
+			delete_option('sk_disabled_wts');
+			delete_site_option('sk_disabled_wts');
+		}
+	}
+
+	function set_autostart_wt(){
+		if (isset($_POST['sk_autostart_walkthrough_id']) && intval($_POST['sk_autostart_walkthrough_id']) > 0){
+			update_option('sk_autostart_walkthrough_id',$_POST['sk_autostart_walkthrough_id']);
+			update_site_option('sk_autostart_walkthrough_id',$_POST['sk_autostart_walkthrough_id']);
+		} else {
+			delete_option('sk_autostart_walkthrough_id');
+			delete_site_option('sk_autostart_walkthrough_id');
+		}
 	}
 
 	function footer(){
-		global $current_user, $SK_FREE_LIBRARY_FILE, $SK_PAID_LIBRARY_FILE;
+		global $current_user;
 
 		require_once('libs/sk_config_data.php');
 
-		$plugin_data              = get_plugin_data(plugin_dir_path( dirname( __FILE__ ) ) . 'sidekick/sidekick.php');
-		$sk_config_data           = new sk_config_data;
-		$current_user             = wp_get_current_user();
-		$sk_just_activated        = get_option( 'sk_just_activated' );
-		$sk_track_data            = get_option( 'sk_track_data' );
-		$sk_composer_button       = get_option( 'sk_composer_button' );
-		$activation_id            = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : DEFAULT_ACTIVATION_ID);
-		$autostart_walkthrough_id = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : 'null' );
-		$theme                    = wp_get_theme();
-		$not_supported_ie         = false;
-		$user_email               = '';
+		$sk_config_data                   = new sk_config_data;
+		$current_user                     = wp_get_current_user();
+		$sk_just_activated                = get_option( 'sk_just_activated' );
+		$sk_track_data                    = get_option( 'sk_track_data' );
+		$sk_composer_button               = get_option( 'sk_composer_button' );
+		$activation_id                    = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : '');
+		$autostart_network_walkthrough_id = (get_site_option('sk_autostart_walkthrough_id') ? get_site_option('sk_autostart_walkthrough_id') : 'null' );
+		$autostart_walkthrough_id         = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : $autostart_network_walkthrough_id );
+		$custom_class                     = (get_option( "sk_custom_class" ) ? get_option( "sk_custom_class" ) : '');
+		$theme                            = wp_get_theme();
+		$not_supported_ie                 = false;
+		$user_email                       = '';
 		if ($sk_track_data) {
 			$user_email = $current_user->user_email;
 		}
@@ -186,6 +193,7 @@ class Sidekick{
 		$site_url                = $sk_config_data->get_domain();
 		$plugin_data             = $sk_config_data->get_plugins();
 		$disabled_wts            = $sk_config_data->get_disabled_wts();
+		$disabled_network_wts    = $sk_config_data->get_disabled_network_wts();
 		$current_url             = $sk_config_data->get_current_url();
 		$post_types              = $sk_config_data->get_post_types();
 		$taxonomies              = $sk_config_data->get_taxonomies();
@@ -194,6 +202,10 @@ class Sidekick{
 		$post_statuses           = $sk_config_data->get_post_statuses();
 		$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
 		$number_of_themes        = $sk_config_data->get_themes();
+		$frameworks              = $sk_config_data->get_framework();
+
+
+
 
 		$installed_plugins       = $plugin_data['plugins'];
 		$plugin_count            = $plugin_data['count'];
@@ -218,6 +230,7 @@ class Sidekick{
 						<?php                     	echo $user_data ?>
 						<?php                     	echo $comments ?>
 						<?php                     	echo $post_statuses ?>
+						<?php                     	echo $frameworks ?>
 						<?php                     	echo $post_types_and_statuses ?>
 						installed_plugins:        	<?php echo $installed_plugins ?>,
 						plugin_count: 				<?php echo $plugin_count ?>,
@@ -227,38 +240,24 @@ class Sidekick{
 						main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
 						theme_version:            	'<?php echo $theme->Version ?>',
 						user_level:               	'<?php echo $user_role ?>',
-						main_soft_name: 'WordPress',
+						main_soft_name: 			'WordPress',
 						role:               		'<?php echo $user_role ?>'
 					},
 
-					<?php                     	echo $post_types ?>
-					<?php                     	echo $taxonomies ?>
-					<?php                     	echo $user_data ?>
-					<?php                     	echo $comments ?>
-					<?php                     	echo $post_statuses ?>
-					<?php                     	echo $post_types_and_statuses ?>
-					installed_plugins:        	<?php echo $installed_plugins ?>,
-					is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
-					number_of_themes:         	<?php echo $number_of_themes ?>,
-					installed_theme:          	'<?php echo $theme->Name ?>',
-					main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
-					theme_version:            	'<?php echo $theme->Version ?>',
-					user_level:               	'<?php echo $user_role ?>',
-					role:               		'<?php echo $user_role ?>',
-
 					disable_wts:              	<?php echo $disabled_wts ?>,
+					disable_network_wts: 		<?php echo $disabled_network_wts ?>,
 					main_soft_name:           	'WordPress',
 
 					// User Settings
 					activation_id:                  '<?php echo $activation_id ?>',
 					auto_open_root_bucket_id:       79,
 					auto_open_product:              'default',
-					disable_wts_in_root_bucket_ids: [5],
-
-					autostart_walkthrough_id: 	<?php echo $autostart_walkthrough_id ?>,
-					sk_composer_button:       	<?php echo ($sk_composer_button ? "true" : "false") ?>,
-					track_data:               	'<?php echo $sk_track_data ?>',
-					user_email:               	'<?php echo $user_email ?>',
+					disable_wts_in_root_bucket_ids: [5,87],
+					autostart_walkthrough_id:       <?php echo $autostart_walkthrough_id ?>,
+					sk_composer_button:             <?php echo ($sk_composer_button ? "true" : "false") ?>,
+					track_data:                     '<?php echo $sk_track_data ?>',
+					user_email:                     '<?php echo $user_email ?>',
+					custom_class:                   '<?php echo $custom_class ?>',
 
 					// Toggles
 					path_not_found_continue: true,
@@ -270,12 +269,13 @@ class Sidekick{
 					basics_upgrade:          true,
 
 					// Platform Info
-					library_version: 			2,
+					library_version: 2,
+					platform_id:     1,
 
 					// Generic Info
 					just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 					platform_version:         	null,
-					plugin_version:           	'2.0.1',
+					plugin_version:           	'2.1.0',
 					show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 					// SIDEKICK URLS
@@ -293,9 +293,6 @@ class Sidekick{
 					plugin_url:               '<?php echo admin_url("admin.php?page=sidekick") ?>',
 					base_url:                 '<?php echo site_url() ?>',
 					current_url:              '<?php echo $current_url ?>',
-					// library_free_file:     '<?php echo (isset($SK_FREE_LIBRARY_FILE) ? $SK_FREE_LIBRARY_FILE : '') ?>',
-					// library_paid_file:     '<?php echo (isset($SK_PAID_LIBRARY_FILE) ? $SK_PAID_LIBRARY_FILE : '') ?>',
-					//,
 					// fallback_notfication_mp3: '//assets.sidekick.pro/fallback.mp3'
 				}
 
@@ -304,6 +301,7 @@ class Sidekick{
 					css:                 '//composer.sidekick.pro/<?php echo COMPOSER_PATH ?>/sidekick-composer.css',
 					apiUrl:              '<?php echo SK_COMPOSER_API ?>',
 					baseSiteUrl:         sk_config.base_url,
+					platformId:          1,
 					compatibilities:     sk_config.compatibilities,
 					audioBaseUrl:        '<?php echo SK_AUDIO ?>',
 					audioPlaceholderUrl: '//assets.sidekick.pro/walkthrough-audio-placeholder.mp3',
@@ -313,8 +311,6 @@ class Sidekick{
 
 			</script>
 		<?php endif ?>
-
-
 
 		<?php
 	}
@@ -421,9 +417,13 @@ add_action('wp_ajax_sk_save', array($sidekick,'ajax_save'));
 add_action('admin_notices', array($sidekick,'admin_notice'));
 add_action('admin_init', array($sidekick,'admin_notice_ignore'));
 
-if (isset($_POST['setting_disabled'])) {
+if (isset($_POST['sk_setting_disabled'])) {
 	$sidekick->set_disabled_wts();
 }
+if (isset($_POST['sk_setting_autostart'])) {
+	$sidekick->set_autostart_wt();
+}
+
 
 if (!defined('SK_PLUGIN_DEGBUG'))
 	require_once('sk_init.php');
@@ -431,5 +431,16 @@ if (!defined('SK_PLUGIN_DEGBUG'))
 if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('IFRAME_REQUEST')) {
 	add_action('admin_footer', array($sidekick,'footer'));
 	add_action('customize_controls_print_footer_scripts', array($sidekick,'footer'));
+}
+
+
+// Multisite Licensing
+
+if (defined('MULTISITE')) {
+	require_once('libs/licensing.php');
+	$sidekickMassActivator = new sidekickMassActivator;
+	add_action('wpmu_new_blog',array($sidekickMassActivator,'activate'),10,6);
+	add_action('network_admin_menu', array($sidekickMassActivator,'setup_menu'));
+	add_action('wp_ajax_sk_activate_single', array($sidekickMassActivator,'activate_single'));
 }
 

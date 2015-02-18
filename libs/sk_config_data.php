@@ -92,6 +92,27 @@ class sk_config_data{
 		return $output;
 	}
 
+	function get_framework(){
+		global $current_user;
+
+		$frameworks = array('genesis');
+
+		$output = "\n 						theme_framework : false,";
+
+		foreach ($frameworks as $framework) {
+			switch ($framework) {
+				case 'genesis':
+				if (function_exists( 'genesis' ) ) {
+					if (defined('PARENT_THEME_VERSION')) {
+						$output = "\n 						theme_framework : {name: '" . $framework . "', version: '" . PARENT_THEME_VERSION . "'},";
+					}
+				}
+				break;
+			}
+		}
+		return $output;
+	}
+
 	function get_current_url() {
 		if (isset($_SERVER['REQUEST_URI'])) {
 			return 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
@@ -109,6 +130,15 @@ class sk_config_data{
 
 	function get_disabled_wts(){
 		$wts = str_replace('"', '', get_option('sk_disabled_wts'));
+		if ($wts) {
+			return $wts;
+		}
+		return 'false';
+	}
+
+	function get_disabled_network_wts(){
+		$wts = str_replace('"', '', get_site_option('sk_disabled_wts'));
+
 		if ($wts) {
 			return $wts;
 		}
@@ -139,7 +169,7 @@ class sk_config_data{
 
 		if (is_array($mu_plugins)) {
 			foreach ($mu_plugins as $plugins_key => $plugin) {
-				$plugins[addslashes($data['Name'])] = $plugin['Version'];
+				$plugins[addslashes($plugin['Name'])] = $plugin['Version'];
 				if ($printed) $output .= ',';
 				$plugin['Name'] = addslashes($plugin['Name']);
 				$output .= "{'{$plugin['Name']}' : '{$plugin['Version']}'}";
