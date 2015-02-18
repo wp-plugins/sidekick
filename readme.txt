@@ -131,6 +131,16 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 == Changelog ==
 
 = 2.0.1 =
+* Multisite Walkthrough Management Support
+* Multisite Auto Activations
+* Multisite Mass Activations
+* Genesis Framework Support
+* Fixes issues with composer mode and auto play of walkthroughs
+* Fixes issues with select all walkthroughs in settings screen
+* Fixes issues with download of file would resume a walkthrough on click event
+* Fixes issues playing back hotspots in certain cases
+
+= 2.0.1 =
 * Fix walkthrough autostart feature
 * Update copy
 
