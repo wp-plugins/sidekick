@@ -19,9 +19,11 @@
 
 <div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Turn Off Walkthroughs</h3>
-
 		<form method='post'>
+
+			<input class='top-right button button-primary alignright' type='submit' value='Save'/>
+			<h3>Configure - Turn Off Walkthroughs</h3>
+
 			<p>Below you can turn off specific Walkthroughs for this website.</p>
 			<p>Please note, incompatible multisite walkthroughs will be disabled automatically on individual sites already. Here you're being show the raw unfiltered list of all available walkthroughs.</p>
 			<div class='sk_walkthrough_list wrapper_wts'>

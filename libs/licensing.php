@@ -15,8 +15,16 @@ class sidekickMassActivator{
 			// TODO: Send Domain for good measure
 
 			$sk_selected_subscription = get_option("sk_selected_subscription");
+			$sk_selected_product      = get_option("sk_selected_product");
 
-			$result = $this->send_request('post','/domains',array('domainName'     => $domain . $path, 'subscriptionId' => $sk_selected_subscription));
+			if (isset($sk_selected_product) && $sk_selected_product) {
+				$data = array('domainName'     => $domain . $path, 'productId' => $sk_selected_product);
+			} else if (strpos($sk_selected_subscription,'subscription-') !== false) {
+				$sk_selected_subscription = explode('subscription-',$sk_selected_subscription);
+				$data = array('domainName'     => $domain . $path, 'subscriptionId' => $sk_selected_subscription[1]);
+			}
+
+			$result = $this->send_request('post','/domains',$data);
 
 			if (isset($result->success) && $result->success == true && $result->payload->domainKey) {
 
@@ -151,14 +159,28 @@ class sidekickMassActivator{
 
 	function load_subscriptions(){
 		// var_dump('load_subscriptions');
-		$result = $this->send_request('get','/users/subscriptions');
+		$result        = $this->send_request('get','/users/subscriptions');
+		$load_products = false;
 		// var_dump($result);
 		if ($result->success) {
 			foreach ($result->payload as &$sub) {
-				if ($sub->PlanId == 1) {
-					// Basics or Enterprise can only be used right now
-					update_option( 'sk_selected_subscription', $sub->id );
-					$current_subscription = $sub;
+				if (count($result->payload) === 1) {
+					// If there is only one result select it
+					if ($sub->Plan->CreatableProductType->name == 'Private') {
+						update_option( 'sk_selected_subscription', 'product-' . $sub->id );
+					} else {
+						update_option( 'sk_selected_subscription', 'subscription-' . $sub->id );
+					}
+				} else {
+					// If there is more then one result and there is no selected subscription then use basics
+					if ($sub->PlanId == 1 && !get_option('sk_selected_subscription')) {
+						// Basics or Enterprise can only be used right now
+						update_option( 'sk_selected_subscription', 'subscription-' . $sub->id );
+						// $current_subscription = $sub;
+					}
+				}
+				if (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') {
+					$load_products = true;
 				}
 				// var_dump($sub->Domains);
 				if (count($sub->Domains) > 0) {
@@ -171,6 +193,16 @@ class sidekickMassActivator{
 							}
 						}
 					}
+				} if (count($sub->PrivateProductSubscriptions) > 0) {
+					foreach ($sub->PrivateProductSubscriptions as &$domain) {
+						// if (!$domain->Domain->deletedAt) {
+							if (isset($sub->activeDomainCount)) {
+								$sub->activeDomainCount++;
+							} else {
+								$sub->activeDomainCount = 1;
+							}
+						// }
+					}
 				} else {
 					$sub->activeDomainCount = 0;
 				}
@@ -178,17 +210,33 @@ class sidekickMassActivator{
 			}
 			$data['subscriptions'] = $result->payload;
 			if (isset($current_subscription)) {
-				$data['current_subscription'] = $current_subscription;
+				// $data['current_subscription'] = $current_subscription;
 			} else {
-				delete_option('sk_auto_activations');
+				// delete_option('sk_auto_activations');
 			}
+
+			if ($load_products) {
+				$data['products'] = $this->load_products();
+			}
+
 			return $data;
+		}
+		return null;
+	}
+
+	function load_products(){
+		$result = $this->send_request('get','/products');
+		// var_dump($result);
+		if ($result->success) {
+			return $result->payload->products;
 		}
 		return null;
 	}
 
 	function admin_page(){
 		if (isset($_POST['sk_account'])) {
+
+			delete_option('sk_auto_activation_error');
 
 			if (isset($_POST['sk_password']) && $_POST['sk_password'] && isset($_POST['sk_account']) && $_POST['sk_account']) {
 				$key    = 'hash';
@@ -210,6 +258,13 @@ class sidekickMassActivator{
 			} else {
 				delete_option( 'sk_auto_activations');
 			}
+
+			if (isset($_POST['sk_selected_product']) && isset($_POST['sk_selected_subscription']) && strpos($_POST['sk_selected_subscription'], 'product') !== false) {
+				update_option( 'sk_selected_product', $_POST['sk_selected_product'] );
+			} else {
+				delete_option( 'sk_selected_product');
+			}
+
 		}
 
 		$sk_token                 = get_transient('sk_token');
@@ -221,6 +276,7 @@ class sidekickMassActivator{
 		$sk_auto_activations      = get_option( 'sk_auto_activations');
 		$sk_auto_activation_error = get_option('sk_auto_activation_error');
 		$sk_selected_subscription = get_option('sk_selected_subscription');
+		$sk_selected_product      = get_option('sk_selected_product');
 		$is_ms_admin              = true;
 		$curl                     = function_exists('curl_version') ? true : false;
 		$fgets                    = file_get_contents(__FILE__) ? true : false;

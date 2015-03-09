@@ -42,7 +42,7 @@
 								<tbody>
 									<tr valign="top">
 										<th scope="row" valign="top">Activation ID</th>
-										<?php if (defined('MULTISITE')): ?>
+										<?php if (defined('MULTISITE') && MULTISITE): ?>
 											<?php if (isset($activation_id) && $activation_id): ?>
 												<td><input class='regular-text' style='color: gray;' type='text' name='activation_id' value='xxxxxxxx-xxxx-xxxx-xxxx-<?php echo substr($activation_id, 25,20) ?>'></input></td>
 											<?php else: ?>

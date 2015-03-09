@@ -137,10 +137,11 @@ class sk_config_data{
 	}
 
 	function get_disabled_network_wts(){
-		$wts = str_replace('"', '', get_site_option('sk_disabled_wts'));
-
-		if ($wts) {
-			return $wts;
+		if (is_multisite()) {
+			$wts = str_replace('"', '', get_site_option('sk_disabled_wts'));
+			if ($wts) {
+				return $wts;
+			}
 		}
 		return 'false';
 	}

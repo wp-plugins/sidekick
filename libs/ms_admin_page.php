@@ -40,8 +40,6 @@
 	</div>
 <?php endif ?>
 
-
-
 <div class="sidekick_admin">
 
 	<div class="sk_box left">
@@ -76,17 +74,25 @@
 											<?php if (isset($sk_subs['subscriptions']) && count($sk_subs['subscriptions']) > 0): ?>
 												<?php foreach ($sk_subs['subscriptions'] as $key => $sub): ?>
 													<?php
-													if ($sub->PlanId !== 1) {
+													if ($sub->PlanId !== 1 && $sub->Plan->CreatableProductType->name !== 'Private') {
 														continue;
 													}
-													if ($sk_selected_subscription == $sub->id) {
+
+													if (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') {
+														$type = 'product';
+													} else {
+														$type = 'subscription';
+													}
+
+
+													if ($sk_selected_subscription == ($type . '-' . $sub->id) || !isset($selected_sub)) {
 														$selected_sub = $sub;
 														$selected     = 'SELECTED';
 													} else {
 														$selected = '';
 													}
 													?>
-													<option <?php echo $selected ?> value='<?php echo $sub->id ?>'><?php echo $sub->Plan->name . ' - ' . $sub->CurrentTier->name ?></option>
+													<option <?php echo $selected ?> value='<?php echo (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') ? "product-" : "subscription-"; echo $sub->id ?>'><?php echo $sub->Plan->name . ' - ' . $sub->CurrentTier->name ?></option>
 												<?php endforeach ?>
 												<?php if (!isset($selected_sub)): ?>
 													<option value='0'>No Compatible Subscriptions</option>
@@ -97,6 +103,25 @@
 										</select>
 									</td>
 								</tr>
+								<?php if (isset($sk_subs['products'])): ?>
+
+									<tr valign="top" style='display: none' class='walkthrough_group'>
+										<th scope="row" valign="top">Walkthrough Group</th>
+										<td>
+											<select name='sk_selected_product'>
+												<?php if (isset($sk_subs['products']) && count($sk_subs['products']) > 0): ?>
+													<?php foreach ($sk_subs['products'] as $key => $product): ?>
+													<option <?php echo ($sk_selected_product == $product->id) ? 'SELECTED' : '' ?> value='<?php echo $product->id ?>'><?php echo $product->name ?></option>
+													<?php endforeach ?>
+												<?php else: ?>
+													<option style='color: red'>You must build at least one walkthrough</option>
+												<?php endif ?>
+											</select>
+										</td>
+									</tr>
+
+								<?php endif ?>
+
 								<tr valign="top">
 									<th scope="row" valign="top">Enable Auto-Activations</th>
 									<td>
@@ -107,6 +132,7 @@
 										<?php endif ?>
 									</td>
 								</tr>
+								<?php //var_dump($selected_sub); ?>
 								<?php if (isset($selected_sub)): ?>
 									<tr>
 										<th scope="row" valign="top">Active Domains</th>
