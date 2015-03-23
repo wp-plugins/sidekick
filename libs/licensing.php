@@ -1,5 +1,7 @@
 <?php
 
+// licensing.php
+
 class sidekickMassActivator{
 
 	function activate($blog_id, $user_id, $domain, $path){
@@ -288,7 +290,8 @@ class sidekickMassActivator{
 			$error = "Sorry, SIDEKICK MultiSite activations require <b>CURL</b> or <b>file_get_contents</b> functions enabled in PHP.";
 		}
 
-		include('ms_admin_page.php');
+		require_once('ms_admin_page.php');
 	}
 }
 
+// //licensing.php

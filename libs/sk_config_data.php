@@ -1,4 +1,5 @@
 <?php
+// sk_config_data.php
 
 class sk_config_data{
 	function get_domain(){
@@ -147,39 +148,27 @@ class sk_config_data{
 	}
 
 	function get_plugins(){
+
 		$active_plugins = wp_get_active_and_valid_plugins();
-		$mu_plugins = get_mu_plugins();
-
-		$printed = false;
-
-		$output = '[';
-		$count = 0;
+		$mu_plugins     = get_mu_plugins();
+		$output         = array();
 
 		if (is_array($active_plugins)) {
 			foreach ($active_plugins as $plugins_key => $plugin) {
-				$data = get_plugin_data( $plugin, false, false );
-
-				$plugins[addslashes($data['Name'])] = $data['Version'];
-				if ($plugins_key > 0) $output .= ',';
-				$data['Name'] = addslashes($data['Name']);
-				$output .= "{'{$data['Name']}' : '{$data['Version']}'}";
-				$printed = true;
-				$count++;
+				$data         = get_plugin_data( $plugin, false, false );
+				$slug          = explode('/',plugin_basename($plugin));
+				$slug          = str_replace('.php', '', $slug[1]);
+				$output[$slug] = $data['Version'];
 			}
 		}
 
 		if (is_array($mu_plugins)) {
 			foreach ($mu_plugins as $plugins_key => $plugin) {
-				$plugins[addslashes($plugin['Name'])] = $plugin['Version'];
-				if ($printed) $output .= ',';
-				$plugin['Name'] = addslashes($plugin['Name']);
-				$output .= "{'{$plugin['Name']}' : '{$plugin['Version']}'}";
-				$printed = true;
-				$count++;
+				$slug = str_replace('.php', '', $plugins_key);
+				$output[$slug]                    = $data['Version'];
 			}
 		}
-		$output .= ']';
-		return array('plugins' => $output, 'count' => $count);
+		return $output;
 	}
 
 	function get_user_role(){
@@ -204,3 +193,5 @@ class sk_config_data{
 		return $user_role;
 	}
 }
+
+// //sk_config_data.php

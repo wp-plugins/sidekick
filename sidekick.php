@@ -12,12 +12,13 @@ Author URI: http://www.sidekick.pro
 */
 
 
-if ( ! defined( 'PLAYER_PATH' ) ) define( 'PLAYER_PATH', 'tag/latest' );
-if ( ! defined( 'PLAYER_FILE' ) ) define( 'PLAYER_FILE', 'sidekick.min.js' );
-if ( ! defined( 'COMPOSER_DOMAIN' ) ) define( 'COMPOSER_DOMAIN', 'composer.sidekick.pro' );
-if ( ! defined( 'COMPOSER_PATH' ) ) define( 'COMPOSER_PATH', 'tag/latest' );
-if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+if ( ! defined( 'PLAYER_DOMAIN' ) ) 	define( 'PLAYER_DOMAIN', 'player.sidekick.pro' );
+if ( ! defined( 'PLAYER_PATH' ) ) 		define( 'PLAYER_PATH', 'tag/latest' );
+if ( ! defined( 'PLAYER_FILE' ) ) 		define( 'PLAYER_FILE', 'sidekick.min.js' );
+if ( ! defined( 'COMPOSER_DOMAIN' ) ) 	define( 'COMPOSER_DOMAIN', 'composer.sidekick.pro' );
+if ( ! defined( 'COMPOSER_PATH' ) ) 	define( 'COMPOSER_PATH', 'tag/latest' );
+if ( ! defined( 'SK_SL_PLUGIN_DIR' ) ) 	define( 'SK_SL_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+if ( ! defined( 'SK_SL_PLUGIN_URL' ) ) 	define( 'SK_SL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'SK_SL_PLUGIN_FILE' ) ) define( 'SK_SL_PLUGIN_FILE', __FILE__ );
 if ( ! function_exists('mlog')) {
 	function mlog(){}
@@ -26,12 +27,12 @@ if ( ! function_exists('mlog')) {
 class Sidekick{
 
 	function __construct(){
-		if (!defined('SK_TRACKING_API')) define('SK_TRACKING_API','//tracking.sidekick.pro/');
-		if (!defined('SK_COMPOSER_API')) define('SK_COMPOSER_API','//apiv2.sidekick.pro');
-		if (!defined('SK_API')) define('SK_API','//apiv2.sidekick.pro/');
-		if (!defined('SK_LIBRARY')) define('SK_LIBRARY','//librarycache.sidekick.pro/');
-		if (!defined('SK_ASSETS')) define('SK_ASSETS','//assets.sidekick.pro/');
-		if (!defined('SK_AUDIO')) define('SK_AUDIO','//audio.sidekick.pro/');
+		if (!defined('SK_TRACKING_API')) 	define('SK_TRACKING_API','//tracking.sidekick.pro/');
+		if (!defined('SK_COMPOSER_API')) 	define('SK_COMPOSER_API','//apiv2.sidekick.pro');
+		if (!defined('SK_API')) 			define('SK_API','//apiv2.sidekick.pro/');
+		if (!defined('SK_LIBRARY')) 		define('SK_LIBRARY','//librarycache.sidekick.pro/');
+		if (!defined('SK_ASSETS')) 			define('SK_ASSETS','//assets.sidekick.pro/');
+		if (!defined('SK_AUDIO')) 			define('SK_AUDIO','//audio.sidekick.pro/');
 	}
 
 	function enqueue_required(){
@@ -47,16 +48,8 @@ class Sidekick{
 		wp_enqueue_script('sidekick-admin'				,plugins_url( '/js/sidekick_admin.js' , __FILE__ ),array( 'jquery' ));
 	}
 
-	function is_https() {
-		if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	function enqueue(){
-		wp_enqueue_script('sidekick'   		,"//player.sidekick.pro/" . PLAYER_PATH . "/" . PLAYER_FILE,	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
+		wp_enqueue_script('sidekick'   		,"//" . PLAYER_DOMAIN ."/" . PLAYER_PATH . "/" . PLAYER_FILE,	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
 		wp_enqueue_style('wp-pointer');
 		wp_enqueue_script('wp-pointer');
 	}
@@ -200,11 +193,11 @@ class Sidekick{
 			$user_email = $current_user->user_email;
 		}
 
+		$disabled_wts            = (!is_network_admin()) ? $sk_config_data->get_disabled_wts() : '[]';
 		$user_role               = $sk_config_data->get_user_role();
 		$site_url                = $sk_config_data->get_domain();
-		$plugin_data             = $sk_config_data->get_plugins();
-
-		$disabled_wts            = (!is_network_admin()) ? $sk_config_data->get_disabled_wts() : '[]';
+		$installed_plugins       = $sk_config_data->get_plugins();
+		$plugin_count            = (isset($plugins) && is_array($plugins)) ? count($plugins) : array();
 		$disabled_network_wts    = $sk_config_data->get_disabled_network_wts();
 		$current_url             = $sk_config_data->get_current_url();
 		$post_types              = $sk_config_data->get_post_types();
@@ -215,14 +208,6 @@ class Sidekick{
 		$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
 		$number_of_themes        = $sk_config_data->get_themes();
 		$frameworks              = $sk_config_data->get_framework();
-
-
-
-
-		$installed_plugins       = $plugin_data['plugins'];
-		$plugin_count            = $plugin_data['count'];
-
-		// $sk_composer_button = true; // BETA
 
 		delete_option( 'sk_just_activated' );
 		if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])) $not_supported_ie = true;
@@ -247,8 +232,8 @@ class Sidekick{
 						<?php                     	echo $post_statuses ?>
 						<?php                     	echo $frameworks ?>
 						<?php                     	echo $post_types_and_statuses ?>
-						installed_plugins:        	<?php echo $installed_plugins ?>,
-						plugin_count: 				<?php echo $plugin_count ?>,
+						installed_plugins:        	<?php echo json_encode($installed_plugins) ?>,
+						plugin_count: 				<?php echo ($plugin_count) ? $plugin_count : 0 ?>,
 						is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
 						number_of_themes:         	<?php echo $number_of_themes ?>,
 						installed_theme:          	'<?php echo $theme->Name ?>',
@@ -304,7 +289,7 @@ class Sidekick{
 					// URLS
 					site_url:                 '<?php echo $site_url ?>',
 					domain:                   '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
-					domain_used:              '//player.sidekick.pro/',
+					domain_used:              '//<?php echo PLAYER_DOMAIN ?>/',
 					plugin_url:               '<?php echo admin_url("admin.php?page=sidekick") ?>',
 					base_url:                 '<?php echo site_url() ?>',
 					current_url:              '<?php echo $current_url ?>'

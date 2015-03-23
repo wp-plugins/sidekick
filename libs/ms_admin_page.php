@@ -1,3 +1,5 @@
+<!-- ms_admin_page.php -->
+
 <script type="text/javascript">
 	if (typeof ajax_url === 'undefined') {
 		ajax_url = '<?php echo admin_url() ?>admin-ajax.php';
@@ -238,6 +240,6 @@
 
 </div>
 
-
+<!-- //ms_admin_page.php -->
 
 
