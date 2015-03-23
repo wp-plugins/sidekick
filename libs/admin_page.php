@@ -4,6 +4,11 @@
 	}
 	var last_site_key = null;
 	var sk_ms_admin   = false;
+
+	jQuery(document).ready(function($) {
+		mixpanel.track('Settings Page Visit - Plugin');
+	});
+
 </script>
 
 <div class="page-header"><h2><a id="pluginlogo_32" class="header-icon32" href="http://www.sidekick.pro/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=header" target="_blank"></a>Sidekick Dashboard</h2></div>

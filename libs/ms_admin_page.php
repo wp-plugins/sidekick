@@ -1,9 +1,16 @@
+<!-- ms_admin_page.php -->
+
 <script type="text/javascript">
 	if (typeof ajax_url === 'undefined') {
 		ajax_url = '<?php echo admin_url() ?>admin-ajax.php';
 	}
 	var last_site_key = null;
 	var sk_ms_admin   = true;
+
+	jQuery(document).ready(function($) {
+		mixpanel.track('Network Settings Page Visit - Plugin');
+	});
+
 </script>
 
 <div class="page-header"><h2><a id="pluginlogo_32" class="header-icon32" href="http://www.sidekick.pro" target="_blank"></a>Sidekick Licensing</h2></div>
@@ -67,7 +74,7 @@
 										<input class='regular-text' type='password' name='sk_password' placeholder='********'></input>
 									</td>
 								</tr>
-								<tr valign="top">
+								<tr valign="top" style='display: none'>
 									<th scope="row" valign="top">Subscription</th>
 									<td>
 										<select name='sk_selected_subscription'>
@@ -105,16 +112,17 @@
 								</tr>
 								<?php if (isset($sk_subs['products'])): ?>
 
-									<tr valign="top" style='display: none' class='walkthrough_group'>
-										<th scope="row" valign="top">Walkthrough Group</th>
+									<tr valign="top" style='display: none' class='walkthrough_library'>
+										<th scope="row" valign="top">Library</th>
 										<td>
 											<select name='sk_selected_product'>
 												<?php if (isset($sk_subs['products']) && count($sk_subs['products']) > 0): ?>
 													<?php foreach ($sk_subs['products'] as $key => $product): ?>
-													<option <?php echo ($sk_selected_product == $product->id) ? 'SELECTED' : '' ?> value='<?php echo $product->id ?>'><?php echo $product->name ?></option>
+														<option <?php echo ($sk_selected_product == $product->id) ? 'SELECTED' : '' ?> value='<?php echo $product->id ?>'><?php echo $product->name ?></option>
 													<?php endforeach ?>
 												<?php else: ?>
-													<option style='color: red'>You must build at least one walkthrough</option>
+													<option style='color: red' value='0'>No Libraries Found!</option>
+													<?php $no_product = true; delete_option( 'sk_auto_activations') ?>
 												<?php endif ?>
 											</select>
 										</td>
@@ -125,7 +133,7 @@
 								<tr valign="top">
 									<th scope="row" valign="top">Enable Auto-Activations</th>
 									<td>
-										<?php if (!isset($selected_sub)): ?>
+										<?php if (!isset($selected_sub) || isset($no_product)): ?>
 											<input class='checkbox' type='checkbox' name='sk_auto_activations' DISABLED>
 										<?php else: ?>
 											<input class='checkbox' type='checkbox' name='sk_auto_activations' <?php echo ($sk_auto_activations) ? 'CHECKED' : '' ?>>
@@ -133,7 +141,7 @@
 									</td>
 								</tr>
 								<?php //var_dump($selected_sub); ?>
-								<?php if (isset($selected_sub)): ?>
+								<?php if (isset($selected_sub) && !isset($no_product)): ?>
 									<tr>
 										<th scope="row" valign="top">Active Domains</th>
 										<td><?php echo $selected_sub->activeDomainCount ?>/ <?php echo ($selected_sub->CurrentTier->numberOfDomains == -1) ? 'Unlimited' : $selected_sub->CurrentTier->numberOfDomains ?> (<a href='https://www.sidekick.pro/profile/#/overview' target='_blank'>Manage</a>)
@@ -238,6 +246,6 @@
 
 </div>
 
-
+<!-- //ms_admin_page.php -->
 
 

@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.1
-Stable tag: 2.1.1
+Stable tag: 2.2.0
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,15 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 2.2.0 =
+* SIDEKICK can now be embeded within other plugins!
+* Custom walkthrough plans are now supported within MultiSite auto activation
+* Wildcard compatibility matching added
+* Captioning support added
+* Fixes issues with general UI elements
+* Fixes issues with walkthrough preview
+* Fixes issues with Safari alignment on settings page
 
 = 2.1.1 =
 * Added SIDEKICK version check
