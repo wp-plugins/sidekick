@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.2.1
+Version: 2.2.2
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -58,10 +58,12 @@ if (!class_exists('Sidekick')){
 		}
 
 		function ajax_save(){
-			if (isset($_POST['sk_composer_button']) && $_POST['sk_composer_button'] == "true") {
-				update_option( 'sk_composer_button', true );
-			} elseif (isset($_POST['sk_composer_button']) && $_POST['sk_composer_button'] == "false") {
-				delete_option('sk_composer_button');
+			if (user_can('install_plugins')) {
+				if (isset($_POST['sk_composer_button']) && $_POST['sk_composer_button'] == "true") {
+					update_option( 'sk_composer_button', true );
+				} elseif (isset($_POST['sk_composer_button']) && $_POST['sk_composer_button'] == "false") {
+					delete_option('sk_composer_button');
+				}
 			}
 		}
 
@@ -138,6 +140,14 @@ if (!class_exists('Sidekick')){
 		}
 
 		function set_disabled_wts(){
+
+			if (!check_admin_referer('update_sk_settings')) {
+				print 'Sorry, your nonce did not verify or you\'re not logged in.';
+				exit;
+			}
+
+			$_POST['disable_wts'] =  array_map("mysql_real_escape_string",$_POST['disable_wts']);
+
 			if (isset($_POST['disable_wts']) && $_POST['disable_wts']) {
 				update_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
 				if (is_network_admin()) {
@@ -152,11 +162,17 @@ if (!class_exists('Sidekick')){
 		}
 
 		function set_autostart_wt(){
+
+			if (!check_admin_referer('update_sk_settings')) {
+				print 'Sorry, your nonce did not verify or you\'re not logged in.';
+				exit;
+			}
+
 			if (isset($_POST['sk_autostart_walkthrough_id']) && intval($_POST['sk_autostart_walkthrough_id']) > 0){
 				if (is_network_admin()) {
-					update_site_option('sk_autostart_walkthrough_id',$_POST['sk_autostart_walkthrough_id']);
+					update_site_option('sk_autostart_walkthrough_id',wp_filter_kses($_POST['sk_autostart_walkthrough_id']));
 				}
-				update_option('sk_autostart_walkthrough_id',$_POST['sk_autostart_walkthrough_id']);
+				update_option('sk_autostart_walkthrough_id',wp_filter_kses($_POST['sk_autostart_walkthrough_id']));
 			} else {
 				delete_option('sk_autostart_walkthrough_id');
 				if (is_network_admin()) {
@@ -166,9 +182,16 @@ if (!class_exists('Sidekick')){
 		}
 
 		function set_api(){
+
+			if (!check_admin_referer('update_sk_settings')) {
+				print 'Sorry, your nonce did not verify or you\'re not logged in.';
+				exit;
+			}
+
+
 			if (isset($_POST['sk_api'])){
-				update_option('sk_api',$_POST['sk_api']);
-				update_site_option('sk_api',$_POST['sk_api']);
+				update_option('sk_api',wp_filter_kses($_POST['sk_api']));
+				update_site_option('sk_api',wp_filter_kses($_POST['sk_api']));
 			}
 		}
 
@@ -236,7 +259,7 @@ if (!class_exists('Sidekick')){
 							plugin_count: 				<?php echo ($plugin_count) ? $plugin_count : 0 ?>,
 							is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
 							number_of_themes:         	<?php echo $number_of_themes ?>,
-							installed_theme:          	{'<?php echo sanitize_title($theme->Name) ?>' : '<?php echo $theme->Version ?>'},
+							installed_theme:          	'<?php echo sanitize_title($theme->Name) ?>',
 							theme_version:            	'<?php echo $theme->Version ?>',
 							main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
 							user_level:               	'<?php echo $user_role ?>',
@@ -276,7 +299,7 @@ if (!class_exists('Sidekick')){
 						// Generic Info
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						platform_version:         	null,
-						plugin_version:           	'2.2.1',
+						plugin_version:           	'2.2.2',
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 						// SIDEKICK URLS
@@ -355,7 +378,7 @@ if (!class_exists('Sidekick')){
 		}
 
 		function activate($return = false){
-			if (isset($_POST['activation_id'])) {
+			if (isset($_POST['activation_id']) && user_can('install_plugins')) {
 				update_option('sk_activation_id',$_POST['activation_id']);
 			}
 		}
@@ -393,7 +416,7 @@ if (!class_exists('Sidekick')){
 
 		function check_ver(){
 
-			$data = json_encode('2.2.1');
+			$data = json_encode('2.2.2');
 
 			if(array_key_exists('callback', $_GET)){
 
@@ -457,10 +480,15 @@ if (!class_exists('Sidekick')){
 	register_activation_hook( __FILE__, array($sidekick,'activate_plugin') );
 	register_deactivation_hook( __FILE__, array($sidekick,'deactivate_plugin')  );
 
-	if (isset($_POST['sk_setting_disabled'])) 	$sidekick->set_disabled_wts();
-	if (isset($_POST['sk_setting_autostart']))	$sidekick->set_autostart_wt();
-	if (isset($_POST['sk_api'])) 				$sidekick->set_api();
-	if (isset($_GET['sk_ver_check'])) 			$sidekick->check_ver();
+	// if (isset($_POST['sk_setting_disabled'])) 	$sidekick->set_disabled_wts();
+	// if (isset($_POST['sk_setting_autostart']))	$sidekick->set_autostart_wt();
+	// if (isset($_POST['sk_api'])) 				$sidekick->set_api();
+	// if (isset($_GET['sk_ver_check'])) 			$sidekick->check_ver();
+
+	if (isset($_POST['sk_setting_disabled'])) 	 add_action('admin_init', array($sidekick,'set_disabled_wts'));
+	if (isset($_POST['sk_setting_autostart']))	 add_action('admin_init', array($sidekick,'set_autostart_wt'));
+	if (isset($_POST['sk_api'])) 				 add_action('admin_init', array($sidekick,'set_api'));
+	if (isset($_GET['sk_ver_check'])) 			 add_action('admin_init', array($sidekick,'check_ver'));
 
 
 	add_action('admin_menu', array($sidekick,'setup_menu'));
