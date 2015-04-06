@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.2.2
+Version: 2.2.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -58,7 +58,7 @@ if (!class_exists('Sidekick')){
 		}
 
 		function ajax_save(){
-			if (user_can('install_plugins')) {
+			if (current_user_can('install_plugins')) {
 				if (isset($_POST['sk_composer_button']) && $_POST['sk_composer_button'] == "true") {
 					update_option( 'sk_composer_button', true );
 				} elseif (isset($_POST['sk_composer_button']) && $_POST['sk_composer_button'] == "false") {
@@ -299,7 +299,7 @@ if (!class_exists('Sidekick')){
 						// Generic Info
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						platform_version:         	null,
-						plugin_version:           	'2.2.2',
+						plugin_version:           	'2.2.3',
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 						// SIDEKICK URLS
@@ -378,7 +378,7 @@ if (!class_exists('Sidekick')){
 		}
 
 		function activate($return = false){
-			if (isset($_POST['activation_id']) && user_can('install_plugins')) {
+			if (isset($_POST['activation_id']) && current_user_can('install_plugins')) {
 				update_option('sk_activation_id',$_POST['activation_id']);
 			}
 		}
@@ -416,7 +416,7 @@ if (!class_exists('Sidekick')){
 
 		function check_ver(){
 
-			$data = json_encode('2.2.2');
+			$data = json_encode('2.2.3');
 
 			if(array_key_exists('callback', $_GET)){
 
