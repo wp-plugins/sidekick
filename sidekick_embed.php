@@ -8,7 +8,7 @@ Description: Adds a real-time WordPress training walkthroughs right in your Dash
  We recommend not activating SIDEKICK automatically for people but via an Opt-In process when they configure your own theme or plugin.
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.2.3
+Version: 2.2.4
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -19,11 +19,16 @@ if ( ! defined( 'PLAYER_PATH' ) ) 		define( 'PLAYER_PATH', 'tag/latest' );
 if ( ! defined( 'PLAYER_FILE' ) ) 		define( 'PLAYER_FILE', 'sidekick.min.js' );
 if ( ! defined( 'COMPOSER_DOMAIN' ) ) 	define( 'COMPOSER_DOMAIN', 'composer.sidekick.pro' );
 if ( ! defined( 'COMPOSER_PATH' ) ) 	define( 'COMPOSER_PATH', 'tag/latest' );
+if ( ! defined( 'SK_EMBED_PARTNER' ) ) 	define( 'SK_EMBED_PARTNER', '' );
+
 if ( ! function_exists('mlog')) {
 	function mlog(){}
 }
 
-if (!class_exists('Sidekick')){
+$sidekick_active = null;
+if (!function_exists('is_plugin_active')) {	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );} 
+if (function_exists('is_plugin_active')) {	$sidekick_active = is_plugin_active('sidekick/sidekick.php');}
+if (!$sidekick_active && !class_exists('Sidekick')){
 
 	class Sidekick{
 
@@ -447,6 +452,7 @@ if (!class_exists('Sidekick')){
 			$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
 			$number_of_themes        = $sk_config_data->get_themes();
 			$frameworks              = $sk_config_data->get_framework();
+			$file_editor_enabled     = $sk_config_data->get_file_editor_enabled();
 
 			delete_option( 'sk_just_activated' );
 			if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])) $not_supported_ie = true;
@@ -480,6 +486,7 @@ if (!class_exists('Sidekick')){
 							main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
 							user_level:               	'<?php echo $user_role ?>',
 							main_soft_name: 			'WordPress',
+							// file_editor_enabled: 		<?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
 							role:               		'<?php echo $user_role ?>'
 						},
 
@@ -511,11 +518,12 @@ if (!class_exists('Sidekick')){
 						// Platform Info
 						library_version: 2,
 						platform_id:     1,
+						embed_partner:   '<?php echo SK_EMBED_PARTNER  ?>',
 
 						// Generic Info
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						platform_version:         	null,
-						plugin_version:           	'2.2.3',
+						plugin_version:           	'2.2.4',
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 						// SIDEKICK URLS
@@ -632,7 +640,7 @@ if (!class_exists('Sidekick')){
 
 		function check_ver(){
 
-			$data = json_encode('2.2.3');
+			$data = json_encode('2.2.4');
 
 			if(array_key_exists('callback', $_GET)){
 
@@ -751,7 +759,7 @@ if (defined('MULTISITE')) {
 
 // licensing.php
 
-if (!class_exists('sidekickMassActivator')) {
+if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 
 	class sidekickMassActivator{
 
@@ -1345,7 +1353,7 @@ if (!class_exists('sidekickMassActivator')) {
 
 // sk_config_data.php
 
-if (!class_exists('sk_config_data')) {
+if (!$sidekick_active && !class_exists('sk_config_data')) {
 
 	class sk_config_data{
 		function get_domain(){
@@ -1368,6 +1376,19 @@ if (!class_exists('sk_config_data')) {
 				$output .= "\n 						post_type_{$type->post_type} : $type->count,";
 			}
 			return $output;
+		}
+
+		function get_file_editor_enabled(){
+			if (defined('GD_SYSTEM_PLUGIN_DIR')) {
+				// Only check this file editor setting for GoDaddy Themes
+				$gd_file_editor_enabled = get_site_option( 'gd_file_editor_enabled', null );
+				if (isset($gd_file_editor_enabled) && $gd_file_editor_enabled) {
+					$gd_file_editor_enabled = 'true';
+				} else {
+					$gd_file_editor_enabled = 'false';
+				}
+			}
+			return (isset($gd_file_editor_enabled)) ? $gd_file_editor_enabled : null;
 		}
 
 		function get_themes(){

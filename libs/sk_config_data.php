@@ -26,6 +26,19 @@ if (!class_exists('sk_config_data')) {
 			return $output;
 		}
 
+		function get_file_editor_enabled(){
+			if (defined('GD_SYSTEM_PLUGIN_DIR')) {
+				// Only check this file editor setting for GoDaddy Themes
+				$gd_file_editor_enabled = get_site_option( 'gd_file_editor_enabled', null );
+				if (isset($gd_file_editor_enabled) && $gd_file_editor_enabled) {
+					$gd_file_editor_enabled = 'true';
+				} else {
+					$gd_file_editor_enabled = 'false';
+				}
+			}
+			return (isset($gd_file_editor_enabled)) ? $gd_file_editor_enabled : null;
+		}
+
 		function get_themes(){
 			$themes = wp_get_themes( array( 'allowed' => true ) );
 			return count($themes);
