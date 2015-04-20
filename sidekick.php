@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.2.3
+Version: 2.2.4
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -17,6 +17,8 @@ if ( ! defined( 'PLAYER_PATH' ) ) 		define( 'PLAYER_PATH', 'tag/latest' );
 if ( ! defined( 'PLAYER_FILE' ) ) 		define( 'PLAYER_FILE', 'sidekick.min.js' );
 if ( ! defined( 'COMPOSER_DOMAIN' ) ) 	define( 'COMPOSER_DOMAIN', 'composer.sidekick.pro' );
 if ( ! defined( 'COMPOSER_PATH' ) ) 	define( 'COMPOSER_PATH', 'tag/latest' );
+if ( ! defined( 'SK_EMBED_PARTNER' ) ) 	define( 'SK_EMBED_PARTNER', '' );
+
 if ( ! function_exists('mlog')) {
 	function mlog(){}
 }
@@ -231,6 +233,7 @@ if (!class_exists('Sidekick')){
 			$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
 			$number_of_themes        = $sk_config_data->get_themes();
 			$frameworks              = $sk_config_data->get_framework();
+			$file_editor_enabled     = $sk_config_data->get_file_editor_enabled();
 
 			delete_option( 'sk_just_activated' );
 			if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])) $not_supported_ie = true;
@@ -264,6 +267,7 @@ if (!class_exists('Sidekick')){
 							main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
 							user_level:               	'<?php echo $user_role ?>',
 							main_soft_name: 			'WordPress',
+							// file_editor_enabled: 		<?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
 							role:               		'<?php echo $user_role ?>'
 						},
 
@@ -295,11 +299,12 @@ if (!class_exists('Sidekick')){
 						// Platform Info
 						library_version: 2,
 						platform_id:     1,
+						embed_partner:   '<?php echo SK_EMBED_PARTNER  ?>',
 
 						// Generic Info
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						platform_version:         	null,
-						plugin_version:           	'2.2.3',
+						plugin_version:           	'2.2.4',
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 
 						// SIDEKICK URLS
@@ -416,7 +421,7 @@ if (!class_exists('Sidekick')){
 
 		function check_ver(){
 
-			$data = json_encode('2.2.3');
+			$data = json_encode('2.2.4');
 
 			if(array_key_exists('callback', $_GET)){
 

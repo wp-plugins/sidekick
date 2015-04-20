@@ -3,8 +3,8 @@ Contributors: raptor235,benfox,bitwit,riavalon
 Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
-Tested up to: 4.1
-Stable tag: 2.2.3
+Tested up to: 4.2
+Stable tag: 2.2.4
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -129,6 +129,9 @@ Absolutely. In fact, we rely on users like you  to tell us about things that nee
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 2.2.4 =
+* Adds new compatibilities to check if plugin editor is enabled
 
 = 2.2.3 =
 * Fixes to user capability checks
