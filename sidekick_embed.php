@@ -486,7 +486,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 							main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
 							user_level:               	'<?php echo $user_role ?>',
 							main_soft_name: 			'WordPress',
-							// file_editor_enabled: 		<?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
+							file_editor_enabled: 		<?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
 							role:               		'<?php echo $user_role ?>'
 						},
 
