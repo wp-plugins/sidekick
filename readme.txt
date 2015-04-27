@@ -18,7 +18,7 @@ Sidekick puts interactive, real-time tutorials (**Walkthroughs**) right inside y
 
 No more reading documentation or watching videos. **Just Click. Do. Learn. **
 
-SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3.50/month. Here’s a complete list of what’s in our library(http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
+SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3.50/month. Here’s a complete list of what’s in our [library](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
 
 **Pro Tip:** If you host with any of our [awesome partners](http://www.sidekick.pro/sidekick-partners?utm_source=wordpress.org&utm_medium=plugin_page_description), you get a the full library for FREE!
 
@@ -43,7 +43,7 @@ With SIDEKICK your life will get better because it:
 
 **Are you a WordPress Product Developer?**
 
-COMING SOON: Create customized Walkthroughs for your Plugin and/or Theme by joining our Developer Program(https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source=wordpress.org&utm_medium=plugin_page_description)!
+COMING SOON: Create customized Walkthroughs for your Plugin and/or Theme by joining our [Developer Program](https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source=wordpress.org&utm_medium=plugin_page_description)!
 
 **SIDEKICK is perfect for you, if...**
 
@@ -61,7 +61,7 @@ Sidekick works with any web application, requiring no app or browser extension d
 
 Walkthroughs are served directly from our servers, so you don't need to download or install additional files as new or updated walkthroughs are released.
 
-You can find out more here(https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source=wordpress.org&utm_medium=plugin_page_description)
+You can find out more [here](https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source=wordpress.org&utm_medium=plugin_page_description)
 
 == Installation ==
 
@@ -101,6 +101,7 @@ While a video speaks to you about a feature or completing a task, a SIDEKICK Wal
 
 = What is WordPress Basics? =
 When we say “WordPress Basics”, we are referring to any Walkthrough that has to do with features and functions provided by a fresh, default install of WordPress, downloaded from WordPress.org. Basically, if a walkthrough is helping you complete a standard WordPress function like creating a post, it’s part of our WordPress Basics Library.
+
 You can view all the Walkthroughs available in our library [here](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics).
 
 = Who Maintains the WordPress Basics Library? =
@@ -113,17 +114,17 @@ Plugin and theme specific Walkthroughs are called Third Party Walkthroughs and a
 
 = How do I create Walkthroughs for my Plugin(s) or Theme(s)? =
 
-You can build Walkthroughs for your plugin or theme by joining our WordPress [Developer Program](https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source= wordpress.org&utm_medium= plugin_page_faq). Your Walkthroughs will be available for free to anyone with SIDEKICK plus your plugin or theme activate d.
+You can build Walkthroughs for your plugin or theme by joining our WordPress [Developer Program](https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source= wordpress.org&utm_medium=plugin_page_faq). Your Walkthroughs will be available for free to anyone with SIDEKICK plus your plugin or theme activate d.
 
 = What does Sidekick for WordPress cost? =
 
 The Sidekick plugin for WordPress is and always will be free to download and use. Installing the plugin gives you instant and unlimited access to 25 basic WordPress How-To and Overview Walkthroughs.
 
-Access to the full library of [WordPress Basics Walkthroughs](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source= wordpress.org&utm_medium= plugin_page_faq) (Over 190) including Hotspots, starts at just $4.00/mont h.
+Access to the full library of [WordPress Basics Walkthroughs](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source= wordpressorg&utm_medium= plugin_page_faq) (Over 190) including Hotspots, starts at just $4.00/mont h.
 
-You can find out more on our [pricing page](http://www.sidekick.pro/plans/wordpress?utm_source= wordpress.org&utm_medium= plugin_page_faq ).
+You can find out more on our [pricing page](http://www.sidekick.pro/plans/wordpress?utm_source= wordpress.org&utm_medium=plugin_page_faq ).
 
-**Pro Tip:** You can get access to the full Basics Library for free if you host with one of our [partners](http://www.sidekick.pro/partners?utm_source= wordpress.org&utm_medium= plugin_page_faq ).
+**Pro Tip:** You can get access to the full Basics Library for free if you host with one of our [partners](http://www.sidekick.pro/partners?utm_source= wordpress.org&utm_medium=plugin_page_faq ).
 
 = Ok, the plugin is installed and activated. How do I use it? =
 
@@ -132,6 +133,7 @@ Click on the “Help Me” bottom left of your screen to open the Walkthrough me
 = Can I suggest a Walkthrough that I’d like to see or give you feedback on the Sidekick WordPress Plugin? =
 
 Absolutely. In fact, we rely on users like you to tell us about things that need to be improved or that you’d like to see added to the plugin. Send your email to [info@sidekick.pro](mailto:info@sidekick.pro).
+
 We read and respond to every piece of feedback we get.
 
 == Screenshots ==
