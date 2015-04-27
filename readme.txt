@@ -114,17 +114,17 @@ Plugin and theme specific Walkthroughs are called Third Party Walkthroughs and a
 
 = How do I create Walkthroughs for my Plugin(s) or Theme(s)? =
 
-You can build Walkthroughs for your plugin or theme by joining our WordPress [Developer Program](https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source= wordpress.org&utm_medium=plugin_page_faq). Your Walkthroughs will be available for free to anyone with SIDEKICK plus your plugin or theme activate d.
+You can build Walkthroughs for your plugin or theme by joining our WordPress [Developer Program](https://www.sidekick.pro/sidekick-plugins-themes-non-wordpress/?utm_source=wordpress.org&utm_medium=plugin_page_faq). Your Walkthroughs will be available for free to anyone with SIDEKICK plus your plugin or theme activate d.
 
 = What does Sidekick for WordPress cost? =
 
 The Sidekick plugin for WordPress is and always will be free to download and use. Installing the plugin gives you instant and unlimited access to 25 basic WordPress How-To and Overview Walkthroughs.
 
-Access to the full library of [WordPress Basics Walkthroughs](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source= wordpressorg&utm_medium=plugin_page_faq) (Over 190) including Hotspots, starts at just $4.00/mont h.
+Access to the full library of [WordPress Basics Walkthroughs](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpressorg&utm_medium=plugin_page_faq) (Over 190) including Hotspots, starts at just $4.00/mont h.
 
-You can find out more on our [pricing page](http://www.sidekick.pro/plans/wordpress?utm_source= wordpress.org&utm_medium=plugin_page_faq).
+You can find out more on our [pricing page](http://www.sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_faq).
 
-**Pro Tip:** You can get access to the full Basics Library for free if you host with one of our [partners](http://www.sidekick.pro/partners?utm_source= wordpress.org&utm_medium=plugin_page_faq).
+**Pro Tip:** You can get access to the full Basics Library for free if you host with one of our [partners](http://www.sidekick.pro/partners?utm_source=wordpress.org&utm_medium=plugin_page_faq).
 
 = Ok, the plugin is installed and activated. How do I use it? =
 
