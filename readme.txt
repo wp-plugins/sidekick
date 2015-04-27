@@ -31,6 +31,7 @@ With SIDEKICK your life will get better because it:
 [youtube https://www.youtube.com/watch?v=OAW0WWzIKt4]
 
 **Features**
+
 - Guided, step-by-step training
 - Walkthroughs happen in real-time, right inside your browser
 - Different solutions for different questions (Overviews, How-Tos & Hotspots)
