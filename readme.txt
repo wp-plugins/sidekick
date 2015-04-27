@@ -16,7 +16,7 @@ Real-time, voice-guided WordPress training and support straight from your dashbo
 
 Sidekick puts interactive, real-time tutorials (**Walkthroughs**) right inside your WordPress dashboard.
 
-No more reading documentation or watching videos. **Just Click. Do. Learn. **
+No more reading documentation or watching videos. **Just Click. Do. Learn.**
 
 SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3.50/month. Here’s a complete list of what’s in our [library](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
 
@@ -120,11 +120,11 @@ You can build Walkthroughs for your plugin or theme by joining our WordPress [De
 
 The Sidekick plugin for WordPress is and always will be free to download and use. Installing the plugin gives you instant and unlimited access to 25 basic WordPress How-To and Overview Walkthroughs.
 
-Access to the full library of [WordPress Basics Walkthroughs](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source= wordpressorg&utm_medium= plugin_page_faq) (Over 190) including Hotspots, starts at just $4.00/mont h.
+Access to the full library of [WordPress Basics Walkthroughs](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source= wordpressorg&utm_medium=plugin_page_faq) (Over 190) including Hotspots, starts at just $4.00/mont h.
 
-You can find out more on our [pricing page](http://www.sidekick.pro/plans/wordpress?utm_source= wordpress.org&utm_medium=plugin_page_faq ).
+You can find out more on our [pricing page](http://www.sidekick.pro/plans/wordpress?utm_source= wordpress.org&utm_medium=plugin_page_faq).
 
-**Pro Tip:** You can get access to the full Basics Library for free if you host with one of our [partners](http://www.sidekick.pro/partners?utm_source= wordpress.org&utm_medium=plugin_page_faq ).
+**Pro Tip:** You can get access to the full Basics Library for free if you host with one of our [partners](http://www.sidekick.pro/partners?utm_source= wordpress.org&utm_medium=plugin_page_faq).
 
 = Ok, the plugin is installed and activated. How do I use it? =
 
