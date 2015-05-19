@@ -51,7 +51,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 			wp_enqueue_script('jquery-ui-droppable'			, null, array('jquery-ui-core') );
 			wp_enqueue_script('jquery-effects-scale'		, null, array('jquery-ui-core') );
 			wp_enqueue_script('jquery-effects-highlight'	, null, array('jquery-ui-core') );
-			wp_enqueue_script('sidekick-admin'				, '//assets.sidekick.pro/plugin/tag/latest/js/sidekick_admin.js',array( 'jquery' ));
+			wp_enqueue_script('sidekick-admin'				, '//assets.sidekick.pro/plugin/tag/latest/js/sidekick_admin.js',array( 'jquery' ), null);
 		}
 
 		function enqueue(){
