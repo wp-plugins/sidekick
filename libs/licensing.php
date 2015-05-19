@@ -400,7 +400,7 @@ if (!class_exists('sidekickMassActivator')) {
                 // $return['counts'][$status] = count($checked_blogs[$status]);
             } else {
                 // $return['counts'][$status] = 0;
-                $return[$status]['sites'] = [];
+                $return[$status]['sites'] = array();
             }
 
             die(json_encode($return));
