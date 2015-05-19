@@ -8,7 +8,7 @@ Description: Adds a real-time WordPress training walkthroughs right in your Dash
  We recommend not activating SIDEKICK automatically for people but via an Opt-In process when they configure your own theme or plugin.
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.2.4
+Version: 2.3.0
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -86,12 +86,6 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						delete_option('sk_activation_id');
 					}
 
-					if (isset($_POST['sk_composer_button'])) {
-						update_option( 'sk_composer_button', true );
-					} else {
-						delete_option('sk_composer_button');
-					}
-
 					if (isset($_POST['sk_track_data'])) {
 						update_option( 'sk_track_data', true );
 					} else {
@@ -104,11 +98,14 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 			}
 
-			$activation_id = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : '');
-			$sk_track_data = get_option( 'sk_track_data' );
-			$current_user  = wp_get_current_user();
-			$status        = 'Free';
-			$error         = null;
+			$activation_id                   = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : '');
+			$sk_track_data                   = get_option( 'sk_track_data' );
+			$sk_hide_composer_taskbar_button = get_option('sk_hide_composer_taskbar_button');
+			$sk_hide_config_taskbar_button   = get_option('sk_hide_config_taskbar_button');
+			$sk_hide_composer_upgrade_button = get_option('sk_hide_composer_upgrade_button');
+			$current_user                    = wp_get_current_user();
+			$status                          = 'Free';
+			$error                           = null;
 
 			if (isset($SK_PAID_LIBRARY_FILE) && $activation_id) {
 				$_POST['activation_id'] = $activation_id;
@@ -191,7 +188,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 								<tbody>
 									<tr valign="top">
 										<th scope="row" valign="top">Activation ID</th>
-										<?php if (defined('MULTISITE') && MULTISITE): ?>
+										<?php if (is_multisite()): ?>
 											<?php if (isset($activation_id) && $activation_id): ?>
 												<td><input class='regular-text' style='color: gray;' type='text' name='activation_id' value='xxxxxxxx-xxxx-xxxx-xxxx-<?php echo substr($activation_id, 25,20) ?>'></input></td>
 											<?php else: ?>
@@ -218,13 +215,12 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 										</td>
 									</tr>
 
-									<tr valign="top" style='display: none'>
+									<tr valign="top">
 										<th scope="row" valign="top">
 											Enable Composer Mode
 										</th>
 										<td>
-											<input name="sk_composer_button" type="checkbox" <?php if (get_option('sk_composer_button')): ?>CHECKED<?php endif ?> />
-											<label class="description" for="track_data">Enable Walkthrough creation.</label>
+											<button class='open_composer'>Open Composer</button>
 										</td>
 									</tr>
 								</tbody>
@@ -236,7 +232,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 				</div>
 			</div>
 
-			<div class="sk_box composer">
+			<div class="sk_box composer" style='display: none'>
 				<div class="well">
 					<h3>Build Your Own Walkthroughs</h3>
 					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>
@@ -319,6 +315,51 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 <div class="sk_box configure">
 	<div class="well">
+		<h3>Configure - Other</h3>
+
+		<form method="post">
+			<?php settings_fields('sk_license'); ?>
+			<table class="form-table long_label">
+				<tbody>
+
+					<tr valign="top">
+						<th scope="row" valign="top">Hide Composer Button in Taskbar</th>
+						<td>
+							<input class='checkbox' type='checkbox' name='sk_hide_composer_taskbar_button' <?php echo (isset($sk_hide_composer_taskbar_button) && $sk_hide_composer_taskbar_button) ? 'CHECKED' : '' ?>>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" valign="top">Hide Config Button in Taskbar</th>
+						<td>
+							<input class='checkbox' type='checkbox' name='sk_hide_config_taskbar_button' <?php echo (isset($sk_hide_config_taskbar_button) && $sk_hide_config_taskbar_button) ? 'CHECKED' : '' ?>>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" valign="top">Hide Composer Upgrade Button in Drawer</th>
+						<td>
+							<input class='checkbox' type='checkbox' name='sk_hide_composer_upgrade_button' <?php echo (isset($sk_hide_composer_upgrade_button) && $sk_hide_composer_upgrade_button) ? 'CHECKED' : '' ?>>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" valign="top"></th>
+						<td>
+							<input class='button button-primary' type='submit' value='Save'/>
+						</td>
+					</tr>
+
+					<input type='hidden' name='is_ms_admin' value='<?php echo (isset($is_ms_admin)) ? $is_ms_admin : false ?>'/>
+					<input type='hidden' name='sk_setting_other' value='true'/>
+
+					<?php wp_nonce_field( 'update_sk_settings' ); ?>
+
+				</tbody>
+			</table>
+		</form>
+	</div>
+</div>
+
+<div class="sk_box configure">
+	<div class="well">
 		<form method='post'>
 
 			<input class='top-right button button-primary alignright' type='submit' value='Save'/>
@@ -362,58 +403,82 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 		function set_disabled_wts(){
 
-			if (!check_admin_referer('update_sk_settings')) {
-				print 'Sorry, your nonce did not verify or you\'re not logged in.';
-				exit;
+
+			if (isset($_POST['sk_setting_disabled'])){
+
+				if (!check_admin_referer('update_sk_settings')) {
+					print 'Sorry, your nonce did not verify or you\'re not logged in.';
+					exit;
+				}
+
+				$_POST['disable_wts'] =  array_map("mysql_real_escape_string",$_POST['disable_wts']);
+
+				if (isset($_POST['disable_wts']) && $_POST['disable_wts']) {
+					update_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
+					if (is_network_admin()) {
+						update_site_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
+					}
+				} else {
+					delete_option('sk_disabled_wts');
+					if (is_network_admin()) {
+						delete_site_option('sk_disabled_wts');
+					}
+				}
 			}
 
-			$_POST['disable_wts'] =  array_map("mysql_real_escape_string",$_POST['disable_wts']);
-
-			if (isset($_POST['disable_wts']) && $_POST['disable_wts']) {
-				update_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
-				if (is_network_admin()) {
-					update_site_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
-				}
-			} else {
-				delete_option('sk_disabled_wts');
-				if (is_network_admin()) {
-					delete_site_option('sk_disabled_wts');
-				}
-			}
 		}
 
 		function set_autostart_wt(){
 
-			if (!check_admin_referer('update_sk_settings')) {
-				print 'Sorry, your nonce did not verify or you\'re not logged in.';
-				exit;
+			if (isset($_POST['sk_setting_autostart'])){
+
+				if (!check_admin_referer('update_sk_settings')) {
+					print 'Sorry, your nonce did not verify or you\'re not logged in.';
+					exit;
+				}
+
+				if (isset($_POST['sk_autostart_walkthrough_id']) && intval($_POST['sk_autostart_walkthrough_id']) > 0){
+					if (is_network_admin()) {
+						update_site_option('sk_autostart_walkthrough_id',wp_filter_kses($_POST['sk_autostart_walkthrough_id']));
+					}
+					update_option('sk_autostart_walkthrough_id',wp_filter_kses($_POST['sk_autostart_walkthrough_id']));
+				} else {
+					delete_option('sk_autostart_walkthrough_id');
+					if (is_network_admin()) {
+						delete_site_option('sk_autostart_walkthrough_id');
+					}
+				}
 			}
 
-			if (isset($_POST['sk_autostart_walkthrough_id']) && intval($_POST['sk_autostart_walkthrough_id']) > 0){
-				if (is_network_admin()) {
-					update_site_option('sk_autostart_walkthrough_id',wp_filter_kses($_POST['sk_autostart_walkthrough_id']));
-				}
-				update_option('sk_autostart_walkthrough_id',wp_filter_kses($_POST['sk_autostart_walkthrough_id']));
-			} else {
-				delete_option('sk_autostart_walkthrough_id');
-				if (is_network_admin()) {
-					delete_site_option('sk_autostart_walkthrough_id');
-				}
-			}
 		}
 
-		function set_api(){
+		function set_configure_other(){
 
-			if (!check_admin_referer('update_sk_settings')) {
-				print 'Sorry, your nonce did not verify or you\'re not logged in.';
-				exit;
+			if (isset($_POST['sk_setting_other'])){
+
+				if (!check_admin_referer('update_sk_settings')) {
+					print 'Sorry, your nonce did not verify or you\'re not logged in.';
+					exit;
+				}
+
+				$checkboxes = array('sk_hide_composer_taskbar_button','sk_hide_config_taskbar_button','sk_hide_composer_upgrade_button');
+
+				foreach ($checkboxes as $key => $checkbox) {
+					if (isset($_POST[$checkbox])){
+						if (is_network_admin()) {
+							update_site_option($checkbox,wp_filter_kses($_POST[$checkbox]));
+						}
+						update_option($checkbox,wp_filter_kses($_POST[$checkbox]));
+					} else {
+						delete_option($checkbox);
+						if (is_network_admin()) {
+							delete_site_option($checkbox);
+						}
+					}
+				}
+
 			}
 
-
-			if (isset($_POST['sk_api'])){
-				update_option('sk_api',wp_filter_kses($_POST['sk_api']));
-				update_site_option('sk_api',wp_filter_kses($_POST['sk_api']));
-			}
 		}
 
 		function footer(){
@@ -425,40 +490,39 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 			$current_user                     = wp_get_current_user();
 			$sk_just_activated                = get_option( 'sk_just_activated' );
 			$sk_track_data                    = get_option( 'sk_track_data' );
-			$sk_composer_button               = get_option( 'sk_composer_button' );
+			$sk_hide_composer_taskbar_button  = get_option( 'sk_hide_composer_taskbar_button' );
+			$sk_hide_config_taskbar_button    = get_option( 'sk_hide_config_taskbar_button' );
+			$sk_hide_composer_upgrade_button  = get_option( 'sk_hide_composer_upgrade_button' );
 			$activation_id                    = (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : '');
 			$autostart_network_walkthrough_id = (get_site_option('sk_autostart_walkthrough_id') ? get_site_option('sk_autostart_walkthrough_id') : 'null' );
 			$autostart_walkthrough_id         = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : $autostart_network_walkthrough_id );
 			$custom_class                     = (get_option( "sk_custom_class" ) ? get_option( "sk_custom_class" ) : '');
 			$theme                            = wp_get_theme();
 			$not_supported_ie                 = false;
-			$user_email                       = '';
-			if ($sk_track_data) {
-				$user_email = $current_user->user_email;
-			}
+			$user_email                       = ($sk_track_data) ? $current_user->user_email : '';
+			$disabled_wts                     = (!is_network_admin()) ? $sk_config_data->get_disabled_wts() : '[]';
+			$user_role                        = $sk_config_data->get_user_role();
+			$site_url                         = $sk_config_data->get_domain();
+			$installed_plugins                = $sk_config_data->get_plugins();
+			$plugin_count                     = (isset($plugins) && is_array($plugins)) ? count($plugins) : array();
+			$disabled_network_wts             = $sk_config_data->get_disabled_network_wts();
+			$current_url                      = $sk_config_data->get_current_url();
+			$post_types                       = $sk_config_data->get_post_types();
+			$taxonomies                       = $sk_config_data->get_taxonomies();
+			$user_data                        = $sk_config_data->get_user_data();
+			$comments                         = $sk_config_data->get_comments();
+			$post_statuses                    = $sk_config_data->get_post_statuses();
+			$post_types_and_statuses          = $sk_config_data->get_post_types_and_statuses();
+			$number_of_themes                 = $sk_config_data->get_themes();
+			$frameworks                       = $sk_config_data->get_framework();
+			$file_editor_enabled              = $sk_config_data->get_file_editor_enabled();
 
-			$disabled_wts            = (!is_network_admin()) ? $sk_config_data->get_disabled_wts() : '[]';
-			$user_role               = $sk_config_data->get_user_role();
-			$site_url                = $sk_config_data->get_domain();
-			$installed_plugins       = $sk_config_data->get_plugins();
-			$plugin_count            = (isset($plugins) && is_array($plugins)) ? count($plugins) : array();
-			$disabled_network_wts    = $sk_config_data->get_disabled_network_wts();
-			$current_url             = $sk_config_data->get_current_url();
-			$post_types              = $sk_config_data->get_post_types();
-			$taxonomies              = $sk_config_data->get_taxonomies();
-			$user_data               = $sk_config_data->get_user_data();
-			$comments                = $sk_config_data->get_comments();
-			$post_statuses           = $sk_config_data->get_post_statuses();
-			$post_types_and_statuses = $sk_config_data->get_post_types_and_statuses();
-			$number_of_themes        = $sk_config_data->get_themes();
-			$frameworks              = $sk_config_data->get_framework();
-			$file_editor_enabled     = $sk_config_data->get_file_editor_enabled();
+
 
 			delete_option( 'sk_just_activated' );
 			if(preg_match('/(?i)msie [6-8]/',$_SERVER['HTTP_USER_AGENT'])) $not_supported_ie = true;
 
 			?>
-
 
 			<?php if (!$not_supported_ie): ?>
 
@@ -484,6 +548,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 							installed_theme:          	'<?php echo sanitize_title($theme->Name) ?>',
 							theme_version:            	'<?php echo $theme->Version ?>',
 							main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
+							// main_soft_version: '4.5.1',
 							user_level:               	'<?php echo $user_role ?>',
 							main_soft_name: 			'WordPress',
 							file_editor_enabled: 		<?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
@@ -501,19 +566,20 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						auto_open_product:              'default',
 						disable_wts_in_root_bucket_ids: [5,87],
 						autostart_walkthrough_id:       <?php echo $autostart_walkthrough_id ?>,
-						sk_composer_button:             <?php echo ($sk_composer_button ? "true" : "false") ?>,
 						track_data:                     '<?php echo $sk_track_data ?>',
 						user_email:                     '<?php echo $user_email ?>',
 						custom_class:                   '<?php echo $custom_class ?>',
 
 						// Toggles
-						path_not_found_continue: true,
-						show_powered_by:         true,
-						show_powered_by_link:    true,
-						sk_autostart_only_once:  true,
-						use_native_controls:     false,
-						composer_upgrade_off:    false,
-						basics_upgrade:          true,
+						path_not_found_continue:      true,
+						show_powered_by:              true,
+						show_powered_by_link:         true,
+						sk_autostart_only_once:       true,
+						use_native_controls:          false,
+						basics_upgrade:               true,
+						composer_upgrade_off:         <?php echo ($sk_hide_composer_upgrade_button ? "true" : "false") ?>,
+						hide_taskbar_composer_button: <?php echo ($sk_hide_composer_taskbar_button ? "true" : "false") ?>,
+						hide_taskbar_config_button:   <?php echo ($sk_hide_config_taskbar_button ? "true" : "false") ?>,
 
 						// Platform Info
 						library_version: 2,
@@ -522,9 +588,9 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 						// Generic Info
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
-						platform_version:         	null,
-						plugin_version:           	'2.2.4',
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
+						platform_version:         	null,
+						plugin_version:           	'2.3.0',
 
 						// SIDEKICK URLS
 						assets:       				'<?php echo SK_ASSETS ?>',
@@ -541,7 +607,6 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						plugin_url:               '<?php echo admin_url("admin.php?page=sidekick") ?>',
 						base_url:                 '<?php echo site_url() ?>',
 						current_url:              '<?php echo $current_url ?>'
-						// fallback_notfication_mp3: '//assets.sidekick.pro/fallback.mp3'
 					}
 
 					var skc_config = {
@@ -610,23 +675,6 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function activate_plugin(){
 			update_option( 'sk_firstuse', true );
 			update_option( 'sk_do_activation_redirect', true );
-			$data = array(
-				'source' => 'plugin',
-				'action' => 'track',
-				'type' => 'activate'
-				);
-			$this->track($data);
-		}
-
-		function curl_get_data($url){
-			$ch = curl_init();
-			$timeout = 5;
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-			$data = curl_exec($ch);
-			curl_close($ch);
-			return $data;
 		}
 
 		function redirect(){
@@ -640,25 +688,28 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 		function check_ver(){
 
-			$data = json_encode('2.2.4');
+			if (isset($_GET['sk_ver_check'])){
+				$data = json_encode('2.3.0');
 
-			if(array_key_exists('callback', $_GET)){
+				if(array_key_exists('callback', $_GET)){
 
-				header('Content-Type: text/javascript; charset=utf8');
-				header('Access-Control-Allow-Origin: http://www.example.com/');
-				header('Access-Control-Max-Age: 3628800');
-				header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+					header('Content-Type: text/javascript; charset=utf8');
+					header('Access-Control-Allow-Origin: http://www.example.com/');
+					header('Access-Control-Max-Age: 3628800');
+					header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 
-				$callback = $_GET['callback'];
-				echo $callback.'('.$data.');';
+					$callback = $_GET['callback'];
+					echo $callback.'('.$data.');';
 
-			}else{
-				header('Content-Type: application/json; charset=utf8');
+				}else{
+					header('Content-Type: application/json; charset=utf8');
 
-				echo $data;
+					echo $data;
+				}
+
+				die();
 			}
 
-			die();
 		}
 
 		function admin_notice() {
@@ -676,55 +727,46 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 			}
 		}
 
-		function deactivate_plugin(){
-			$data = array(
-				'source' => 'plugin',
-				'action' => 'track',
-				'type' => 'deactivate',
-				'user' => get_option( "activation_id" )
-				);
-			$this->track($data);
-			?>
-			<script type="text/javascript">
-				window._gaq = window._gaq || [];
-				window._gaq.push(['sk._setAccount', 'UA-39283622-1']);
+		// Clear transients for cached sk_config_data
 
-				(function() {
-					var ga_wpu = document.createElement('script'); ga_sk.type = 'text/javascript'; ga_sk.async = true;
-					ga_sk.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga_wpu, s);
-				})();
-				window._gaq.push(['sk._trackEvent', 'Plugin - Deactivate', '', null, 0,true]);
-			</script>
-			<?php
-			delete_option( 'sk_activated' );
+		function delete_sk_get_comments(){
+			mlog("delete_sk_get_comments");
+			delete_transient('sk_get_comments');
 		}
+
+		function delete_sk_get_post_types(){
+			mlog('delete sk_get_post_types');
+			delete_transient('sk_get_post_types');
+			delete_transient('sk_post_statuses');
+		}
+
+		function delete_sk_get_user_data(){
+			mlog('delete sk_get_user_data');
+			delete_transient('sk_get_user_data');
+		}
+
+		function delete_sk_get_plugins(){
+			mlog('delete sk_get_plugins');
+			delete_transient('sk_get_plugins');
+		}
+
 	}
+
 	$sidekick = new Sidekick;
 	register_activation_hook( __FILE__, array($sidekick,'activate_plugin') );
-	register_deactivation_hook( __FILE__, array($sidekick,'deactivate_plugin')  );
 
-	// if (isset($_POST['sk_setting_disabled'])) 	$sidekick->set_disabled_wts();
-	// if (isset($_POST['sk_setting_autostart']))	$sidekick->set_autostart_wt();
-	// if (isset($_POST['sk_api'])) 				$sidekick->set_api();
-	// if (isset($_GET['sk_ver_check'])) 			$sidekick->check_ver();
-
-	if (isset($_POST['sk_setting_disabled'])) 	 add_action('admin_init', array($sidekick,'set_disabled_wts'));
-	if (isset($_POST['sk_setting_autostart']))	 add_action('admin_init', array($sidekick,'set_autostart_wt'));
-	if (isset($_POST['sk_api'])) 				 add_action('admin_init', array($sidekick,'set_api'));
-	if (isset($_GET['sk_ver_check'])) 			 add_action('admin_init', array($sidekick,'check_ver'));
-
-
-	add_action('admin_menu', array($sidekick,'setup_menu'));
+	add_action('admin_init', array($sidekick,'set_disabled_wts'));
+	add_action('admin_init', array($sidekick,'set_autostart_wt'));
+	add_action('admin_init', array($sidekick,'set_configure_other'));
+	add_action('admin_init', array($sidekick,'check_ver'));
 	add_action('admin_init', array($sidekick,'redirect'));
+	add_action('admin_init', array($sidekick,'admin_notice_ignore'));
+	add_action('admin_menu', array($sidekick,'setup_menu'));
 	add_action('wp_ajax_sk_activate', array($sidekick,'activate'));
 	add_action('wp_ajax_sk_save', array($sidekick,'ajax_save'));
 	add_action('admin_notices', array($sidekick,'admin_notice'));
-	add_action('admin_init', array($sidekick,'admin_notice_ignore'));
 
-
-
-	
+	{
 		
 
 if (defined('SK_PLUGIN_DEGBUG')) {
@@ -743,312 +785,505 @@ if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('
 	}
 }
 
+	}
 
 	if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('IFRAME_REQUEST')) {
 		add_action('admin_footer', array($sidekick,'footer'));
 		add_action('customize_controls_print_footer_scripts', array($sidekick,'footer'));
 	}
-}
 
+	add_action('transition_post_status',array($sidekick,'delete_sk_get_post_types_and_statuses'));
+	add_action('clean_post_cache',array($sidekick,'delete_sk_get_post_types_and_statuses'));
 
+	add_action('wp_update_comment_count',array($sidekick,'delete_sk_get_comments'));
 
-// Multisite Licensing
+	add_action('set_user_role',array($sidekick,'delete_sk_get_user_data'));
+	add_action('edit_user_profile',array($sidekick,'delete_sk_get_user_data'));
 
-if (defined('MULTISITE')) {
-	
+	add_action('activated_plugin',array($sidekick,'delete_sk_get_plugins'));
+	add_action('deactivated_plugin',array($sidekick,'delete_sk_get_plugins'));
+
+	// Multisite Licensing
+
+	if (is_multisite()) {
+		
 
 // licensing.php
 
 if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 
-	class sidekickMassActivator{
+    class sidekickMassActivator {
 
-		function activate($blog_id, $user_id, $domain, $path){
-			// mlog('FUNCTION: activate');
+        var $sites_per_page = 25;
+        var $offet = 0;
 
-			$sk_auto_activations = get_option( 'sk_auto_activations');
+        function activate($blog_id, $user_id, $domain, $path) {
+            mlog("FUNCTION: activate [$blog_id, $user_id, $domain, $path]");
 
-			if ($sk_auto_activations) {
+            switch_to_blog($blog_id);
+            $sk_activation_id = get_option('sk_activation_id');
+            restore_current_blog();
 
-				$user = get_user_by('id',$user_id);
-				$email = ($user) ? $user->user_email : 'unknown';
+            $checked_blogs = get_option('sk_checked_blogs');
 
-				// TODO: Send Domain for good measure
+            if (isset($checked_blogs['active'][$blog_id]) || $sk_activation_id) {
+                unset($checked_blogs['unactivated'][$blog_id]);
+                $blog                              = $this->get_blog_by_id($blog_id);
+                $checked_blogs['active'][$blog_id] = $blog[0];
 
-				$sk_selected_subscription = get_option("sk_selected_subscription");
-				$sk_selected_product      = get_option("sk_selected_product");
+                update_option('sk_checked_blogs', $checked_blogs);
 
-				if (isset($sk_selected_product) && $sk_selected_product) {
-					$data = array('domainName'     => $domain . $path, 'productId' => $sk_selected_product);
-				} else if (strpos($sk_selected_subscription,'subscription-') !== false) {
-					$sk_selected_subscription = explode('subscription-',$sk_selected_subscription);
-					$data = array('domainName'     => $domain . $path, 'subscriptionId' => $sk_selected_subscription[1]);
-				}
+                $result = array(
+                    "payload" => array(
+                        "blog"    => $blog[0],
+                        "message" => "Already Activated",
+                        ),
+                    );
 
-				$result = $this->send_request('post','/domains',$data);
+                return json_encode($result);
+            }
 
-				if (isset($result->success) && $result->success == true && $result->payload->domainKey) {
+            $user                = get_user_by('id', $user_id);
+            $email               = ($user) ? $user->user_email : 'unknown';
+            $sk_subscription_id  = get_option("sk_subscription_id");
+            $sk_selected_library = get_option("sk_selected_library");
 
-					if (!get_option('sk_activation_id')) {
-						// Use the first site's activation key for the network key
-						update_option('sk_activation_id',$result->payload->domainKey);
-					}
+            if (isset($sk_selected_library) && $sk_selected_library && $sk_selected_library !== -1 && $sk_selected_library !== '-1') {
+                $data = array('domainName' => $domain . '/' . $path, 'productId' => $sk_selected_library);
+            } elseif (isset($sk_subscription_id) && intval($sk_subscription_id)) {
+                $data = array('domainName' => $domain . '/' . $path, 'subscriptionId' => $sk_subscription_id);
+            } else {
+                update_option('sk_auto_activation_error', "No selected library or subscriptionId set");
 
-					switch_to_blog($blog_id);
-					update_option('sk_activation_id',$result->payload->domainKey);
-					update_option('sk_email',$email);
-					restore_current_blog();
 
-					$this->track('Mass Activate',array('domain' => $domain,'email' => $email));
+                return false;
+            }
 
-					delete_option('sk_auto_activation_error');
-				} else {
+            $result = $this->send_request('post', '/domains', $data);
 
-					$this->track('Mass Activate Error',array('domain' => $domain, 'message' => $result->message,'email' => $email));
-					update_option('sk_auto_activation_error',$result->message);
-					wp_mail( 'support@sidekick.pro', 'Failed Mass Domain Add', json_encode($result));
-				}
-				return $result;
-			}
-			return false;
-		}
+            if (isset($result->success) && $result->success == true && $result->payload->domainKey) {
 
-		function track($event,$data){
-			if (file_exists(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php')) {
-				require_once(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php');
-				$mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");
-				$domain = str_replace("http://","",$_SERVER["SERVER_NAME"]);
+                $this->setup_super_admin_key($result->payload->domainKey);
 
-				$mp->track($event, $data);
-			}
-		}
+                switch_to_blog($blog_id);
+                update_option('sk_activation_id', $result->payload->domainKey);
+                update_option('sk_email', $email);
+                restore_current_blog();
 
-		function activate_single(){
-			die(json_encode($this->activate($_POST['blog_id'], $_POST['user_id'], $_POST['domain'], $_POST['path'])));
-		}
+                $this->track('Mass Activate', array('domain' => $domain, 'email' => $email));
 
-		function send_request_curl($url, $post){
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
-			curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($post));
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			$result = curl_exec($ch);
-			curl_close($ch);
-			return $result;
-		}
+                if (isset($checked_blogs['deactivated'][$blog_id])) {
+                    $checked_blogs['active'][$blog_id] = $checked_blogs['deactivated'][$blog_id];
+                    unset($checked_blogs['deactivated'][$blog_id]);
+                } else if (isset($checked_blogs['unactivated'][$blog_id])) {
+                    $checked_blogs['active'][$blog_id] = $checked_blogs['unactivated'][$blog_id];
+                    unset($checked_blogs['unactivated'][$blog_id]);
+                }
 
-		function send_request($type,$end_point, $data = null,$second_attempt = null){
-		// var_dump('send_request');
-		//var_dump("FUNCTION: send_request");
+                update_option('sk_checked_blogs', $checked_blogs);
+                update_option('sk_last_setup_blog_id', $blog_id);
 
-			if (strpos($_SERVER['SERVER_PROTOCOL'], 'https') === false) {
-				$protocol = 'http:';
-			} else {
-				$protocol = 'https:';
-			}
+                delete_option('sk_auto_activation_error');
+            } else {
 
-			$url      = $protocol . SK_API  . $end_point;
-			$sk_token = get_transient('sk_token');
+                $this->track('Mass Activate Error', array('domain' => $domain, 'message' => $result->message, 'email' => $email));
+                update_option('sk_auto_activation_error', $result->message);
+                    // wp_mail( 'support@sidekick.pro', 'Failed Mass Domain Add', json_encode($result));
+                wp_mail('bart@sidekick.pro', 'Failed Mass Domain Add', json_encode($result));
+            }
 
-			if (!$sk_token && $end_point !== '/login') {
-				$this->login();
-				$sk_token = get_transient('sk_token');
-			}
+            return $result;
 
-			$headers = array('Content-Type:application/json');
+        }
 
-			if ($sk_token && $end_point !== '/login') {
-				$headers[] = "Authorization: $sk_token";
-			}
+        function setup_super_admin_key($domainKey) {
+                // Use the super admin's site activation key if not set using last activation key
+            if (!get_option('sk_activation_id')) {
+                update_option('sk_activation_id', $domainKey);
+            }
+        }
 
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($type));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			if ($data) {
-				curl_setopt($ch, CURLOPT_POSTFIELDS,json_encode($data));
-			}
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			$result = curl_exec($ch);
-			curl_close($ch);
+        function track($event, $data) {
+            if (file_exists(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php')) {
+                require_once(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php');
+                $mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");
+                $domain = str_replace("http://", "", $_SERVER["SERVER_NAME"]);
 
-			// echo $result; var_dump($url); var_dump($headers); var_dump($data); var_dump($result); die();
+                $mp->track($event, $data);
+            }
+        }
 
-			if ($result == 'HTTP/1.1 401 Unauthorized' && !$second_attempt) {
-				// var_dump('Getting rid of token and trying again');
-				$this->login();
-				delete_transient('sk_token');
-				$this->send_request('post',$type,$data,true);
-			}
+        function activate_batch() {
+            $checked_blogs = get_option('sk_checked_blogs');
+            $count         = 0;
 
-			return json_decode($result);
-		}
+            if (isset($checked_blogs['unactivated']) && is_array($checked_blogs['unactivated'])) {
+                foreach ($checked_blogs['unactivated'] as $key => $blog) {
+                    if ($count == $this->sites_per_page) {
+                        break;
+                    }
+                    $this->activate($blog->blog_id, $blog->user_id, $blog->domain, $blog->path);
+                    $count++;
+                }
+            }
+            //mlog('$checked_blogs',$checked_blogs);
 
-		function setup_menu(){
-			add_submenu_page( 'settings.php', 'Sidekick - Licensing', 'Sidekick - Licensing', 'activate_plugins','sidekick-licensing', array(&$this,'admin_page'));
-		}
+            $result = array('activated_count' => $count, 'sites_per_page' => $this->sites_per_page, 'unactivated_count' => count($checked_blogs['unactivated']));
+            die(json_encode($result));
+        }
 
-		function login(){
-			global $login_error;
+        function activate_single() {
+            $result = $this->activate($_POST['blog_id'], $_POST['user_id'], $_POST['domain'], $_POST['path']);
+            die(json_encode($result));
+        }
 
-			$email    = get_option('sk_account');
-			$password = get_option('sk_password');
-			delete_option('sk_auto_activation_error');
+        function deactivate_single() {
 
-			if (!$password || !$email) {
-				return false;
-			}
+            $checked_blogs = get_option('sk_checked_blogs');
+            $blog_id       = $_POST['blog_id'];
 
-			$string = $password;
-			$key    = 'hash';
-			$decrypted_password = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($password), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+            if (isset($checked_blogs['active'][$_POST['blog_id']])) {
+                $checked_blogs['deactivated'][$blog_id] = $checked_blogs['active'][$blog_id];
+                unset($checked_blogs['active'][$blog_id]);
+                update_option('sk_checked_blogs', $checked_blogs);
+                die('{"success":1}');
+            } else {
+                die('{"payload":{"message":"Error #13"}}');
+            }
+        }
 
-			$result = $this->send_request('post','/login',array('email' => $email, 'password' => $decrypted_password));
+        function send_request($type, $end_point, $data = null, $second_attempt = null) {
 
-			if (!isset($result) || !$result->success) {
-				delete_option( 'sk_token' );
-				return array('error' => $result->message);
-			} else {
-				set_transient( 'sk_token', $result->payload->token->value, 24 * HOUR_IN_SECONDS );
-				$this->load_subscriptions($result->payload->token->value);
-				return array('success' => true);
-			}
-		}
+                // var_dump("FUNCTION: send_request [$type] -> $end_point");
 
-		function load_user_data(){
-			return $this->send_request('get','/users/');
-		}
+            if (strpos($_SERVER['SERVER_PROTOCOL'], 'https') === false) {
+                $protocol = 'http:';
+            } else {
+                $protocol = 'https:';
+            }
 
-		function load_subscriptions(){
+            $url      = $protocol . SK_API . $end_point;
+            $sk_token = get_transient('sk_token');
 
-			$result        = $this->send_request('get','/users/subscriptions');
-			$load_products = false;
+            if (!$sk_token && $end_point !== '/login') {
+                $this->login();
+                $sk_token = get_transient('sk_token');
+            }
 
-			if (isset($result->success) && isset($result->payload)) {
+            $headers = array('Content-Type' => 'application/json');
 
-				$sub = $result->payload[0];
+            if ($sk_token && $end_point !== '/login') {
+                $headers['Authorization'] = $sk_token;
+            }
 
-				if (isset($sub->Plan->CreatableProductType) && $sub->Plan->CreatableProductType->name == 'Public') {
-					$this->logout();
-					update_option( 'sk_auto_activation_error', 'Public accounts are not compatible with MultiSite activations.');
-					return false;
-				} if (isset($sub->Plan->CreatableProductType) && $sub->Plan->CreatableProductType->name == 'Private') {
-					update_option( 'sk_selected_subscription', 'product-' . $sub->id );
-				} else {
-					update_option( 'sk_selected_subscription', 'subscription-' . $sub->id );
-				}
+            $args = array(
+                'timeout'     => 45,
+                'redirection' => 5,
+                'httpversion' => '1.0',
+                'blocking'    => true,
+                'headers'     => $headers
+                );
 
-				if (isset($sub->Plan->CreatableProductType) && isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') {
-					$load_products = true;
-				}
+            if (isset($type) && $type == 'post') {
+                $args['method'] = 'POST';
+                $args['body']   = json_encode($data);
+            } else if (isset($type) && $type == 'get') {
+                $args['method'] = 'GET';
+                $args['body']   = $data;
+            }
 
-				if (count($sub->Domains) > 0) {
-					foreach ($sub->Domains as &$domain) {
-						if (!$domain->DomainSubscription->end) {
-							if (isset($sub->activeDomainCount)) {
-								$sub->activeDomainCount++;
-							} else {
-								$sub->activeDomainCount = 1;
-							}
-						}
-					}
-				} if (count($sub->PrivateProductSubscriptions) > 0) {
-					foreach ($sub->PrivateProductSubscriptions as &$domain) {
-						if (isset($sub->activeDomainCount)) {
-							$sub->activeDomainCount++;
-						} else {
-							$sub->activeDomainCount = 1;
-						}
-					}
-				} else {
-					$sub->activeDomainCount = 0;
-				}
+            $result = wp_remote_post($url, $args);
 
-				$data['subscriptions'] = $result->payload;
+            if ($result['response']['message'] == 'Unauthorized' && !$second_attempt) {
+                    // var_dump('Getting rid of token and trying again');
+                delete_transient('sk_token');
+                $this->login();
 
-				if ($load_products) {
-					$data['products'] = $this->load_products();
-				}
+                return $this->send_request($type, $end_point, $data, true);
+            }
 
-				return $data;
-			} else if (isset($result->message) && strpos($result->message, 'Invalid Token') !== false) {
-				$this->logout();
-				update_option( 'sk_auto_activation_error', 'Please authorize SIDEKICK by logging in.');
-			}
-			return null;
-		}
+            return json_decode($result['body']);
+        }
 
-		function logout(){
-			delete_option( 'sk_account');
-			delete_option( 'sk_password');
-			delete_option( 'sk_selected_subscription');
-			delete_option( 'sk_selected_product');
-		}
+        function setup_menu() {
+            add_submenu_page('settings.php', 'Sidekick - Licensing', 'Sidekick - Licensing', 'activate_plugins', 'sidekick-licensing', array(&$this, 'admin_page'));
+        }
 
-		function load_products(){
-			$result = $this->send_request('get','/products');
-			if ($result->success) {
-				return $result->payload->products;
-			}
-			return null;
-		}
+        function login() {
+            $email    = get_option('sk_account');
+            $password = get_option('sk_password');
+            delete_option('sk_auto_activation_error');
 
-		function admin_page(){
-			if (isset($_POST['sk_account'])) {
+            if (!$password || !$email) {
+                return false;
+            }
 
-				delete_option('sk_auto_activation_error');
+            $key                = 'hash';
+            $decrypted_password = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($password), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
 
-				if (isset($_POST['sk_password']) && $_POST['sk_password'] && isset($_POST['sk_account']) && $_POST['sk_account']) {
-					$key    = 'hash';
-					$string = $_POST['sk_password'];
+            $result = $this->send_request('post', '/login', array('email' => $email, 'password' => $decrypted_password));
 
-					$encrypted_password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
-					$decrypted_password = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted_password), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+            if (!isset($result) || !$result->success) {
+                delete_option('sk_token');
 
-					update_option( 'sk_account', $_POST['sk_account'] );
-					update_option( 'sk_password', $encrypted_password );
-					$login_status = $this->login();
-					delete_option('sk_auto_activation_error');
-				} else {
-					update_option( 'sk_selected_subscription', $_POST['sk_selected_subscription'] );
-				}
+                return array('error' => $result->message);
+            } else {
+                set_transient('sk_token', $result->payload->token->value, 24 * HOUR_IN_SECONDS);
+                    // var_dump($result->payload->token->value);
+                $this->load_subscriptions($result->payload->token->value);
 
-				if (isset($_POST['sk_auto_activations'])) {
-					update_option( 'sk_auto_activations', true );
-				} else {
-					delete_option( 'sk_auto_activations');
-				}
+                return array('success' => true);
+            }
+        }
 
-				if (isset($_POST['sk_selected_product']) && $_POST['sk_selected_product'] !== '0' && isset($_POST['sk_selected_subscription']) && strpos($_POST['sk_selected_subscription'], 'product') !== false) {
-					update_option( 'sk_selected_product', $_POST['sk_selected_product'] );
-				} else {
-					delete_option( 'sk_selected_product');
-				}
+        function load_user_data() {
+            return $this->send_request('get', '/users/');
+        }
 
-			}
+        function load_subscriptions() {
 
-			$sk_token                 = get_transient('sk_token');
-			if (!$sk_token) {
-				$login_status = $this->login();
-			}
-			$sk_subs                  = $this->load_subscriptions();
-			$user_data                = $this->load_user_data();
-			$sk_auto_activations      = get_option( 'sk_auto_activations');
-			$sk_auto_activation_error = get_option('sk_auto_activation_error');
-			$sk_selected_subscription = get_option('sk_selected_subscription');
-			$sk_selected_product      = get_option('sk_selected_product');
-			$is_ms_admin              = true;
-			$curl                     = function_exists('curl_version') ? true : false;
-			$fgets                    = file_get_contents(__FILE__) ? true : false;
-			$fgets_url                = ini_get('allow_url_fopen') ? true : false;
+            $result         = $this->send_request('get', '/users/subscriptions');
 
-			if ($curl && (!$fgets || !$fgets_url)) {
-				$error = "Sorry, SIDEKICK MultiSite activations require <b>CURL</b> or <b>file_get_contents</b> functions enabled in PHP.";
-			}
+            if (isset($result->success) && isset($result->payload)) {
 
-			?>
+                $sub = $result->payload[0];
+
+                if (isset($sub->Plan->CreatableProductType) && $sub->Plan->CreatableProductType->name == 'Public') {
+                    $this->logout();
+                    update_option('sk_auto_activation_error', 'Public accounts are not compatible with MultiSite activations.');
+
+                    return false;
+                }
+
+                update_option('sk_subscription_id', $sub->id);
+
+                $sub->activeDomainCount = 0;
+
+                if (count($sub->Domains) > 0) {
+                    foreach ($sub->Domains as &$domain) {
+                        if (!$domain->end) {
+                            if (isset($sub->activeDomainCount)) {
+                                $sub->activeDomainCount++;
+                            } else {
+                                $sub->activeDomainCount = 1;
+                            }
+                        }
+                    }
+                }
+
+                $data['subscriptions'] = $result->payload;
+                $data['libraries']     = $this->load_libraries();
+
+                return $data;
+            } else if (isset($result->message) && strpos($result->message, 'Invalid Token') !== false) {
+                $this->logout();
+                update_option('sk_auto_activation_error', 'Please authorize SIDEKICK by logging in.');
+            }
+
+            return null;
+        }
+
+        function get_blog_by_id($id) {
+            global $wpdb;
+
+            $blogs = $wpdb->get_results($wpdb->prepare("SELECT *
+                FROM $wpdb->blogs
+                WHERE blog_id = '%d'
+                "
+                , $id));
+
+            return $blogs;
+        }
+
+        function get_blogs() {
+            global $wpdb;
+
+            if (false === ($blogs = get_transient('sk_blog_list'))) {
+                $blogs = $wpdb->get_results($wpdb->prepare("SELECT *
+                 FROM $wpdb->blogs
+                 WHERE spam = '%d' AND deleted = '%d'
+                 "
+                 , 0, 0));
+                set_transient('sk_blog_list', $blogs, 24 * HOUR_IN_SECONDS);
+            }
+
+            return $blogs;
+        }
+
+        function get_unchecked_blogs($blogs, $checked_blogs) {
+            $return = array();
+
+            foreach ($blogs as $key => $blog) {
+
+                if (isset($checked_blogs['deactivated']) && is_array($checked_blogs['deactivated']) && isset($checked_blogs['deactivated'][$blog->blog_id])) {
+                    continue;
+                }
+
+                if (isset($checked_blogs['unactivated']) && is_array($checked_blogs['unactivated']) && isset($checked_blogs['unactivated'][$blog->blog_id])) {
+                    continue;
+                }
+
+                if (isset($checked_blogs['active']) && is_array($checked_blogs['active']) && isset($checked_blogs['active'][$blog->blog_id])) {
+                    continue;
+                }
+
+                $return[$blog->blog_id] = $blog;
+            }
+
+            return $return;
+        }
+
+        function check_statuses() {
+            $checked_blogs   = get_option('sk_checked_blogs');
+            $blogs           = $this->get_blogs();
+            $unchecked_blogs = $this->get_unchecked_blogs($blogs, $checked_blogs);
+            $count           = 0;
+
+            if (!isset($checked_blogs['unactivated'])) {
+                $checked_blogs['unactivated'] = array();
+            }
+
+            if (!isset($checked_blogs['active'])) {
+                $checked_blogs['active'] = array();
+            }
+
+            if (!isset($checked_blogs['deactivated'])) {
+                $checked_blogs['deactivated'] = array();
+            }
+
+            foreach ($unchecked_blogs as $blog) {
+
+//                if ($count > $this->sites_per_page) {
+//                    break;
+//                }
+
+                $blog_id       = $blog->blog_id;
+                $activation_id = null;
+                $count++;
+
+                switch_to_blog($blog_id);
+                if ($user = get_user_by('email', get_option('admin_email'))) {
+                    $blog->user_id = $user->ID;
+                }
+                $activation_id = get_site_option('sk_activation_id');
+                restore_current_blog();
+
+                if ($activation_id) {
+                    $status = 'active';
+                } elseif (isset($checked_blogs['deactivated']) && in_array($blog_id, $checked_blogs['deactivated'])) {
+                    $status = 'deactivated';
+                } else {
+                    $status = 'unactivated';
+                }
+
+                $checked_blogs[$status][$blog_id] = $blog;
+
+            }
+
+            update_option('sk_checked_blogs', $checked_blogs);
+
+            return $checked_blogs;
+
+        }
+
+        function load_sites_by_status() {
+            global $wpdb;
+
+            $checked_blogs = $this->check_statuses();
+            $status        = sanitize_text_field($_POST['status']);
+            $this->offet   = sanitize_text_field($_POST['offset']);
+
+            if (isset($checked_blogs[$status]) && is_array($checked_blogs[$status])) {
+
+                $return['sites']                 = array_slice($checked_blogs[$status], $this->offet, $this->sites_per_page);
+                $return['counts']['all_blogs']   = intval($wpdb->get_var($wpdb->prepare("SELECT count(blog_id) as count FROM $wpdb->blogs WHERE spam = '%d' AND deleted = '%d'", 0, 0)));
+                $return['counts']['active']      = count($checked_blogs['active']);
+                $return['counts']['deactivated'] = count($checked_blogs['deactivated']);
+                $return['counts']['unactivated'] = intval($return['counts']['all_blogs']) - intval($return['counts']['active']) - $return['counts']['deactivated'];
+
+
+                $currentStatusCount = intval($return['counts'][$status]);
+                $return['pages']    = ceil($currentStatusCount / $this->sites_per_page);
+
+                // $return['counts'][$status] = count($checked_blogs[$status]);
+            } else {
+                // $return['counts'][$status] = 0;
+                $return[$status]['sites'] = [];
+            }
+
+            die(json_encode($return));
+        }
+
+        function logout() {
+            delete_option('sk_account');
+            delete_option('sk_password');
+            delete_option('sk_subscription_id');
+            delete_option('sk_selected_library');
+        }
+
+        function load_libraries() {
+            $result = $this->send_request('get', '/products');
+            if ($result->success) {
+                return $result->payload->products;
+            }
+
+            return null;
+        }
+
+        function schedule(){
+            if ( ! wp_next_scheduled( array($this,'check_statuses') ) ) {
+                wp_schedule_event( time(), 'hourly', array($this,'check_statuses'));
+                wp_schedule_event( time(), 'hourly', array($this,'activate_batch'));
+            }
+
+        }
+
+        function admin_page() {
+            if (isset($_POST['sk_account'])) {
+
+                delete_option('sk_auto_activation_error');
+
+                if (isset($_POST['sk_password']) && $_POST['sk_password'] && isset($_POST['sk_account']) && $_POST['sk_account']) {
+                    $key    = 'hash';
+                    $string = $_POST['sk_password'];
+
+                    $encrypted_password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
+                    $decrypted_password = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted_password), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+
+                    update_option('sk_account', $_POST['sk_account']);
+                    update_option('sk_password', $encrypted_password);
+                    $login_status = $this->login();
+                    delete_option('sk_auto_activation_error');
+                }
+
+                if (isset($_POST['sk_auto_activations'])) {
+                    update_option('sk_auto_activations', true);
+                } else {
+                    delete_option('sk_auto_activations');
+                }
+
+                if (isset($_POST['sk_selected_library'])) {
+                    update_option('sk_selected_library', $_POST['sk_selected_library']);
+                }
+
+            }
+
+            if (!$sk_token = get_transient('sk_token')) {
+                $login_status = $this->login();
+            }
+
+            $sk_subs                         = $this->load_subscriptions();
+            $user_data                       = $this->load_user_data();
+            $sk_auto_activations             = get_option('sk_auto_activations');
+            $sk_auto_activation_error        = get_option('sk_auto_activation_error');
+            $sk_subscription_id              = get_option('sk_subscription_id');
+            $sk_selected_library             = get_option('sk_selected_library');
+            $sk_hide_composer_taskbar_button = get_option('sk_hide_composer_taskbar_button');
+            $sk_hide_config_taskbar_button   = get_option('sk_hide_config_taskbar_button');
+            $sk_hide_composer_upgrade_button = get_option('sk_hide_composer_upgrade_button');
+            $is_ms_admin                     = true;
+
+            ?>
 ?> <!-- ms_admin_page.php -->
 
 <script type="text/javascript">
@@ -1059,7 +1294,9 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 	var sk_ms_admin   = true;
 
 	jQuery(document).ready(function($) {
-		mixpanel.track('Network Settings Page Visit - Plugin');
+		if (typeof mixpanel !== 'undefined') {
+			mixpanel.track('Network Settings Page Visit - Plugin');
+		};
 	});
 
 </script>
@@ -1125,73 +1362,29 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 										<input class='regular-text' type='password' name='sk_password' placeholder='********'></input>
 									</td>
 								</tr>
-								<tr valign="top" style='display: none'>
-									<th scope="row" valign="top">Subscription</th>
+
+								<tr valign="top" class='walkthrough_library'>
+									<th scope="row" valign="top">Library to Distribute</th>
 									<td>
-										<select name='sk_selected_subscription'>
-											<?php if (isset($sk_subs['subscriptions']) && count($sk_subs['subscriptions']) > 0): ?>
-												<?php foreach ($sk_subs['subscriptions'] as $key => $sub): ?>
-													<?php
-													if ($sub->PlanId !== 1 && $sub->Plan->CreatableProductType->name !== 'Private') {
-														continue;
-													}
-
-													if (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') {
-														$type = 'product';
-													} else {
-														$type = 'subscription';
-													}
-
-
-													if ($sk_selected_subscription == ($type . '-' . $sub->id) || !isset($selected_sub)) {
-														$selected_sub = $sub;
-														$selected     = 'SELECTED';
-													} else {
-														$selected = '';
-													}
-													?>
-													<option <?php echo $selected ?> value='<?php echo (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') ? "product-" : "subscription-"; echo $sub->id ?>'><?php echo $sub->Plan->name . ' - ' . $sub->CurrentTier->name ?></option>
+										<select name='sk_selected_library'>
+											<?php if (isset($sk_subs['libraries']) && count($sk_subs['libraries']) > 0): ?>
+												<?php foreach ($sk_subs['libraries'] as $key => $library): ?>
+													<option <?php echo ($sk_selected_library == $library->id) ? 'SELECTED' : '' ?> value='<?php echo $library->id ?>'><?php echo $library->name ?></option>
 												<?php endforeach ?>
-												<?php if (!isset($selected_sub)): ?>
-													<option value='0'>No Compatible Subscriptions</option>
-												<?php endif ?>
-											<?php else: ?>
-												<option>No Subscriptions</option>
 											<?php endif ?>
+											<option <?php echo ($sk_selected_library == -1) ? 'SELECTED' : '' ?> value='-1'>WordPress Basics Only</option>
 										</select>
 									</td>
 								</tr>
-								<?php if (isset($sk_subs['products'])): ?>
 
-									<tr valign="top" style='display: none' class='walkthrough_library'>
-										<th scope="row" valign="top">Library</th>
-										<td>
-											<select name='sk_selected_product'>
-												<?php if (isset($sk_subs['products']) && count($sk_subs['products']) > 0): ?>
-													<?php foreach ($sk_subs['products'] as $key => $product): ?>
-														<option <?php echo ($sk_selected_product == $product->id) ? 'SELECTED' : '' ?> value='<?php echo $product->id ?>'><?php echo $product->name ?></option>
-													<?php endforeach ?>
-												<?php else: ?>
-													<option style='color: red' value='0'>No Libraries Found!</option>
-													<?php $no_product = true; delete_option( 'sk_auto_activations') ?>
-												<?php endif ?>
-											</select>
-										</td>
-									</tr>
-
-								<?php endif ?>
 
 								<tr valign="top">
 									<th scope="row" valign="top">Enable Auto-Activations</th>
 									<td>
-										<?php if (!isset($selected_sub) || isset($no_product)): ?>
-											<input class='checkbox' type='checkbox' name='sk_auto_activations' DISABLED>
-										<?php else: ?>
-											<input class='checkbox' type='checkbox' name='sk_auto_activations' <?php echo ($sk_auto_activations) ? 'CHECKED' : '' ?>>
-										<?php endif ?>
+										<input class='checkbox' type='checkbox' name='sk_auto_activations' <?php echo ($sk_auto_activations) ? 'CHECKED' : '' ?>>
 									</td>
 								</tr>
-								<?php //var_dump($selected_sub); ?>
+
 								<?php if (isset($selected_sub) && !isset($no_product)): ?>
 									<tr>
 										<th scope="row" valign="top">Active Domains</th>
@@ -1236,46 +1429,48 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 
 			<div class="sk_box sites">
 				<div class="well">
-					<h3>Sidekick Network Activations - (<a class='activate_all' href='#'>Activate All</a>)</h3>
+					<h3>Sidekick Network Activations</h3>
 
-					<p>To manage your complete list of domains please login to your <a href='https://www.sidekick.pro/profile/#' target='_blank'>account center</a>.</p>
+					<div class='stats'>
+						<div class='active' onclick='load_sites_by_status("active",this)'>
+							<i>></i>
+							<h3>0</h3>
+							<span>Active</span>
+						</div>
+						<div class='unactivated' onclick='load_sites_by_status("unactivated",this)'>
+							<i>></i>
+							<h3>0</h3>
+							<span>Unactivated</span>
+						</div>
+						<div class='deactivated' onclick='load_sites_by_status("deactivated",this)'>
+							<i>></i>
+							<h3>0</h3>
+							<span>Deactivated</span>
+						</div>
+					</div>
 
-					<?php $blogs = wp_get_sites(array('limit' => 10000)) ?>
-					<ul>
-						<?php foreach ($blogs as $key => $blog): ?>
-							<?php
+					<div class="status">
 
-							switch_to_blog($blog['blog_id']);
+					</div>
 
-							if ($user = get_user_by('email', get_option('admin_email'))) {
-								$user_id = $user->ID;
-							} else {
-								$user_id = null;
-							}
+					<h2><span>Loading...</span><button class='activate_all'>Activate All<div class="spinner"></div></button></h2>
 
-							$key = get_option('sk_activation_id');
-							if ($key) $last_key = $key;
-
-							$turn_on_button = '';
-
-							if (isset($selected_sub)) {
-								$turn_on_button = "<button class=\"activate_sk\" data-blogid=\"{$blog["blog_id"]}\" data-userid=\"{$user_id}\" data-domain=\"{$blog["domain"]}\" data-path=\"{$blog["path"]}\">Turn On</button>";
-							}
-
-							?>
-
-							<li>
-								<div class='bold'>
-									<h3><?php echo ucfirst(str_replace('/', '', $blog['path'])) ?></h3>
-									<?php echo $blog['domain'] . $blog['path'] ?>
-									<span><?php echo ($key) ? ' - <span class="green">Active</span>' : " - <span class=\"not_active\">Not Activated</span> $turn_on_button" ?></span>
-								</div>
-							</li>
-						<?php endforeach ?>
-					</ul>
+					<div class='action'>
+						<div class="pagination">
+							<button class='prev'>Prev</button>
+							<span>Showing <span class="start">1</span>/<span class='end'>1</span></span>
+							<button class='next'>Next</button>
+						</div>
+						<div class="filter">
+							<!-- <input type='text' placeholder='Find'> -->
+						</div>
+					</div>
 
 					<div class="single_activation_error red"></div>
 
+					<div class="site_list">
+						Loading...
+					</div>
 
 				</div>
 			</div>
@@ -1311,6 +1506,51 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 
 <div class="sk_box configure">
 	<div class="well">
+		<h3>Configure - Other</h3>
+
+		<form method="post">
+			<?php settings_fields('sk_license'); ?>
+			<table class="form-table long_label">
+				<tbody>
+
+					<tr valign="top">
+						<th scope="row" valign="top">Hide Composer Button in Taskbar</th>
+						<td>
+							<input class='checkbox' type='checkbox' name='sk_hide_composer_taskbar_button' <?php echo (isset($sk_hide_composer_taskbar_button) && $sk_hide_composer_taskbar_button) ? 'CHECKED' : '' ?>>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" valign="top">Hide Config Button in Taskbar</th>
+						<td>
+							<input class='checkbox' type='checkbox' name='sk_hide_config_taskbar_button' <?php echo (isset($sk_hide_config_taskbar_button) && $sk_hide_config_taskbar_button) ? 'CHECKED' : '' ?>>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" valign="top">Hide Composer Upgrade Button in Drawer</th>
+						<td>
+							<input class='checkbox' type='checkbox' name='sk_hide_composer_upgrade_button' <?php echo (isset($sk_hide_composer_upgrade_button) && $sk_hide_composer_upgrade_button) ? 'CHECKED' : '' ?>>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row" valign="top"></th>
+						<td>
+							<input class='button button-primary' type='submit' value='Save'/>
+						</td>
+					</tr>
+
+					<input type='hidden' name='is_ms_admin' value='<?php echo (isset($is_ms_admin)) ? $is_ms_admin : false ?>'/>
+					<input type='hidden' name='sk_setting_other' value='true'/>
+
+					<?php wp_nonce_field( 'update_sk_settings' ); ?>
+
+				</tbody>
+			</table>
+		</form>
+	</div>
+</div>
+
+<div class="sk_box configure">
+	<div class="well">
 		<form method='post'>
 
 			<input class='top-right button button-primary alignright' type='submit' value='Save'/>
@@ -1339,15 +1579,24 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 
 <?php
 
-		}
-	}
+        }
+    }
 }
 
 // //licensing.php
-	$sidekickMassActivator = new sidekickMassActivator;
-	add_action('wpmu_new_blog',array($sidekickMassActivator,'activate'),10,6);
-	add_action('network_admin_menu', array($sidekickMassActivator,'setup_menu'));
-	add_action('wp_ajax_sk_activate_single', array($sidekickMassActivator,'activate_single'));
+		$sidekickMassActivator = new sidekickMassActivator;
+
+		add_action('network_admin_menu', array($sidekickMassActivator,'setup_menu'));
+		add_action('wp_ajax_sk_activate_single', array($sidekickMassActivator,'activate_single'));
+		add_action('wp_ajax_sk_activate_batch', array($sidekickMassActivator,'activate_batch'));
+		add_action('wp_ajax_sk_load_sites_by_status', array($sidekickMassActivator,'load_sites_by_status'));
+
+		$sk_auto_activations = get_option( 'sk_auto_activations');
+		if ($sk_auto_activations) {
+			add_action('wpmu_new_blog',array($sidekickMassActivator,'activate'),10,6);
+			add_action('sk_hourly_event',array($sidekickMassActivator,'schedule'),10,6);
+		}
+	}
 }
 
 
@@ -1356,6 +1605,9 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 if (!$sidekick_active && !class_exists('sk_config_data')) {
 
 	class sk_config_data{
+
+		var $cache_time = 43200; // 12 Hours
+
 		function get_domain(){
 			$site_url = get_site_url();
 			if(substr($site_url, -1) == '/') {
@@ -1365,17 +1617,26 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 			return $site_url;
 		}
 
+		// Return list of post types registered in WordPress
+		// Transients cleared on post type update, create, delete
+
 		function get_post_types(){
 			global $wpdb;
-			$query  = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $type) {
-				$type->post_type = str_replace('-', '_', $type->post_type);
-				$output .= "\n 						post_type_{$type->post_type} : $type->count,";
+			if ( false === ( $result = get_transient( 'sk_get_post_types' ) ) ) {
+
+				$query  = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
+				$counts = $wpdb->get_results($query);
+				$result = '';
+
+				foreach ($counts as $key => $type) {
+					$type->post_type = str_replace('-', '_', $type->post_type);
+					$result .= "\n 						post_type_{$type->post_type} : $type->count,";
+				}
+				set_transient( 'sk_get_post_types', $result, $this->cache_time );
 			}
-			return $output;
+
+			return $result;
 		}
 
 		function get_file_editor_enabled(){
@@ -1392,72 +1653,102 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 		}
 
 		function get_themes(){
-			$themes = wp_get_themes( array( 'allowed' => true ) );
-			return count($themes);
+			if ( false === ( $result = get_transient( 'sk_get_themes' ) ) ) {
+				$result = wp_get_themes( array( 'allowed' => true ) );
+				set_transient( 'sk_get_themes', $result, $this->cache_time );
+			}
+
+			return count($result);
 		}
 
 		function get_post_types_and_statuses(){
 			global $wpdb;
-			$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $type) {
-				$type->post_type   = str_replace('-', '_', $type->post_type);
-				$type->post_status = str_replace('-', '_', $type->post_status);
+			// Can't find a good method to clear cache for newly registered post types that fires once
+			// if ( false === ( $result = get_transient( 'sk_get_post_types_and_statuses' ) ) ) {
+				$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
+				$counts = $wpdb->get_results($query);
+				$result = '';
 
-				$output .= "\n 						post_type_{$type->post_type}_{$type->post_status} : $type->count,";
-			}
-			return $output;
+				foreach ($counts as $key => $type) {
+					$type->post_type   = str_replace('-', '_', $type->post_type);
+					$type->post_status = str_replace('-', '_', $type->post_status);
+
+					$result .= "\n 						post_type_{$type->post_type}_{$type->post_status} : $type->count,";
+				}
+				set_transient( 'sk_get_post_types_and_statuses', $result, $this->cache_time );
+			// }
+
+			return $result;
 		}
 
 		function get_taxonomies(){
 			global $wpdb;
-			$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $taxonomy) {
-				$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
-				$output .= "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
-			}
-			return $output;
+			// if ( false === ( $result = get_transient( 'sk_get_taxonomies' ) ) ) {
+				$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+				$counts = $wpdb->get_results($query);
+				$result = '';
+
+				foreach ($counts as $key => $taxonomy) {
+					$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
+					$result .= "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
+				}
+				set_transient( 'sk_get_taxonomies', $result, $this->cache_time );
+			// }
+
+			return $result;
 		}
 
 		function get_comments(){
 			global $wpdb;
-			$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
-			$counts = $wpdb->get_var($query);
-			if (!$counts) $counts = 0;
-			return "\n 						comment_count : $counts,";
+
+			if ( false === ( $result = get_transient( 'sk_get_comments' ) ) ) {
+				$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
+				$counts = $wpdb->get_var($query);
+				if (!$counts) $counts = 0;
+				$result = "\n 						comment_count : $counts,";
+				set_transient( 'sk_get_comments', $result, $this->cache_time );
+			}
+
+			return $result;
 		}
 
 		function get_post_statuses(){
 			global $wpdb;
-			$query  = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $type) {
-				$type->post_status = str_replace('-', '_', $type->post_status);
-				$output .= "\n 						post_status_{$type->post_status} : $type->count,";
+			if ( false === ( $result = get_transient( 'sk_post_statuses' ) ) ) {
+				$query  = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
+				$counts = $wpdb->get_results($query);
+				$result = '';
+
+				foreach ($counts as $key => $type) {
+					$type->post_status = str_replace('-', '_', $type->post_status);
+					$result .= "\n 						post_status_{$type->post_status} : $type->count,";
+				}
+				set_transient( 'sk_post_statuses', $result, $this->cache_time );
 			}
-			return $output;
+
+			return $result;
 		}
 
 		function get_user_data(){
 			global $current_user;
 
-			$data   = get_userdata($current_user->ID);
-			$output = "\n 						user_id : $current_user->ID,";
+			if ( false === ( $result = get_transient( 'sk_get_user_data' ) ) ) {
+				$data   = get_userdata($current_user->ID);
+				$result = "\n 						user_id : $current_user->ID,";
 
-			foreach ($data->allcaps as $cap => $val) {
-				$cap = sanitize_title($cap);
-				$cap = str_replace('-', '_', $cap);
-				if (!$val) $val = 0;
-				$output .= "\n 						cap_{$cap} : $val,";
+				foreach ($data->allcaps as $cap => $val) {
+					$cap = sanitize_title($cap);
+					$cap = str_replace('-', '_', $cap);
+					if (!$val) $val = 0;
+					$result .= "\n 						cap_{$cap} : $val,";
+				}
+				set_transient( 'sk_get_user_data', $result, $this->cache_time );
 			}
-			return $output;
+
+			return $result;
 		}
 
 		function get_framework(){
@@ -1516,26 +1807,30 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 
 		function get_plugins(){
 
-			$active_plugins = wp_get_active_and_valid_plugins();
-			$mu_plugins     = get_mu_plugins();
-			$output         = array();
+			if ( false === ( $result = get_transient( 'sk_get_plugins' ) ) ) {
+				$active_plugins = wp_get_active_and_valid_plugins();
+				$mu_plugins     = get_mu_plugins();
+				$result         = array();
 
-			if (is_array($active_plugins)) {
-				foreach ($active_plugins as $plugins_key => $plugin) {
-					$data          = get_plugin_data( $plugin, false, false );
-					$slug          = explode('/',plugin_basename($plugin));
-					$slug          = str_replace('.php', '', $slug[1]);
-					$output[$slug] = $data['Version'];
+				if (is_array($active_plugins)) {
+					foreach ($active_plugins as $plugins_key => $plugin) {
+						$data          = get_plugin_data( $plugin, false, false );
+						$slug          = explode('/',plugin_basename($plugin));
+						$slug          = str_replace('.php', '', $slug[1]);
+						$result[$slug] = $data['Version'];
+					}
 				}
+
+				if (is_array($mu_plugins)) {
+					foreach ($mu_plugins as $plugins_key => $plugin) {
+						$slug          = str_replace('.php', '', $plugins_key);
+						$result[$slug] = '1.0.0';
+					}
+				}
+				set_transient( 'sk_get_plugins', $result, $this->cache_time );
 			}
 
-			if (is_array($mu_plugins)) {
-				foreach ($mu_plugins as $plugins_key => $plugin) {
-					$slug          = str_replace('.php', '', $plugins_key);
-					$output[$slug] = '1.0.0';
-				}
-			}
-			return $output;
+			return $result;
 		}
 
 		function get_user_role(){
@@ -1559,6 +1854,7 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 			}
 			return $user_role;
 		}
+
 	}
 }
 

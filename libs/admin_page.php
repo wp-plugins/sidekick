@@ -47,7 +47,7 @@
 								<tbody>
 									<tr valign="top">
 										<th scope="row" valign="top">Activation ID</th>
-										<?php if (defined('MULTISITE') && MULTISITE): ?>
+										<?php if (is_multisite()): ?>
 											<?php if (isset($activation_id) && $activation_id): ?>
 												<td><input class='regular-text' style='color: gray;' type='text' name='activation_id' value='xxxxxxxx-xxxx-xxxx-xxxx-<?php echo substr($activation_id, 25,20) ?>'></input></td>
 											<?php else: ?>
@@ -74,13 +74,12 @@
 										</td>
 									</tr>
 
-									<tr valign="top" style='display: none'>
+									<tr valign="top">
 										<th scope="row" valign="top">
 											Enable Composer Mode
 										</th>
 										<td>
-											<input name="sk_composer_button" type="checkbox" <?php if (get_option('sk_composer_button')): ?>CHECKED<?php endif ?> />
-											<label class="description" for="track_data">Enable Walkthrough creation.</label>
+											<button class='open_composer'>Open Composer</button>
 										</td>
 									</tr>
 								</tbody>
@@ -92,7 +91,7 @@
 				</div>
 			</div>
 
-			<div class="sk_box composer">
+			<div class="sk_box composer" style='display: none'>
 				<div class="well">
 					<h3>Build Your Own Walkthroughs</h3>
 					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>

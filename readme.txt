@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.2
-Stable tag: 2.2.4
+Stable tag: 2.3.0
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -144,6 +144,13 @@ We read and respond to every piece of feedback we get.
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 2.3.0 =
+* Revamp of multisite activation screen and optimizations for activations on large networks
+* Added config options for disabling the composer, configuration buttons in the taskbar
+* Added config option for disabling the "Create your own walkthroughs" message in the drawer
+* Added caching options to db queries (Thank You Joost - @yoast)
+* Changed over from custom cURL requests to utulize wp_remote_post
 
 = 2.2.4 =
 * Adds new compatibilities to check if plugin editor is enabled

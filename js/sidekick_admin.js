@@ -3,7 +3,204 @@
 var currently_disabled_wts;
 var currently_disabled_network_wts;
 var lastTimeout;
-var loadCount = 0;
+var loadCount         = 0;
+var lastLoadedStatus  = null;
+var loadOffset        = 0;
+var maxLoadOffset     = null;
+var activated         = 0;
+var unactivated_count = 0;
+
+function load_sites_by_status(status,target){
+
+	activated = 0;
+
+	if (status) {
+		lastLoadedStatus = status;
+	} else {
+		status = lastLoadedStatus;
+	}
+
+	jQuery('.stats>div').removeClass('selected');
+	jQuery('.stats .' + status).addClass('selected');
+	jQuery('.sites h2 span').html(status + ' site list');
+
+	if (parseInt(jQuery(target).find('h3').html(),10) === 0) {
+		jQuery('.site_list').html('<div class="site">No Sites</div>');
+		jQuery('.sites .action').hide();
+		return false;
+	} else {
+		jQuery('.sites .action').show();
+	}
+
+	var data = {
+		action:  'sk_load_sites_by_status',
+		status: status,
+		offset: (loadOffset) ? loadOffset : 0
+	};
+
+	// console.log('data %o', data);
+	jQuery('.site_list .site').fadeTo('fast',0.5);
+
+
+	jQuery.post(ajaxurl, data, function(e,msg){
+
+		// console.log('back %o', e);
+
+		jQuery('.site_list').html('');
+
+
+
+		jQuery('.pagination .start').html(loadOffset+1);
+		jQuery('.pagination .end').html(e.pages);
+
+		jQuery('.stats .unactivated h3').html(e.counts.unactivated);
+		jQuery('.stats .active h3').html(e.counts.active);
+		jQuery('.stats .deactivated h3').html(e.counts.deactivated);
+
+		var button = '<button class="activate">Activate</button></div>';
+
+		if (lastLoadedStatus == 'active') {
+			button = '<button class="deactivate">Deactivate</button></div>';
+		}
+
+		if (e.sites) {
+			_.each(e.sites,function(site,key){
+				jQuery('.site_list').append('<div class="site" data-path="' + site.path + '" data-domain="' + site.domain + '" data-userid="' + site.user_id + '" data-blogid="' + site.blog_id + '">' + site.domain + '/' + site.path + button);
+			});
+		} else {
+			jQuery('.site_list').append('<div class="site">No Sites</div>');
+		}
+
+
+		setup_buttons();
+
+	},'json');
+}
+
+function setup_buttons(){
+	// console.log('setup_buttons');
+	setup_buttons_next_prev();
+	setup_buttons_activate();
+	setup_buttons_deactivate();
+	setup_buttons_activate_batch();
+}
+
+function setup_buttons_deactivate(){
+	jQuery('.site button.deactivate').off('click').click(function(){
+		window.open('https://www.sidekick.pro/profile/#/overview','_blank');
+	});
+}
+
+function setup_buttons_next_prev(){
+
+	jQuery('.pagination .next').off('click').click(function(){
+		// jQuery('.site_list').html('Loading...');
+		jQuery('.pagination .prev').show();
+
+		loadOffset = loadOffset + 1;
+		load_sites_by_status(null,loadOffset);
+
+		if (loadOffset === parseInt(jQuery('.pagination .end').html(),10)-1) {
+			jQuery('.pagination .next').hide();
+		}
+
+	});
+
+	jQuery('.pagination .prev').off('click').click(function(){
+		// jQuery('.site_list').html('Loading...');
+		jQuery('.pagination .next').show();
+
+		loadOffset = loadOffset - 1;
+		load_sites_by_status(null,loadOffset);
+
+		if (loadOffset === 0) {
+			jQuery('.pagination .prev').hide();
+		}
+	});
+}
+
+function setup_buttons_activate_batch(){
+	jQuery('.activate_all').off('click').click(function(){
+
+		var data = {
+			action:  'sk_activate_batch'
+		};
+
+		if (activated > 0) {
+			var activated_perc = Math.round((activated/unactivated_count)*100,0);
+			jQuery(this).html('Activating... ' + activated_perc + '%').addClass('loading');
+		} else {
+			jQuery(this).html('Activating...').addClass('loading');
+		}
+
+		jQuery.post(ajaxurl, data, function(e){
+
+			activated += parseInt(e.activated_count,10);
+			unactivated_count = parseInt(e.unactivated_count,10);
+
+			updateStatCounts(parseInt(e.activated_count,10));
+			if (parseInt(e.activated_count,10) === parseInt(e.sites_per_page,10)) {
+				jQuery('.activate_all').trigger('click');
+			} else {
+				jQuery(this).html('Done').removeClass('loading');
+			}
+
+		},'json');
+
+	});
+}
+
+function setup_buttons_activate(){
+	jQuery('.site button.activate').off('click').click(function(){
+		// console.log('activate');
+
+		var data = {
+			action:  'sk_activate_single',
+			blog_id: jQuery(this).parent().data('blogid'),
+			user_id: jQuery(this).parent().data('userid'),
+			domain:  jQuery(this).parent().data('domain'),
+			path:    jQuery(this).parent().data('path')
+		};
+
+		jQuery(this).html('Activating...');
+		jQuery('.single_activation_error').html('').hide();
+
+		// console.log('data %o', data);
+
+
+		jQuery.post(ajaxurl, data, activateCallback(this),'json');
+
+	});
+}
+
+var activateCallback = function(button){
+	return function(e){
+
+		// console.log('activateCallback back e %o', e);
+
+		if (!e.success) {
+			jQuery(button).html('Error').addClass('red');
+			if (e.payload.message == 'Already Activated') {
+				updateStatCounts();
+			}
+			jQuery('.single_activation_error').html(e.payload.message).show();
+		} else if (e.success) {
+			updateStatCounts();
+			jQuery(button).html('Success').addClass('green');
+		}
+	};
+};
+
+function updateStatCounts(increment){
+
+	var default_increment = 1;
+	if (increment) {
+		default_increment = increment;
+	}
+
+	jQuery('h3','div.' + lastLoadedStatus).html(parseInt(jQuery('h3','div.' + lastLoadedStatus).html(),10)-default_increment);
+	jQuery('h3','div.active').html(parseInt(jQuery('h3','div.active').html(),10)+default_increment);
+}
 
 function sk_populate(data){
 
@@ -40,7 +237,7 @@ function sk_populate(data){
 
 					// Clear out disabled wts so that compatibility doesn't screen out wts from this screen. Put it back after we're done.
 
-					console.groupCollapsed('Checking Compatibilities');
+					// console.groupCollapsed('Checking Compatibilities');
 
 					_.each(data.payload.buckets,function(bucket,key){
 
@@ -68,7 +265,7 @@ function sk_populate(data){
 								return;
 							}
 
-							if (sidekick.compatibilityModel.check_compatiblity_array(this.all_walkthroughs[key]) || (typeof sk_ms_admin !== 'undefined' && sk_ms_admin)){
+							if (typeof sidekick !== 'undefined' && sidekick.compatibilityModel.check_compatiblity_array(this.all_walkthroughs[key]) || (typeof sk_ms_admin !== 'undefined' && sk_ms_admin)){
 								// Only check compatibilities for single sites not network admin page
 								pass = true;
 							}
@@ -97,7 +294,7 @@ function sk_populate(data){
 
 					jQuery('.configure').show(); //
 
-					console.groupEnd();//
+					// console.groupEnd();//
 
 				} else { //
 					jQuery('#' + this.cacheId).remove();
@@ -107,6 +304,8 @@ function sk_populate(data){
 		});
 		}); //
 	} //
+
+
 
 	function setup_events(){
 		// console.log('setup_events');
@@ -146,6 +345,8 @@ function sk_populate(data){
 	}
 
 	function load_sk_library($key){
+
+		// TODO we need to switch based on library to distribute and load the right library
 
 		// console.log('BBBB load_sk_library %o', $key);
 		var sk_url;
@@ -198,6 +399,14 @@ function sk_populate(data){
 			return;
 		}
 
+		jQuery('.open_composer').click(function(e){
+			e.preventDefault();
+			jQuery('#toggle_composer').trigger('click');
+		});
+
+		load_sites_by_status('unactivated');
+		// return;
+
 		if (typeof sk_ms_admin !== 'undefined' && sk_ms_admin) {
 
 			// Multisite
@@ -213,20 +422,20 @@ function sk_populate(data){
 			jQuery('.activate_sk').click(function(){
 
 				clicked_button = this;
-				jQuery('.single_activation_error').html('');
+				jQuery('.single_activation_error').html('').hide();
 
 				var data = {
 					action:  'sk_activate_single',
-					blog_id: jQuery(this).data('blogid'),
-					user_id: jQuery(this).data('userid'),
-					domain:  jQuery(this).data('domain'),
-					path:    jQuery(this).data('path')
+					blog_id: jQuery(this).parent().data('blogid'),
+					user_id: jQuery(this).parent().data('userid'),
+					domain:  jQuery(this).parent().data('domain'),
+					path:    jQuery(this).parent().data('path')
 				};
 
 				jQuery.post(ajaxurl, data, function(e){
 
 					if (!e.success) {
-						jQuery('.single_activation_error').html(e.message);
+						jQuery('.single_activation_error').html(e.message).show();
 						jQuery(clicked_button).parent().html('- <span class="not_active">Error Activating</span>');
 					} else if (e.success) {
 						jQuery(clicked_button).parent().html('- <span class="green">Activated</span>');
@@ -235,18 +444,20 @@ function sk_populate(data){
 
 			});
 
-			if (jQuery('select[name="sk_selected_subscription"]').val().indexOf('roduct') > -1) {
-				jQuery('.walkthrough_library').show();
-			}
 
-			jQuery('select[name="sk_selected_subscription"]').on('change',function(){
-				if (jQuery('select[name="sk_selected_subscription"]').val().indexOf('roduct') > -1) {
-					jQuery('.walkthrough_library').show();
-				} else {
-					jQuery('.walkthrough_library').val(0);
-					jQuery('.walkthrough_library').hide();
-				}
-			});
+
+			// if (jQuery('select[name="sk_selected_subscription"]').val().indexOf('roduct') > -1) {
+				// jQuery('.walkthrough_library').show();
+			// }
+
+			// jQuery('select[name="sk_selected_subscription"]').on('change',function(){
+			// 	if (jQuery('select[name="sk_selected_subscription"]').val().indexOf('roduct') > -1) {
+			// 		jQuery('.walkthrough_library').show();
+			// 	} else {
+			// 		jQuery('.walkthrough_library').val(0);
+			// 		jQuery('.walkthrough_library').hide();
+			// 	}
+			// });
 
 		} else {
 			jQuery(document).ready(function($) {

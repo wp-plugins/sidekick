@@ -8,7 +8,9 @@
 	var sk_ms_admin   = true;
 
 	jQuery(document).ready(function($) {
-		mixpanel.track('Network Settings Page Visit - Plugin');
+		if (typeof mixpanel !== 'undefined') {
+			mixpanel.track('Network Settings Page Visit - Plugin');
+		};
 	});
 
 </script>
@@ -74,73 +76,29 @@
 										<input class='regular-text' type='password' name='sk_password' placeholder='********'></input>
 									</td>
 								</tr>
-								<tr valign="top" style='display: none'>
-									<th scope="row" valign="top">Subscription</th>
+
+								<tr valign="top" class='walkthrough_library'>
+									<th scope="row" valign="top">Library to Distribute</th>
 									<td>
-										<select name='sk_selected_subscription'>
-											<?php if (isset($sk_subs['subscriptions']) && count($sk_subs['subscriptions']) > 0): ?>
-												<?php foreach ($sk_subs['subscriptions'] as $key => $sub): ?>
-													<?php
-													if ($sub->PlanId !== 1 && $sub->Plan->CreatableProductType->name !== 'Private') {
-														continue;
-													}
-
-													if (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') {
-														$type = 'product';
-													} else {
-														$type = 'subscription';
-													}
-
-
-													if ($sk_selected_subscription == ($type . '-' . $sub->id) || !isset($selected_sub)) {
-														$selected_sub = $sub;
-														$selected     = 'SELECTED';
-													} else {
-														$selected = '';
-													}
-													?>
-													<option <?php echo $selected ?> value='<?php echo (isset($sub->Plan->CreatableProductType->name) && $sub->Plan->CreatableProductType->name == 'Private') ? "product-" : "subscription-"; echo $sub->id ?>'><?php echo $sub->Plan->name . ' - ' . $sub->CurrentTier->name ?></option>
+										<select name='sk_selected_library'>
+											<?php if (isset($sk_subs['libraries']) && count($sk_subs['libraries']) > 0): ?>
+												<?php foreach ($sk_subs['libraries'] as $key => $library): ?>
+													<option <?php echo ($sk_selected_library == $library->id) ? 'SELECTED' : '' ?> value='<?php echo $library->id ?>'><?php echo $library->name ?></option>
 												<?php endforeach ?>
-												<?php if (!isset($selected_sub)): ?>
-													<option value='0'>No Compatible Subscriptions</option>
-												<?php endif ?>
-											<?php else: ?>
-												<option>No Subscriptions</option>
 											<?php endif ?>
+											<option <?php echo ($sk_selected_library == -1) ? 'SELECTED' : '' ?> value='-1'>WordPress Basics Only</option>
 										</select>
 									</td>
 								</tr>
-								<?php if (isset($sk_subs['products'])): ?>
 
-									<tr valign="top" style='display: none' class='walkthrough_library'>
-										<th scope="row" valign="top">Library</th>
-										<td>
-											<select name='sk_selected_product'>
-												<?php if (isset($sk_subs['products']) && count($sk_subs['products']) > 0): ?>
-													<?php foreach ($sk_subs['products'] as $key => $product): ?>
-														<option <?php echo ($sk_selected_product == $product->id) ? 'SELECTED' : '' ?> value='<?php echo $product->id ?>'><?php echo $product->name ?></option>
-													<?php endforeach ?>
-												<?php else: ?>
-													<option style='color: red' value='0'>No Libraries Found!</option>
-													<?php $no_product = true; delete_option( 'sk_auto_activations') ?>
-												<?php endif ?>
-											</select>
-										</td>
-									</tr>
-
-								<?php endif ?>
 
 								<tr valign="top">
 									<th scope="row" valign="top">Enable Auto-Activations</th>
 									<td>
-										<?php if (!isset($selected_sub) || isset($no_product)): ?>
-											<input class='checkbox' type='checkbox' name='sk_auto_activations' DISABLED>
-										<?php else: ?>
-											<input class='checkbox' type='checkbox' name='sk_auto_activations' <?php echo ($sk_auto_activations) ? 'CHECKED' : '' ?>>
-										<?php endif ?>
+										<input class='checkbox' type='checkbox' name='sk_auto_activations' <?php echo ($sk_auto_activations) ? 'CHECKED' : '' ?>>
 									</td>
 								</tr>
-								<?php //var_dump($selected_sub); ?>
+
 								<?php if (isset($selected_sub) && !isset($no_product)): ?>
 									<tr>
 										<th scope="row" valign="top">Active Domains</th>
@@ -185,46 +143,48 @@
 
 			<div class="sk_box sites">
 				<div class="well">
-					<h3>Sidekick Network Activations - (<a class='activate_all' href='#'>Activate All</a>)</h3>
+					<h3>Sidekick Network Activations</h3>
 
-					<p>To manage your complete list of domains please login to your <a href='https://www.sidekick.pro/profile/#' target='_blank'>account center</a>.</p>
+					<div class='stats'>
+						<div class='active' onclick='load_sites_by_status("active",this)'>
+							<i>></i>
+							<h3>0</h3>
+							<span>Active</span>
+						</div>
+						<div class='unactivated' onclick='load_sites_by_status("unactivated",this)'>
+							<i>></i>
+							<h3>0</h3>
+							<span>Unactivated</span>
+						</div>
+						<div class='deactivated' onclick='load_sites_by_status("deactivated",this)'>
+							<i>></i>
+							<h3>0</h3>
+							<span>Deactivated</span>
+						</div>
+					</div>
 
-					<?php $blogs = wp_get_sites(array('limit' => 10000)) ?>
-					<ul>
-						<?php foreach ($blogs as $key => $blog): ?>
-							<?php
+					<div class="status">
 
-							switch_to_blog($blog['blog_id']);
+					</div>
 
-							if ($user = get_user_by('email', get_option('admin_email'))) {
-								$user_id = $user->ID;
-							} else {
-								$user_id = null;
-							}
+					<h2><span>Loading...</span><button class='activate_all'>Activate All<div class="spinner"></div></button></h2>
 
-							$key = get_option('sk_activation_id');
-							if ($key) $last_key = $key;
-
-							$turn_on_button = '';
-
-							if (isset($selected_sub)) {
-								$turn_on_button = "<button class=\"activate_sk\" data-blogid=\"{$blog["blog_id"]}\" data-userid=\"{$user_id}\" data-domain=\"{$blog["domain"]}\" data-path=\"{$blog["path"]}\">Turn On</button>";
-							}
-
-							?>
-
-							<li>
-								<div class='bold'>
-									<h3><?php echo ucfirst(str_replace('/', '', $blog['path'])) ?></h3>
-									<?php echo $blog['domain'] . $blog['path'] ?>
-									<span><?php echo ($key) ? ' - <span class="green">Active</span>' : " - <span class=\"not_active\">Not Activated</span> $turn_on_button" ?></span>
-								</div>
-							</li>
-						<?php endforeach ?>
-					</ul>
+					<div class='action'>
+						<div class="pagination">
+							<button class='prev'>Prev</button>
+							<span>Showing <span class="start">1</span>/<span class='end'>1</span></span>
+							<button class='next'>Next</button>
+						</div>
+						<div class="filter">
+							<!-- <input type='text' placeholder='Find'> -->
+						</div>
+					</div>
 
 					<div class="single_activation_error red"></div>
 
+					<div class="site_list">
+						Loading...
+					</div>
 
 				</div>
 			</div>

@@ -4,6 +4,9 @@
 if (!class_exists('sk_config_data')) {
 
 	class sk_config_data{
+
+		var $cache_time = 43200; // 12 Hours
+
 		function get_domain(){
 			$site_url = get_site_url();
 			if(substr($site_url, -1) == '/') {
@@ -13,17 +16,26 @@ if (!class_exists('sk_config_data')) {
 			return $site_url;
 		}
 
+		// Return list of post types registered in WordPress
+		// Transients cleared on post type update, create, delete
+
 		function get_post_types(){
 			global $wpdb;
-			$query  = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $type) {
-				$type->post_type = str_replace('-', '_', $type->post_type);
-				$output .= "\n 						post_type_{$type->post_type} : $type->count,";
+			if ( false === ( $result = get_transient( 'sk_get_post_types' ) ) ) {
+
+				$query  = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
+				$counts = $wpdb->get_results($query);
+				$result = '';
+
+				foreach ($counts as $key => $type) {
+					$type->post_type = str_replace('-', '_', $type->post_type);
+					$result .= "\n 						post_type_{$type->post_type} : $type->count,";
+				}
+				set_transient( 'sk_get_post_types', $result, $this->cache_time );
 			}
-			return $output;
+
+			return $result;
 		}
 
 		function get_file_editor_enabled(){
@@ -40,72 +52,102 @@ if (!class_exists('sk_config_data')) {
 		}
 
 		function get_themes(){
-			$themes = wp_get_themes( array( 'allowed' => true ) );
-			return count($themes);
+			if ( false === ( $result = get_transient( 'sk_get_themes' ) ) ) {
+				$result = wp_get_themes( array( 'allowed' => true ) );
+				set_transient( 'sk_get_themes', $result, $this->cache_time );
+			}
+
+			return count($result);
 		}
 
 		function get_post_types_and_statuses(){
 			global $wpdb;
-			$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $type) {
-				$type->post_type   = str_replace('-', '_', $type->post_type);
-				$type->post_status = str_replace('-', '_', $type->post_status);
+			// Can't find a good method to clear cache for newly registered post types that fires once
+			// if ( false === ( $result = get_transient( 'sk_get_post_types_and_statuses' ) ) ) {
+				$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
+				$counts = $wpdb->get_results($query);
+				$result = '';
 
-				$output .= "\n 						post_type_{$type->post_type}_{$type->post_status} : $type->count,";
-			}
-			return $output;
+				foreach ($counts as $key => $type) {
+					$type->post_type   = str_replace('-', '_', $type->post_type);
+					$type->post_status = str_replace('-', '_', $type->post_status);
+
+					$result .= "\n 						post_type_{$type->post_type}_{$type->post_status} : $type->count,";
+				}
+				set_transient( 'sk_get_post_types_and_statuses', $result, $this->cache_time );
+			// }
+
+			return $result;
 		}
 
 		function get_taxonomies(){
 			global $wpdb;
-			$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $taxonomy) {
-				$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
-				$output .= "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
-			}
-			return $output;
+			// if ( false === ( $result = get_transient( 'sk_get_taxonomies' ) ) ) {
+				$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+				$counts = $wpdb->get_results($query);
+				$result = '';
+
+				foreach ($counts as $key => $taxonomy) {
+					$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
+					$result .= "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
+				}
+				set_transient( 'sk_get_taxonomies', $result, $this->cache_time );
+			// }
+
+			return $result;
 		}
 
 		function get_comments(){
 			global $wpdb;
-			$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
-			$counts = $wpdb->get_var($query);
-			if (!$counts) $counts = 0;
-			return "\n 						comment_count : $counts,";
+
+			if ( false === ( $result = get_transient( 'sk_get_comments' ) ) ) {
+				$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
+				$counts = $wpdb->get_var($query);
+				if (!$counts) $counts = 0;
+				$result = "\n 						comment_count : $counts,";
+				set_transient( 'sk_get_comments', $result, $this->cache_time );
+			}
+
+			return $result;
 		}
 
 		function get_post_statuses(){
 			global $wpdb;
-			$query  = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
-			$counts = $wpdb->get_results($query);
-			$output = '';
 
-			foreach ($counts as $key => $type) {
-				$type->post_status = str_replace('-', '_', $type->post_status);
-				$output .= "\n 						post_status_{$type->post_status} : $type->count,";
+			if ( false === ( $result = get_transient( 'sk_post_statuses' ) ) ) {
+				$query  = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
+				$counts = $wpdb->get_results($query);
+				$result = '';
+
+				foreach ($counts as $key => $type) {
+					$type->post_status = str_replace('-', '_', $type->post_status);
+					$result .= "\n 						post_status_{$type->post_status} : $type->count,";
+				}
+				set_transient( 'sk_post_statuses', $result, $this->cache_time );
 			}
-			return $output;
+
+			return $result;
 		}
 
 		function get_user_data(){
 			global $current_user;
 
-			$data   = get_userdata($current_user->ID);
-			$output = "\n 						user_id : $current_user->ID,";
+			if ( false === ( $result = get_transient( 'sk_get_user_data' ) ) ) {
+				$data   = get_userdata($current_user->ID);
+				$result = "\n 						user_id : $current_user->ID,";
 
-			foreach ($data->allcaps as $cap => $val) {
-				$cap = sanitize_title($cap);
-				$cap = str_replace('-', '_', $cap);
-				if (!$val) $val = 0;
-				$output .= "\n 						cap_{$cap} : $val,";
+				foreach ($data->allcaps as $cap => $val) {
+					$cap = sanitize_title($cap);
+					$cap = str_replace('-', '_', $cap);
+					if (!$val) $val = 0;
+					$result .= "\n 						cap_{$cap} : $val,";
+				}
+				set_transient( 'sk_get_user_data', $result, $this->cache_time );
 			}
-			return $output;
+
+			return $result;
 		}
 
 		function get_framework(){
@@ -164,26 +206,30 @@ if (!class_exists('sk_config_data')) {
 
 		function get_plugins(){
 
-			$active_plugins = wp_get_active_and_valid_plugins();
-			$mu_plugins     = get_mu_plugins();
-			$output         = array();
+			if ( false === ( $result = get_transient( 'sk_get_plugins' ) ) ) {
+				$active_plugins = wp_get_active_and_valid_plugins();
+				$mu_plugins     = get_mu_plugins();
+				$result         = array();
 
-			if (is_array($active_plugins)) {
-				foreach ($active_plugins as $plugins_key => $plugin) {
-					$data          = get_plugin_data( $plugin, false, false );
-					$slug          = explode('/',plugin_basename($plugin));
-					$slug          = str_replace('.php', '', $slug[1]);
-					$output[$slug] = $data['Version'];
+				if (is_array($active_plugins)) {
+					foreach ($active_plugins as $plugins_key => $plugin) {
+						$data          = get_plugin_data( $plugin, false, false );
+						$slug          = explode('/',plugin_basename($plugin));
+						$slug          = str_replace('.php', '', $slug[1]);
+						$result[$slug] = $data['Version'];
+					}
 				}
+
+				if (is_array($mu_plugins)) {
+					foreach ($mu_plugins as $plugins_key => $plugin) {
+						$slug          = str_replace('.php', '', $plugins_key);
+						$result[$slug] = '1.0.0';
+					}
+				}
+				set_transient( 'sk_get_plugins', $result, $this->cache_time );
 			}
 
-			if (is_array($mu_plugins)) {
-				foreach ($mu_plugins as $plugins_key => $plugin) {
-					$slug          = str_replace('.php', '', $plugins_key);
-					$output[$slug] = '1.0.0';
-				}
-			}
-			return $output;
+			return $result;
 		}
 
 		function get_user_role(){
@@ -207,6 +253,7 @@ if (!class_exists('sk_config_data')) {
 			}
 			return $user_role;
 		}
+
 	}
 }
 
