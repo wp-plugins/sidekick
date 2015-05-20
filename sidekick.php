@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.3.0
+Version: 2.3.1
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -327,7 +327,7 @@ if (!class_exists('Sidekick')){
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						platform_version:         	null,
-						plugin_version:           	'2.3.0',
+						plugin_version:           	'2.3.1',
 
 						// SIDEKICK URLS
 						assets:       				'<?php echo SK_ASSETS ?>',
@@ -426,7 +426,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.3.0');
+				$data = json_encode('2.3.1');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -512,8 +512,9 @@ if (!class_exists('Sidekick')){
 		add_action('customize_controls_print_footer_scripts', array($sidekick,'footer'));
 	}
 
-	add_action('transition_post_status',array($sidekick,'delete_sk_get_post_types_and_statuses'));
-	add_action('clean_post_cache',array($sidekick,'delete_sk_get_post_types_and_statuses'));
+	// Not working right now
+	// add_action('transition_post_status',array($sidekick,'delete_sk_get_post_types_and_statuses'));
+	// add_action('clean_post_cache',array($sidekick,'delete_sk_get_post_types_and_statuses'));
 
 	add_action('wp_update_comment_count',array($sidekick,'delete_sk_get_comments'));
 
