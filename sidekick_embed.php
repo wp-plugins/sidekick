@@ -8,7 +8,7 @@ Description: Adds a real-time WordPress training walkthroughs right in your Dash
  We recommend not activating SIDEKICK automatically for people but via an Opt-In process when they configure your own theme or plugin.
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.3.1
+Version: 2.4.0
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -19,7 +19,7 @@ if ( ! defined( 'PLAYER_PATH' ) ) 		define( 'PLAYER_PATH', 'tag/latest' );
 if ( ! defined( 'PLAYER_FILE' ) ) 		define( 'PLAYER_FILE', 'sidekick.min.js' );
 if ( ! defined( 'COMPOSER_DOMAIN' ) ) 	define( 'COMPOSER_DOMAIN', 'composer.sidekick.pro' );
 if ( ! defined( 'COMPOSER_PATH' ) ) 	define( 'COMPOSER_PATH', 'tag/latest' );
-if ( ! defined( 'SK_EMBED_PARTNER' ) ) 	define( 'SK_EMBED_PARTNER', '' );
+if ( ! defined( 'SK_EMBEDDED_PARTNER' ) ) 	define( 'SK_EMBEDDED_PARTNER', '' );
 
 if ( ! function_exists('mlog')) {
 	function mlog(){}
@@ -55,9 +55,14 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		}
 
 		function enqueue(){
-			wp_enqueue_script('sidekick'   		,"//" . PLAYER_DOMAIN ."/" . PLAYER_PATH . "/" . PLAYER_FILE,	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
-			wp_enqueue_style('wp-pointer');
-			wp_enqueue_script('wp-pointer');
+			$prod_build = apply_filters( 'sk_build', true );
+			if ($prod_build) {
+				wp_enqueue_script('sidekick'   		,"//" . PLAYER_DOMAIN ."/" . PLAYER_PATH . "/" . PLAYER_FILE,	array('backbone','jquery','underscore','jquery-effects-highlight'),null);
+				wp_enqueue_style('wp-pointer');
+				wp_enqueue_script('wp-pointer');
+			} else {
+				do_action( 'sk_enqueue' );
+			}
 		}
 
 		function setup_menu(){
@@ -558,7 +563,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						disable_wts:              	<?php echo $disabled_wts ?>,
 						disable_network_wts: 		<?php echo $disabled_network_wts ?>,
 						main_soft_name:           	'WordPress',
-						embeded:					true,
+						embedded:					false,
 
 						// User Settings
 						activation_id:                  '<?php echo $activation_id ?>',
@@ -582,15 +587,15 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						hide_taskbar_config_button:   <?php echo ($sk_hide_config_taskbar_button ? "true" : "false") ?>,
 
 						// Platform Info
-						library_version: 2,
-						platform_id:     1,
-						embed_partner:   '<?php echo SK_EMBED_PARTNER  ?>',
+						library_version:  2,
+						platform_id:      1,
+						embedded_partner: '<?php echo SK_EMBEDDED_PARTNER  ?>', // Track the emb
 
 						// Generic Info
 						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
 						platform_version:         	null,
-						plugin_version:           	'2.3.1',
+						plugin_version:           	'2.4.0',
 
 						// SIDEKICK URLS
 						assets:       				'<?php echo SK_ASSETS ?>',
@@ -608,6 +613,10 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						base_url:                 '<?php echo site_url() ?>',
 						current_url:              '<?php echo $current_url ?>'
 					}
+
+					sk_config.onBeforePlay = [
+						{path: 'a.customize-controls-close,a.media-modal-close', event: 'click'}
+					];
 
 					var skc_config = {
 						audioPlaceholderUrl: '<?php echo SK_ASSETS ?>walkthrough-audio-placeholder.mp3',
@@ -689,7 +698,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.3.1');
+				$data = json_encode('2.4.0');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -766,32 +775,15 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 	add_action('wp_ajax_sk_save', array($sidekick,'ajax_save'));
 	add_action('admin_notices', array($sidekick,'admin_notice'));
 
-	{
-		
-
-if (defined('SK_PLUGIN_DEGBUG')) {
-	// mlog('PHP: Sidekick run debug class');
-	$sidekick = new SidekickDev;
-}
-
-if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('IFRAME_REQUEST')) {
-	add_action('admin_enqueue_scripts',              array($sidekick,'enqueue'));
-	add_action('admin_enqueue_scripts',              array($sidekick,'enqueue_required'));
-	add_action('customize_controls_enqueue_scripts', array($sidekick,'enqueue'));
-
-	if (defined('SK_PLUGIN_DEGBUG')) {
-		add_action('admin_footer',                            array($sidekick,'footer_dev'));
-		add_action('customize_controls_print_footer_scripts', array($sidekick,'footer_dev'));
-	}
-}
-
-	}
-
-	if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information') && !defined('IFRAME_REQUEST')) {
-		add_action('admin_footer', array($sidekick,'footer'));
+	if (!(isset($_GET['tab']) && $_GET['tab'] == 'plugin-information')) {
+		add_action('admin_footer',                            array($sidekick,'footer'));
 		add_action('customize_controls_print_footer_scripts', array($sidekick,'footer'));
+		add_action('admin_enqueue_scripts',                   array($sidekick,'enqueue'));
+		add_action('admin_enqueue_scripts',                   array($sidekick,'enqueue_required'));
+		add_action('customize_controls_enqueue_scripts',      array($sidekick,'enqueue'),1000);
+		add_action('customize_controls_enqueue_scripts',      array($sidekick,'enqueue_required'),1000);
 	}
-
+	
 	// Not working right now
 	// add_action('transition_post_status',array($sidekick,'delete_sk_get_post_types_and_statuses'));
 	// add_action('clean_post_cache',array($sidekick,'delete_sk_get_post_types_and_statuses'));
