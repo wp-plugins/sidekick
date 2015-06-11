@@ -79,7 +79,7 @@
 											Enable Composer Mode
 										</th>
 										<td>
-											<button class='open_composer'>Open Composer</button>
+											<button type='button' class='open_composer'>Open Composer</button>
 										</td>
 									</tr>
 								</tbody>

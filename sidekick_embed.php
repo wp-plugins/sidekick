@@ -8,7 +8,7 @@ Description: Adds a real-time WordPress training walkthroughs right in your Dash
  We recommend not activating SIDEKICK automatically for people but via an Opt-In process when they configure your own theme or plugin.
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.4.0
+Version: 2.4.1
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -42,16 +42,16 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		}
 
 		function enqueue_required(){
-			wp_enqueue_script('jquery'                      , null );
-			wp_enqueue_script('underscore'                  , null, array('underscore'));
-			wp_enqueue_script('backbone'                    , null, array('jquery','underscore'));
-			wp_enqueue_script('jquery-ui-core'				, null, array('jquery') );
-			wp_enqueue_script('jquery-ui-position'			, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-ui-draggable'			, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-ui-droppable'			, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-effects-scale'		, null, array('jquery-ui-core') );
-			wp_enqueue_script('jquery-effects-highlight'	, null, array('jquery-ui-core') );
-			wp_enqueue_script('sidekick-admin'				, '//assets.sidekick.pro/plugin/tag/latest/js/sidekick_admin.js',array( 'jquery' ), null);
+			wp_enqueue_script('jquery'                   , null );
+			wp_enqueue_script('underscore'               , null, array('underscore'));
+			wp_enqueue_script('backbone'                 , null, array('jquery','underscore'));
+			wp_enqueue_script('jquery-ui-core'           , null, array('jquery') );
+			wp_enqueue_script('jquery-ui-position'       , null, array('jquery-ui-core') );
+			wp_enqueue_script('jquery-ui-draggable'      , null, array('jquery-ui-core') );
+			wp_enqueue_script('jquery-ui-droppable'      , null, array('jquery-ui-core') );
+			wp_enqueue_script('jquery-effects-scale'     , null, array('jquery-ui-core') );
+			wp_enqueue_script('jquery-effects-highlight' , null, array('jquery-ui-core') );
+			wp_enqueue_script('sidekick-admin'           , '//assets.sidekick.pro/plugin/tag/latest/js/sidekick_admin.js',array( 'jquery' ), null);
 		}
 
 		function enqueue(){
@@ -225,7 +225,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 											Enable Composer Mode
 										</th>
 										<td>
-											<button class='open_composer'>Open Composer</button>
+											<button type='button' class='open_composer'>Open Composer</button>
 										</td>
 									</tr>
 								</tbody>
@@ -536,36 +536,41 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 					<?php if (is_network_admin()): ?>var is_network_admin = true;		<?php endif ?>
 
 					var sk_config = {
-						// Compatibility
+						
+						// Compatibilities
 
 						compatibilities: {
-							<?php                     	echo $post_types ?>
-							<?php                     	echo $taxonomies ?>
-							<?php                     	echo $user_data ?>
-							<?php                     	echo $comments ?>
-							<?php                     	echo $post_statuses ?>
-							<?php                     	echo $frameworks ?>
-							<?php                     	echo $post_types_and_statuses ?>
-							installed_plugins:        	<?php echo json_encode($installed_plugins) ?>,
-							plugin_count: 				<?php echo ($plugin_count) ? $plugin_count : 0 ?>,
-							is_multisite:             	<?php echo (is_multisite()) ? "true" : "false" ?>,
-							number_of_themes:         	<?php echo $number_of_themes ?>,
-							installed_theme:          	'<?php echo sanitize_title($theme->Name) ?>',
-							theme_version:            	'<?php echo $theme->Version ?>',
-							main_soft_version:        	'<?php echo get_bloginfo("version") ?>',
-							// main_soft_version: '4.5.1',
-							user_level:               	'<?php echo $user_role ?>',
-							main_soft_name: 			'WordPress',
-							file_editor_enabled: 		<?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
-							role:               		'<?php echo $user_role ?>'
+							<?php echo $post_types ?>
+							<?php echo $taxonomies ?>
+							<?php echo $user_data ?>
+							<?php echo $comments ?>
+							<?php echo $post_statuses ?>
+							<?php echo $frameworks ?>
+							<?php echo $post_types_and_statuses ?>							
+							installed_theme:     '<?php echo sanitize_title($theme->Name) ?>',
+							theme_version:       '<?php echo $theme->Version ?>',
+							main_soft_version:   '<?php echo get_bloginfo("version") ?>',
+							user_level:          '<?php echo $user_role ?>',
+							role:                '<?php echo $user_role ?>',
+							show_on_front:       '<?php echo get_option('show_on_front') ?>',
+							page_on_front:       '<?php echo get_option('page_on_front') ?>',
+							page_for_posts:      '<?php echo get_option('page_for_posts') ?>',
+							installed_plugins:   <?php echo json_encode($installed_plugins) ?>,
+							plugin_count:        <?php echo ($plugin_count) ? $plugin_count : 0 ?>,
+							is_multisite:        <?php echo (is_multisite()) ? "true" : "false" ?>,
+							number_of_themes:    <?php echo $number_of_themes ?>,
+							file_editor_enabled: <?php echo ($file_editor_enabled) ? $file_editor_enabled: 'null' ?>,
+							disable_wts:         <?php echo $disabled_wts ?>, // Copying these to compatibilities, have to update this over time 
+							disable_network_wts: <?php echo $disabled_network_wts ?> // Copying these to compatibilities, have to update this over time 
 						},
 
-						disable_wts:              	<?php echo $disabled_wts ?>,
-						disable_network_wts: 		<?php echo $disabled_network_wts ?>,
-						main_soft_name:           	'WordPress',
-						embedded:					false,
+						disable_wts:              	<?php echo $disabled_wts ?>, // Copying these to compatibilities, have to update this over time 
+						disable_network_wts: 		<?php echo $disabled_network_wts ?>, // Copying these to compatibilities, have to update this over time 
 
-						// User Settings
+						// Platform
+
+						platform_id:                    1, 
+						base_url:                       '<?php echo site_url() ?>',
 						activation_id:                  '<?php echo $activation_id ?>',
 						auto_open_root_bucket_id:       79,
 						auto_open_product:              'default',
@@ -574,48 +579,64 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 						track_data:                     '<?php echo $sk_track_data ?>',
 						user_email:                     '<?php echo $user_email ?>',
 						custom_class:                   '<?php echo $custom_class ?>',
+						path_not_found_continue:        true, // Turn on audio fallback if step is not found
+						show_powered_by:                true, // Show powered by in the taskbar
+						show_powered_by_link:           true, // Make powered by a link
+						sk_autostart_only_once:         true, // Make autostarted walkthrough play only once, if false it will play everytime the user comes back.
+						hide_taskbar_composer_button:   <?php echo ($sk_hide_composer_taskbar_button ? "true" : "false") ?>, // hide composer button on the taskbar
+						hide_taskbar_config_button:     <?php echo ($sk_hide_config_taskbar_button ? "true" : "false") ?>, // hide settings button on taskbar						
+						show_login:                     <?php echo ($sk_just_activated) ? "true" : "false" ?>, // open drawer automatically, same as just_activated
+						platform_version:               null, // default value set at runtime by build process
+						assets:                         '<?php echo SK_ASSETS ?>',
+						api:                            '<?php echo SK_API ?>',
+						tracking_api:                   '<?php echo SK_TRACKING_API ?>',
+						sk_path:                        '<?php echo PLAYER_PATH ?>',
+						audio:                          '<?php echo SK_AUDIO ?>',
+						library:                        '<?php echo SK_LIBRARY ?>',
+						playIntro:                      true,
+						
 
-						// Toggles
-						path_not_found_continue:      true,
-						show_powered_by:              true,
-						show_powered_by_link:         true,
-						sk_autostart_only_once:       true,
-						use_native_controls:          false,
-						basics_upgrade:               true,
-						composer_upgrade_off:         <?php echo ($sk_hide_composer_upgrade_button ? "true" : "false") ?>,
-						hide_taskbar_composer_button: <?php echo ($sk_hide_composer_taskbar_button ? "true" : "false") ?>,
-						hide_taskbar_config_button:   <?php echo ($sk_hide_config_taskbar_button ? "true" : "false") ?>,
+						// WordPress
 
-						// Platform Info
-						library_version:  2,
-						platform_id:      1,
-						embedded_partner: '<?php echo SK_EMBEDDED_PARTNER  ?>', // Track the emb
-
-						// Generic Info
-						just_activated:           	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
-						show_login:               	<?php echo ($sk_just_activated) ? "true" : "false" ?>,
-						platform_version:         	null,
-						plugin_version:           	'2.4.0',
-
-						// SIDEKICK URLS
-						assets:       				'<?php echo SK_ASSETS ?>',
-						api:          				'<?php echo SK_API ?>',
-						tracking_api: 				'<?php echo SK_TRACKING_API ?>',
-						sk_path:      				'<?php echo PLAYER_PATH ?>',
-						audio:        				'<?php echo SK_AUDIO ?>',
-						library: 					'<?php echo SK_LIBRARY ?>',
-
-						// URLS
-						site_url:                 '<?php echo $site_url ?>',
-						domain:                   '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
-						domain_used:              '//<?php echo PLAYER_DOMAIN ?>/',
-						plugin_url:               '<?php echo admin_url("admin.php?page=sidekick") ?>',
-						base_url:                 '<?php echo site_url() ?>',
-						current_url:              '<?php echo $current_url ?>'
+						embedded:           false,
+						showContentUpgrade: true, // if true show upgrade to WordPress basics if not on a paid library, should always be false for other platforms
+						embedded_partner:   '<?php echo SK_EMBEDDED_PARTNER  ?>', // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
+						plugin_version:     '2.4.1', // WordPress plugin version
+						site_url:           '<?php echo $site_url ?>',
+						domain:             '<?php echo str_replace("http://","",$_SERVER["SERVER_NAME"]) ?>',
+						domain_used:        '//<?php echo PLAYER_DOMAIN ?>/',
+						plugin_url:         '<?php echo admin_url("admin.php?page=sidekick") ?>',						
+						current_url:        '<?php echo $current_url ?>', // need to move this to be set via the client
+						introMp3:           '<?php echo SK_ASSETS ?>/sidekick-getting-started-short-v2.mp3'
+						
 					}
 
+					// sk_config.additionalLibrary = {
+					// 	products : {
+					// 		5 : {
+					// 			buckets: {
+					// 				7: {
+					// 					walkthroughs: [
+					// 					{id: 100000, title: 'Install WordPress on Bluehost Addon Domain', type: 'video', url: 'https://www.youtube.com/watch?v=UbEg8P89MiU', width: 560, height: 315},
+					// 					{id: 100001, title: 'Creating Pages', type: 'video', url: 'https://www.youtube.com/watch?v=9s8aYsSNtjk&index=3&list=PL_9u00nsHteH2OBVX4YSU_HWWY_JSxFyj', width: 560, height: 315},
+					// 					{id: 100002, title: 'Creating Blog Pages', type: 'video', url: 'https://www.youtube.com/watch?v=m0C55PU-8xE&index=4&list=PL_9u00nsHteH2OBVX4YSU_HWWY_JSxFyj', width: 560, height: 315},
+					// 					{id: 100003, title: 'Categories and Tags', type: 'video', url: 'https://www.youtube.com/watch?v=GYy9n-nmnM0&index=5&list=PL_9u00nsHteH2OBVX4YSU_HWWY_JSxFyj', width: 560, height: 315},
+					// 					{id: 100004, title: 'Using Plugins', type: 'video', url: 'https://www.youtube.com/watch?v=mmpoAC9HhRQ&index=6&list=PL_9u00nsHteH2OBVX4YSU_HWWY_JSxFyj', width: 560, height: 315},
+					// 					{id: 100005, title: 'Customizing Themes', type: 'video', url: 'https://www.youtube.com/watch?v=rlpSSSXRThk&index=7&list=PL_9u00nsHteH2OBVX4YSU_HWWY_JSxFyj', width: 560, height: 315},
+
+					// 					{id: 100006, title: 'Install a new Theme', type: 'website', url: 'https://my.bluehost.com/hosting/help/wp_themes', width: 560, height: 315},
+					// 					{id: 100007, title: 'How to Update WordPress Plugins', type: 'website', url: 'https://my.bluehost.com/hosting/help/update_wordpress_plugins', width: 560, height: 315},
+					// 					{id: 100008, title: 'How to Uninstall a Plugin', type: 'website', url: 'https://my.bluehost.com/hosting/help/2530', width: 560, height: 315},
+					// 					{id: 100009, title: 'Preventing Spam', type: 'website', url: 'https://my.bluehost.com/hosting/help/wp_spam', width: 560, height: 315}
+					// 					]
+					// 				}
+					// 			}
+					// 		}
+					// 	}
+					// }
+
 					sk_config.onBeforePlay = [
-						{path: 'a.customize-controls-close,a.media-modal-close', event: 'click'}
+					{path: 'a.customize-controls-close,a.media-modal-close,.so-panels-dialog-edit-widget a.so-close,.close-full-overlay', event: 'click'}
 					];
 
 					var skc_config = {
@@ -647,11 +668,11 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 				switch ($data['type']) {
 					case 'activate':
-					$mp->track("Activate - Plugin", array("domain" => $domain));
+						$mp->track("Activate - Plugin", array("domain" => $domain));
 					break;
 
 					case 'deactivate':
-					$mp->track("Deactivate - Plugin", array("domain" => $domain));
+						$mp->track("Deactivate - Plugin", array("domain" => $domain));
 					break;
 
 					default:
@@ -698,7 +719,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.4.0');
+				$data = json_encode('2.4.1');
 
 				if(array_key_exists('callback', $_GET)){
 

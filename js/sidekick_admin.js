@@ -404,12 +404,10 @@ function sk_populate(data){
 			jQuery('#toggle_composer').trigger('click');
 		});
 
-		load_sites_by_status('unactivated');
-		// return;
-
 		if (typeof sk_ms_admin !== 'undefined' && sk_ms_admin) {
 
 			// Multisite
+			load_sites_by_status('unactivated');
 
 			var clicked_button;
 
