@@ -22,17 +22,17 @@ if (!class_exists('sk_config_data')) {
 		function get_post_types(){
 			global $wpdb;
 
-			if ( false === ( $result = get_transient( 'sk_get_post_types' ) ) ) {
+			if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types' ) ) ) {
 
 				$query  = "SELECT post_type, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type";
 				$counts = $wpdb->get_results($query);
-				$result = '';
+				$result = array();
 
 				foreach ($counts as $key => $type) {
 					$type->post_type = str_replace('-', '_', $type->post_type);
-					$result .= "\n 						post_type_{$type->post_type} : $type->count,";
+					$result["post_type_{$type->post_type}"] = intval($type->count);
 				}
-				set_transient( 'sk_get_post_types', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types', $result, $this->cache_time );
 			}
 
 			return $result;
@@ -52,9 +52,9 @@ if (!class_exists('sk_config_data')) {
 		}
 
 		function get_themes(){
-			if ( false === ( $result = get_transient( 'sk_get_themes' ) ) ) {
+			if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_themes' ) ) ) {
 				$result = wp_get_themes( array( 'allowed' => true ) );
-				set_transient( 'sk_get_themes', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_themes', $result, $this->cache_time );
 			}
 
 			return count($result);
@@ -64,18 +64,18 @@ if (!class_exists('sk_config_data')) {
 			global $wpdb;
 
 			// Can't find a good method to clear cache for newly registered post types that fires once
-			// if ( false === ( $result = get_transient( 'sk_get_post_types_and_statuses' ) ) ) {
+			// if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses' ) ) ) {
 				$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
 				$counts = $wpdb->get_results($query);
-				$result = '';
+				$result = array();
 
 				foreach ($counts as $key => $type) {
 					$type->post_type   = str_replace('-', '_', $type->post_type);
 					$type->post_status = str_replace('-', '_', $type->post_status);
 
-					$result .= "\n 						post_type_{$type->post_type}_{$type->post_status} : $type->count,";
+					$result["post_type_{$type->post_type}_{$type->post_status}"] = intval($type->count);
 				}
-				set_transient( 'sk_get_post_types_and_statuses', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses', $result, $this->cache_time );
 			// }
 
 			return $result;
@@ -84,16 +84,15 @@ if (!class_exists('sk_config_data')) {
 		function get_taxonomies(){
 			global $wpdb;
 
-			// if ( false === ( $result = get_transient( 'sk_get_taxonomies' ) ) ) {
+			// if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies' ) ) ) {
 				$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
 				$counts = $wpdb->get_results($query);
-				$result = '';
 
 				foreach ($counts as $key => $taxonomy) {
 					$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
-					$result .= "\n 						taxonomy_{$taxonomy->taxonomy} : $taxonomy->count,";
+					$result["taxonomy_{$taxonomy->taxonomy}"] = intval($taxonomy->count);
 				}
-				set_transient( 'sk_get_taxonomies', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies', $result, $this->cache_time );
 			// }
 
 			return $result;
@@ -102,30 +101,29 @@ if (!class_exists('sk_config_data')) {
 		function get_comments(){
 			global $wpdb;
 
-			if ( false === ( $result = get_transient( 'sk_get_comments' ) ) ) {
+			if ( false === ( $counts = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_comments' ) ) ) {
 				$query = "SELECT count(distinct comment_ID) as count from {$wpdb->prefix}comments";
 				$counts = $wpdb->get_var($query);
 				if (!$counts) $counts = 0;
-				$result = "\n 						comment_count : $counts,";
-				set_transient( 'sk_get_comments', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_comments', $counts, $this->cache_time );
 			}
 
-			return $result;
+			return intval($counts);
 		}
 
 		function get_post_statuses(){
 			global $wpdb;
 
-			if ( false === ( $result = get_transient( 'sk_post_statuses' ) ) ) {
+			if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_post_statuses' ) ) ) {
 				$query  = "SELECT post_status, count(ID) as count from {$wpdb->prefix}posts group by post_status";
 				$counts = $wpdb->get_results($query);
-				$result = '';
+				$result = array();
 
 				foreach ($counts as $key => $type) {
 					$type->post_status = str_replace('-', '_', $type->post_status);
-					$result .= "\n 						post_status_{$type->post_status} : $type->count,";
+					$result["post_status_{$type->post_status}"] = intval($type->count);
 				}
-				set_transient( 'sk_post_statuses', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_post_statuses', $result, $this->cache_time );
 			}
 
 			return $result;
@@ -134,17 +132,17 @@ if (!class_exists('sk_config_data')) {
 		function get_user_data(){
 			global $current_user;
 
-			if ( false === ( $result = get_transient( 'sk_get_user_data' ) ) ) {
+			if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_user_data' ) ) ) {
 				$data   = get_userdata($current_user->ID);
-				$result = "\n 						user_id : $current_user->ID,";
+				$result = array("user_id" => $current_user->ID);
 
 				foreach ($data->allcaps as $cap => $val) {
 					$cap = sanitize_title($cap);
 					$cap = str_replace('-', '_', $cap);
 					if (!$val) $val = 0;
-					$result .= "\n 						cap_{$cap} : $val,";
+					$result["cap_{$cap}"] = $val;
 				}
-				set_transient( 'sk_get_user_data', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_user_data', $result, $this->cache_time );
 			}
 
 			return $result;
@@ -155,20 +153,23 @@ if (!class_exists('sk_config_data')) {
 
 			$frameworks = array('genesis');
 
-			$output = "\n 						theme_framework : false,";
+			$result = array("theme_framework" => false);
 
 			foreach ($frameworks as $framework) {
 				switch ($framework) {
 					case 'genesis':
 					if (function_exists( 'genesis' ) ) {
 						if (defined('PARENT_THEME_VERSION')) {
-							$output = "\n 						theme_framework : {name: '" . $framework . "', version: '" . PARENT_THEME_VERSION . "'},";
+							$result["theme_framework"] = array(
+								"name" => $framework, 
+								"version" => PARENT_THEME_VERSION 
+							);
 						}
 					}
 					break;
 				}
 			}
-			return $output;
+			return $result;
 		}
 
 		function get_current_url() {
@@ -206,7 +207,7 @@ if (!class_exists('sk_config_data')) {
 
 		function get_plugins(){
 
-			if ( false === ( $result = get_transient( 'sk_get_plugins' ) ) ) {
+			if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_plugins' ) ) ) {
 				$active_plugins = wp_get_active_and_valid_plugins();
 				$mu_plugins     = get_mu_plugins();
 				$result         = array();
@@ -226,7 +227,7 @@ if (!class_exists('sk_config_data')) {
 						$result[$slug] = '1.0.0';
 					}
 				}
-				set_transient( 'sk_get_plugins', $result, $this->cache_time );
+				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_plugins', $result, $this->cache_time );
 			}
 
 			return $result;

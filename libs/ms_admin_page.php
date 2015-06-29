@@ -7,12 +7,6 @@
 	var last_site_key = null;
 	var sk_ms_admin   = true;
 
-	jQuery(document).ready(function($) {
-		if (typeof mixpanel !== 'undefined') {
-			mixpanel.track('Network Settings Page Visit - Plugin');
-		};
-	});
-
 </script>
 
 <div class="page-header"><h2><a id="pluginlogo_32" class="header-icon32" href="http://www.sidekick.pro" target="_blank"></a>Sidekick Licensing</h2></div>
