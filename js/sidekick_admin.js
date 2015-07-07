@@ -214,6 +214,13 @@ function sk_populate(data){
 
 		jQuery('.sk_walkthrough_list').append('<div class="sk_product" id="' + item.cacheId + '"><b>' + item.name + '</b> (<span class="select_all">Toggle All</span>)</div>');
 
+		if (typeof sk_config.disable_wts === "string" && sk_config.disable_wts.indexOf(']') > -1) {
+			sk_config.disable_wts = JSON.parse(sk_config.disable_wts);
+		};
+
+		if (typeof sk_config.disable_network_wts === "string" && sk_config.disable_network_wts.indexOf(']') > -1) {
+			sk_config.disable_network_wts = JSON.parse(sk_config.disable_network_wts);
+		};
 
 		if (sk_config.disable_wts) {
 			currently_disabled_wts = sk_config.disable_wts;

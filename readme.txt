@@ -18,7 +18,7 @@ Sidekick puts interactive, real-time tutorials (**Walkthroughs**) right inside y
 
 No more reading documentation or watching videos. **Just Click. Do. Learn.**
 
-SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3/month. Here’s a complete list of what’s in our [library](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
+SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3.50/month. Here’s a complete list of what’s in our [library](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
 
 **Pro Tip:** If you host with any of our [awesome partners](http://www.sidekick.pro/sidekick-partners?utm_source=wordpress.org&utm_medium=plugin_page_description), you get a the full library for FREE!
 
