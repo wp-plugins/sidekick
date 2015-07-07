@@ -189,6 +189,7 @@ if (!class_exists('sk_config_data')) {
 
 		function get_disabled_wts(){
 			$wts = str_replace('"', '', get_option('sk_disabled_wts'));
+			$wts = json_decode($wts);
 			if ($wts) {
 				return $wts;
 			}
@@ -198,6 +199,7 @@ if (!class_exists('sk_config_data')) {
 		function get_disabled_network_wts(){
 			if (is_multisite()) {
 				$wts = str_replace('"', '', get_site_option('sk_disabled_wts'));
+				$wts = json_decode($wts);
 				if ($wts) {
 					return $wts;
 				}

@@ -204,9 +204,11 @@ function updateStatCounts(increment){
 
 function sk_populate(data){
 
+	// console.log('sk_populate %o',data);
+
 	jQuery('.sk_walkthrough_list').html('');
 
-	_.each(data.products,function(item,key){
+	_.each(data,function(item,key){
 
 		if (!item.cacheId) {
 			return false;
@@ -214,6 +216,13 @@ function sk_populate(data){
 
 		jQuery('.sk_walkthrough_list').append('<div class="sk_product" id="' + item.cacheId + '"><b>' + item.name + '</b> (<span class="select_all">Toggle All</span>)</div>');
 
+		if (typeof sk_config.disable_wts === "string" && sk_config.disable_wts.indexOf(']') > -1) {
+			sk_config.disable_wts = JSON.parse(sk_config.disable_wts);
+		};
+
+		if (typeof sk_config.disable_network_wts === "string" && sk_config.disable_network_wts.indexOf(']') > -1) {
+			sk_config.disable_network_wts = JSON.parse(sk_config.disable_network_wts);
+		};
 
 		if (sk_config.disable_wts) {
 			currently_disabled_wts = sk_config.disable_wts;
@@ -352,7 +361,7 @@ function sk_populate(data){
 		var sk_url;
 
 		if (loadCount > 5) {
-			console.warn('Something is wrong...');
+			// console.warn('Something is wrong...');
 			return false;
 		}
 
@@ -373,6 +382,8 @@ function sk_populate(data){
 			},
 			success: function(data){
 
+				// console.log('success');
+
 				if (sk_config.library + 'domains/cache?domainKey=' + sk_config.activation_id == sk_url) {
 					if (!data.payload) {
 						jQuery('.sk_license_status').html('Invalid Key').css({color: 'red'});
@@ -387,7 +398,13 @@ function sk_populate(data){
 				}
 
 				if (data.payload) {
-					sk_populate(data.payload);
+
+					// console.log('data.payload %o', data.payload);
+
+
+					sidekick.compatibilityModel.filter_products(data.payload.products);
+
+					sk_populate(sidekick.compatibilityModel.get('passed_products'));
 				}
 			}
 		});
@@ -442,36 +459,19 @@ function sk_populate(data){
 
 			});
 
-
-
-			// if (jQuery('select[name="sk_selected_subscription"]').val().indexOf('roduct') > -1) {
-				// jQuery('.walkthrough_library').show();
-			// }
-
-			// jQuery('select[name="sk_selected_subscription"]').on('change',function(){
-			// 	if (jQuery('select[name="sk_selected_subscription"]').val().indexOf('roduct') > -1) {
-			// 		jQuery('.walkthrough_library').show();
-			// 	} else {
-			// 		jQuery('.walkthrough_library').val(0);
-			// 		jQuery('.walkthrough_library').hide();
-			// 	}
-			// });
-
 		} else {
-			jQuery(document).ready(function($) {
-				if (sk_config.activation_id) {
-					load_sk_library(sk_config.activation_id);
-				} else {
-					jQuery('.sk_upgrade').show();
+			
+			if (sk_config.activation_id) {
+				load_sk_library(sk_config.activation_id);
+			} else {
+				jQuery('.sk_upgrade').show();
+			}
+
+			jQuery('h3:contains(My Sidekick Account)').click(function(e){
+				if (e.shiftKey) {
+					jQuery('.advanced').show();
 				}
-
-				jQuery('h3:contains(My Sidekick Account)').click(function(e){
-					if (e.shiftKey) {
-						jQuery('.advanced').show();
-					}
-				});
-
-			});
+			});			
 		}
 
 	});

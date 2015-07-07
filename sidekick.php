@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.5.0
+Version: 2.5.2
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -24,7 +24,7 @@ if (!class_exists('Sidekick')){
 
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','//apiv2.sidekick.pro/');
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.0'));
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.2'));
 		}
 
 		function enqueue_required(){
@@ -41,6 +41,9 @@ if (!class_exists('Sidekick')){
 			wp_enqueue_script('sidekick'   		,"//loader.sidekick.pro/platforms/d9993157-d972-4c49-93be-a0c684096961.js",	array('backbone','jquery','underscore','jquery-effects-highlight'),null,true);
 			wp_enqueue_style('wp-pointer');
 			wp_enqueue_script('wp-pointer');
+
+			do_action('post_enqueue_required');
+
 		}
 
 		function setup_menu(){
@@ -229,18 +232,19 @@ if (!class_exists('Sidekick')){
 
 			$sk_config = array(
 				"compatibilities" => array(
-					"theme_version"     => $theme->Version,
-					"installed_theme"   => sanitize_title($theme->Name),
-					"main_soft_version" => get_bloginfo("version"),
-					"is_multisite"      => (is_multisite()) ? true : false,
 					"comment_count"     => $sk_config_data->get_comments(),
-					"role"              => $sk_config_data->get_user_role(),
+					"domain"            => str_replace("http://","",$_SERVER["SERVER_NAME"]),
+					"installed_plugins" => (isset($installed_plugins)) ? $installed_plugins : array(),
+					"installed_theme"   => sanitize_title($theme->Name),
+					"is_multisite"      => (is_multisite()) ? true : false,
+					"main_soft_version" => get_bloginfo("version"),
 					"number_of_themes"  => $sk_config_data->get_themes(),
-					"show_on_front"     => get_option('show_on_front'),
-					"page_on_front"     => intval(get_option('page_on_front')),
 					"page_for_posts"    => intval(get_option('page_for_posts')),
+					"page_on_front"     => intval(get_option('page_on_front')),
 					"plugin_count"      => (isset($installed_plugins) && is_array($installed_plugins)) ? count($installed_plugins) : 0,
-					"installed_plugins" => (isset($installed_plugins)) ? $installed_plugins : array()
+					"role"              => $sk_config_data->get_user_role(),
+					"show_on_front"     => get_option('show_on_front'),
+					"theme_version"     => $theme->Version
 					),
 
 				// Platform
@@ -264,7 +268,7 @@ if (!class_exists('Sidekick')){
 				// WordPress
 				"embedded"      				=> false,
 				"embedPartner"  				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.5.0', // WordPress plugin version
+				"plugin_version"				=> '2.5.2', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -360,7 +364,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.5.0');
+				$data = json_encode('2.5.2');
 
 				if(array_key_exists('callback', $_GET)){
 

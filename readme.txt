@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.2
-Stable tag: 2.5.0
+Stable tag: 2.5.2
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ Sidekick puts interactive, real-time tutorials (**Walkthroughs**) right inside y
 
 No more reading documentation or watching videos. **Just Click. Do. Learn.**
 
-SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3/month. Here’s a complete list of what’s in our [library](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
+SIDEKICK for WordPress comes with 55+ Walkthroughs with no signup required (including 30 for the Genesis Framework).  You can also choose to [upgrade](http://sidekick.pro/plans/wordpress?utm_source=wordpress.org&utm_medium=plugin_page_description) to over 200 starting at just $3.50/month. Here’s a complete list of what’s in our [library](http://support.sidekick.pro/article/167-which-walkthroughs-are-included-with-wordpress-basics?utm_source=wordpress.org&utm_medium=plugin_page_description).
 
 **Pro Tip:** If you host with any of our [awesome partners](http://www.sidekick.pro/sidekick-partners?utm_source=wordpress.org&utm_medium=plugin_page_description), you get a the full library for FREE!
 
@@ -144,6 +144,11 @@ We read and respond to every piece of feedback we get.
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 2.5.2 = 
+* Adjust disabled walkthroughs settings
+* Filter out non compatible products from settings screen
+* Add domain to walkthrough compatibility filter
 
 = 2.5.0 = 
 * Sidekick platform major refactoring
