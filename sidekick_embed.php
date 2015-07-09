@@ -100,6 +100,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 			$current_user                    = wp_get_current_user();
 			$status                          = 'Free';
 			$error                           = null;
+			$affiliate_id 					 = $this->getAffiliateId();
 
 			if (isset($SK_PAID_LIBRARY_FILE) && $activation_id) {
 				$_POST['activation_id'] = $activation_id;
@@ -193,7 +194,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 									<tr valign="top">
 										<th scope="row" valign="top">Status</th>
-										<td><span style='color: blue' class='sk_license_status'><span><?php echo ucfirst($status) ?></span>  <a style='display: none' class='sk_upgrade' href='http://www.sidekick.pro/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade' target="_blank"> Upgrade Now!</a> </span></td>
+										<td><span style='color: blue' class='sk_license_status'><span><?php echo ucfirst($status) ?></span>  <a style='display: none' class='sk_upgrade' href='http://www.sidekick.pro/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>' target="_blank"> Upgrade Now!</a> </span></td>
 									</tr>
 
 									<tr valign="top">
@@ -227,9 +228,9 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 			<div class="sk_box composer" style='display: none'>
 				<div class="well">
 					<h3>Build Your Own Walkthroughs</h3>
-					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>
+					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>
 					<ul>
-						<li>Get more info about <a href='http://www.sidekick.pro/how-it-works/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'>Custom Walkthroughs</a> now!</li>
+						<li>Get more info about <a href='http://www.sidekick.pro/how-it-works/?utm_source=plugin&utm_medium=settings&utm_campaign=composer<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>' target='_blank'>Custom Walkthroughs</a> now!</li>
 						<li><a href="http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer" target="_blank">Check out our custom walkthroughs plans</a></li>
 					</ul>
 				</div>
@@ -244,7 +245,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 							<li>Your Activation ID is unique and limited to your production, staging, and development urls.</li>
 							<li>The Sidekick team adheres strictly to CANSPAM. From time to time we may send critical updates (such as security notices) to the email address setup as the Administrator on this site.</li>
 							<li>If you have any questions, bug reports or feedback, please send them to <a target="_blank" href="mailto:support@sidekick.pro">us</a> </li>
-							<li>You can find our terms of use <a target="_blank" href="http://www.sidekick.pro/terms-of-use/">here</a></li>
+							<li>You can find our terms of use <a target="_blank" href="http://www.sidekick.pro/terms-of-use/<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>">here</a></li>
 						</ul>
 					</div>
 				</div>
@@ -472,21 +473,30 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 		}
 
+		function getAffiliateId(){
+			if (defined('SK_AFFILIATE_ID')) {
+				$affiliate_id = intval(SK_AFFILIATE_ID);
+			} else if (get_option( "sk_affiliate_id")){
+				$affiliate_id = intval(get_option( "sk_affiliate_id"));
+			} else {
+				$affiliate_id = '';
+			}
+			return $affiliate_id;
+		}
+
 		function footer(){
 			global $current_user;
 
 			
 
 			$sk_config_data                   = new sk_config_data;
-
 			$current_user                     = (get_option( 'sk_track_data' )) ? wp_get_current_user() : null;
-
 			$autostart_network_walkthrough_id = (get_site_option('sk_autostart_walkthrough_id') ? get_site_option('sk_autostart_walkthrough_id') : null );
 			$autostart_walkthrough_id         = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : $autostart_network_walkthrough_id );
 			$theme                            = wp_get_theme();
-
 			$installed_plugins                = $sk_config_data->get_plugins();
 			$file_editor_enabled              = $sk_config_data->get_file_editor_enabled();
+			$affiliate_id                     = $this->getAffiliateId();
 
 			$sk_config = array(
 				"compatibilities" => array(
@@ -512,7 +522,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 				// User Settings
 				"activation_id"            		=> (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : ''),
 				"custom_class" 					=> (get_option( "sk_custom_class" ) ? get_option( "sk_custom_class" ) : ''),
-				"distributor_id" 				=> (get_option( "sk_distributor_id" ) ? intval(get_option( "sk_distributor_id" )) : ''),
+				"affiliate_id" 					=> $affiliate_id,
 				"user_email"               		=> ($current_user) ? $current_user->user_email : '',
 				"autostart_walkthrough_id" 		=> ($autostart_walkthrough_id) ? $autostart_walkthrough_id : '',
 				"disable_wts"              		=> (!is_network_admin()) ? $sk_config_data->get_disabled_wts() : array(), // Copying these to compatibilities, have to update this over time 
@@ -1204,6 +1214,7 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
             $sk_hide_config_taskbar_button   = get_option('sk_hide_config_taskbar_button');
             $sk_hide_composer_upgrade_button = get_option('sk_hide_composer_upgrade_button');
             $is_ms_admin                     = true;
+            $affiliate_id                    = $this->getAffiliateId();
 
             $this->track(array('what' => 'Network Settings Page', 'where' => 'plugin'));
 

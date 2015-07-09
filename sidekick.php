@@ -95,6 +95,7 @@ if (!class_exists('Sidekick')){
 			$current_user                    = wp_get_current_user();
 			$status                          = 'Free';
 			$error                           = null;
+			$affiliate_id 					 = $this->getAffiliateId();
 
 			if (isset($SK_PAID_LIBRARY_FILE) && $activation_id) {
 				$_POST['activation_id'] = $activation_id;
@@ -213,21 +214,30 @@ if (!class_exists('Sidekick')){
 
 		}
 
+		function getAffiliateId(){
+			if (defined('SK_AFFILIATE_ID')) {
+				$affiliate_id = intval(SK_AFFILIATE_ID);
+			} else if (get_option( "sk_affiliate_id")){
+				$affiliate_id = intval(get_option( "sk_affiliate_id"));
+			} else {
+				$affiliate_id = '';
+			}
+			return $affiliate_id;
+		}
+
 		function footer(){
 			global $current_user;
 
 			require_once('libs/sk_config_data.php');
 
 			$sk_config_data                   = new sk_config_data;
-
 			$current_user                     = (get_option( 'sk_track_data' )) ? wp_get_current_user() : null;
-
 			$autostart_network_walkthrough_id = (get_site_option('sk_autostart_walkthrough_id') ? get_site_option('sk_autostart_walkthrough_id') : null );
 			$autostart_walkthrough_id         = (get_option('sk_autostart_walkthrough_id') ? get_option('sk_autostart_walkthrough_id') : $autostart_network_walkthrough_id );
 			$theme                            = wp_get_theme();
-
 			$installed_plugins                = $sk_config_data->get_plugins();
 			$file_editor_enabled              = $sk_config_data->get_file_editor_enabled();
+			$affiliate_id                     = $this->getAffiliateId();
 
 			$sk_config = array(
 				"compatibilities" => array(
@@ -253,7 +263,7 @@ if (!class_exists('Sidekick')){
 				// User Settings
 				"activation_id"            		=> (get_option( "sk_activation_id" ) ? get_option( "sk_activation_id" ) : ''),
 				"custom_class" 					=> (get_option( "sk_custom_class" ) ? get_option( "sk_custom_class" ) : ''),
-				"distributor_id" 				=> (get_option( "sk_distributor_id" ) ? intval(get_option( "sk_distributor_id" )) : ''),
+				"affiliate_id" 					=> $affiliate_id,
 				"user_email"               		=> ($current_user) ? $current_user->user_email : '',
 				"autostart_walkthrough_id" 		=> ($autostart_walkthrough_id) ? $autostart_walkthrough_id : '',
 				"disable_wts"              		=> (!is_network_admin()) ? $sk_config_data->get_disabled_wts() : array(), // Copying these to compatibilities, have to update this over time 

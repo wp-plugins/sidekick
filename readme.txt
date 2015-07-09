@@ -1,7 +1,7 @@
 === Sidekick ===
 Contributors: raptor235,benfox,bitwit,riavalon
 Donate link: http://www.sidekick.pro
-Tags: help, tutorial, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
+Tags: help, tutorial, tutorials,screencast, self-help, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.2
 Stable tag: 2.5.3

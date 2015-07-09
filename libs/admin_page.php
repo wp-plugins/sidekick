@@ -56,7 +56,7 @@
 
 									<tr valign="top">
 										<th scope="row" valign="top">Status</th>
-										<td><span style='color: blue' class='sk_license_status'><span><?php echo ucfirst($status) ?></span>  <a style='display: none' class='sk_upgrade' href='http://www.sidekick.pro/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade' target="_blank"> Upgrade Now!</a> </span></td>
+										<td><span style='color: blue' class='sk_license_status'><span><?php echo ucfirst($status) ?></span>  <a style='display: none' class='sk_upgrade' href='http://www.sidekick.pro/modules/wordpress-core-module-premium/?utm_source=plugin&utm_medium=settings&utm_campaign=upgrade<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>' target="_blank"> Upgrade Now!</a> </span></td>
 									</tr>
 
 									<tr valign="top">
@@ -90,9 +90,9 @@
 			<div class="sk_box composer" style='display: none'>
 				<div class="well">
 					<h3>Build Your Own Walkthroughs</h3>
-					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>
+					<a href='http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>' target='_blank'><div class='composer_beta_button'>Build Your Own<br/>Walkthroughs</div></a>
 					<ul>
-						<li>Get more info about <a href='http://www.sidekick.pro/how-it-works/?utm_source=plugin&utm_medium=settings&utm_campaign=composer' target='_blank'>Custom Walkthroughs</a> now!</li>
+						<li>Get more info about <a href='http://www.sidekick.pro/how-it-works/?utm_source=plugin&utm_medium=settings&utm_campaign=composer<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>' target='_blank'>Custom Walkthroughs</a> now!</li>
 						<li><a href="http://www.sidekick.pro/plans/create_wp_walkthroughs/?utm_source=plugin&utm_medium=settings&utm_campaign=composer" target="_blank">Check out our custom walkthroughs plans</a></li>
 					</ul>
 				</div>
@@ -107,7 +107,7 @@
 							<li>Your Activation ID is unique and limited to your production, staging, and development urls.</li>
 							<li>The Sidekick team adheres strictly to CANSPAM. From time to time we may send critical updates (such as security notices) to the email address setup as the Administrator on this site.</li>
 							<li>If you have any questions, bug reports or feedback, please send them to <a target="_blank" href="mailto:support@sidekick.pro">us</a> </li>
-							<li>You can find our terms of use <a target="_blank" href="http://www.sidekick.pro/terms-of-use/">here</a></li>
+							<li>You can find our terms of use <a target="_blank" href="http://www.sidekick.pro/terms-of-use/<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>">here</a></li>
 						</ul>
 					</div>
 				</div>
