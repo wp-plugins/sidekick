@@ -95,7 +95,7 @@ if (!class_exists('sidekickMassActivator')) {
             }
         }
 
-        function track($event, $data) {
+        function track($event, $data = array()) {
             if (file_exists(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php')) {
                 require_once(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php');
                 $mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");

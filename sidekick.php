@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.5.2
+Version: 2.5.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -24,7 +24,8 @@ if (!class_exists('Sidekick')){
 
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','//apiv2.sidekick.pro/');
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.2'));
+			if (!defined('SK_TRACKING_API')) 	define('SK_TRACKING_API','//tracking.sidekick.pro/');			
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.3'));
 		}
 
 		function enqueue_required(){
@@ -101,7 +102,7 @@ if (!class_exists('Sidekick')){
 				$status = 'Checking...';
 			}
 
-			$this->track(array('what' => 'Settings Page', 'where' => 'plugin'));
+			$this->track(array('event' => 'Settings Page', 'what' => 'Settings Page', 'where' => 'plugin'));
 
 			global $wp_version;
 			if (version_compare($wp_version, '3.9', '<=')) {
@@ -215,8 +216,6 @@ if (!class_exists('Sidekick')){
 		function footer(){
 			global $current_user;
 
-			delete_option( 'sk_just_activated' );
-
 			require_once('libs/sk_config_data.php');
 
 			$sk_config_data                   = new sk_config_data;
@@ -268,7 +267,7 @@ if (!class_exists('Sidekick')){
 				// WordPress
 				"embedded"      				=> false,
 				"embedPartner"  				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.5.2', // WordPress plugin version
+				"plugin_version"				=> '2.5.3', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -287,6 +286,8 @@ if (!class_exists('Sidekick')){
 			$sk_config['compatibilities'] = array_merge($sk_config['compatibilities'],$sk_config_data->get_framework());
 
 			$sk_config = apply_filters('sk_config',$sk_config);
+
+			delete_option( 'sk_just_activated' );
 
 			?>
 
@@ -310,21 +311,29 @@ if (!class_exists('Sidekick')){
 				$mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");
 				$domain = str_replace("http://","",$_SERVER["SERVER_NAME"]);
 
-				switch ($data['type']) {
-					case 'activate':
-						$mp->track("Activate - Plugin", array("domain" => $domain));
-					break;
+				if (isset($data['type'])) {
+					switch ($data['type']) {
+						case 'activate':
+							$mp->track("Activate - Plugin", array("domain" => $domain));
+						break;
 
-					case 'deactivate':
-						$mp->track("Deactivate - Plugin", array("domain" => $domain));
-					break;
+						case 'deactivate':
+							$mp->track("Deactivate - Plugin", array("domain" => $domain));
+						break;
 
-					default:
+						default:
+						if (isset($data['event'])) {
+							$mp->track($data['event'], array("domain" => $domain));
+						}
+						break;
+					}
+				} else {
 					if (isset($data['event'])) {
 						$mp->track($data['event'], array("domain" => $domain));
 					}
-					break;
 				}
+
+				
 			}
 
 			$response = wp_remote_post( SK_TRACKING_API . 'event', array(
@@ -364,7 +373,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.5.2');
+				$data = json_encode('2.5.3');
 
 				if(array_key_exists('callback', $_GET)){
 

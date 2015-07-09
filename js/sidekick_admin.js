@@ -224,6 +224,7 @@ function sk_populate(data){
 			sk_config.disable_network_wts = JSON.parse(sk_config.disable_network_wts);
 		};
 
+
 		if (sk_config.disable_wts) {
 			currently_disabled_wts = sk_config.disable_wts;
 			sk_config.disable_wts  = null;
@@ -410,8 +411,7 @@ function sk_populate(data){
 		});
 	}
 
-	jQuery(document).ready(function($) {
-
+	function setup_sk_admin(){
 		if (jQuery('.sidekick_admin').length === 0) {
 			return;
 		}
@@ -460,7 +460,7 @@ function sk_populate(data){
 			});
 
 		} else {
-			
+
 			if (sk_config.activation_id) {
 				load_sk_library(sk_config.activation_id);
 			} else {
@@ -471,9 +471,10 @@ function sk_populate(data){
 				if (e.shiftKey) {
 					jQuery('.advanced').show();
 				}
-			});			
+			});
 		}
+	}
 
-	});
+	setup_sk_admin();
 
 

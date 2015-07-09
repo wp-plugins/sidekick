@@ -65,17 +65,17 @@ if (!class_exists('sk_config_data')) {
 
 			// Can't find a good method to clear cache for newly registered post types that fires once
 			// if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses' ) ) ) {
-				$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
-				$counts = $wpdb->get_results($query);
-				$result = array();
+			$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
+			$counts = $wpdb->get_results($query);
+			$result = array();
 
-				foreach ($counts as $key => $type) {
-					$type->post_type   = str_replace('-', '_', $type->post_type);
-					$type->post_status = str_replace('-', '_', $type->post_status);
+			foreach ($counts as $key => $type) {
+				$type->post_type   = str_replace('-', '_', $type->post_type);
+				$type->post_status = str_replace('-', '_', $type->post_status);
 
-					$result["post_type_{$type->post_type}_{$type->post_status}"] = intval($type->count);
-				}
-				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses', $result, $this->cache_time );
+				$result["post_type_{$type->post_type}_{$type->post_status}"] = intval($type->count);
+			}
+			set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses', $result, $this->cache_time );
 			// }
 
 			return $result;
@@ -85,14 +85,14 @@ if (!class_exists('sk_config_data')) {
 			global $wpdb;
 
 			// if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies' ) ) ) {
-				$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
-				$counts = $wpdb->get_results($query);
+			$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+			$counts = $wpdb->get_results($query);
 
-				foreach ($counts as $key => $taxonomy) {
-					$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
-					$result["taxonomy_{$taxonomy->taxonomy}"] = intval($taxonomy->count);
-				}
-				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies', $result, $this->cache_time );
+			foreach ($counts as $key => $taxonomy) {
+				$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
+				$result["taxonomy_{$taxonomy->taxonomy}"] = intval($taxonomy->count);
+			}
+			set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies', $result, $this->cache_time );
 			// }
 
 			return $result;
@@ -158,12 +158,12 @@ if (!class_exists('sk_config_data')) {
 			foreach ($frameworks as $framework) {
 				switch ($framework) {
 					case 'genesis':
-					if (function_exists( 'genesis' ) ) {
+					if (function_exists( 'genesis' ) ) { //
 						if (defined('PARENT_THEME_VERSION')) {
 							$result["theme_framework"] = array(
 								"name" => $framework, 
 								"version" => PARENT_THEME_VERSION 
-							);
+								);
 						}
 					}
 					break;
@@ -219,16 +219,42 @@ if (!class_exists('sk_config_data')) {
 						$data          = get_plugin_data( $plugin, false, false );
 						$slug          = explode('/',plugin_basename($plugin));
 						$slug          = str_replace('.php', '', $slug[1]);
-						$result[$slug] = $data['Version'];
+						if ($data['Version']) {
+							$result[$slug] = $data['Version'];
+						} else {							
+							$result[$slug] = '1.0.0';
+						}
 					}
 				}
 
 				if (is_array($mu_plugins)) {
 					foreach ($mu_plugins as $plugins_key => $plugin) {
-						$slug          = str_replace('.php', '', $plugins_key);
-						$result[$slug] = '1.0.0';
+						$data = get_plugin_data( WPMU_PLUGIN_DIR . '/' . $plugins_key, false, false );
+						$slug          = explode('/',plugin_basename($plugins_key));
+						$slug          = str_replace('.php', '', $slug[0]);
+						if ($data['Version']) {
+							$result[$slug] = $data['Version'];
+						} else {							
+							$result[$slug] = '1.0.0';
+						}
 					}
 				}
+
+
+				if ( is_multisite() ){
+					$plugins = get_site_option( 'active_sitewide_plugins');
+					foreach ($plugins as $plugins_key => $plugin) {
+						$data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugins_key, false, false );
+						$slug          = explode('/',plugin_basename($plugins_key));
+						$slug          = str_replace('.php', '', $slug[1]);
+						if ($data['Version']) {
+							$result[$slug] = $data['Version'];
+						} else {							
+							$result[$slug] = '1.0.0';
+						}
+					}
+				}
+
 				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_plugins', $result, $this->cache_time );
 			}
 
@@ -236,7 +262,9 @@ if (!class_exists('sk_config_data')) {
 		}
 
 		function get_user_role(){
-			global $current_user, $wp_roles;
+			$wp_roles;
+
+			$current_user = wp_get_current_user();
 
 			if (is_super_admin($current_user->ID)) {
 				return 'administrator';

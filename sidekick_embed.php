@@ -8,7 +8,7 @@ Description: Adds a real-time WordPress training walkthroughs right in your Dash
  We recommend not activating SIDEKICK automatically for people but via an Opt-In process when they configure your own theme or plugin.
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.5.2
+Version: 2.5.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -29,7 +29,8 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','//apiv2.sidekick.pro/');
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.2'));
+			if (!defined('SK_TRACKING_API')) 	define('SK_TRACKING_API','//tracking.sidekick.pro/');			
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.3'));
 		}
 
 		function enqueue_required(){
@@ -106,7 +107,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 				$status = 'Checking...';
 			}
 
-			$this->track(array('what' => 'Settings Page', 'where' => 'plugin'));
+			$this->track(array('event' => 'Settings Page', 'what' => 'Settings Page', 'where' => 'plugin'));
 
 			global $wp_version;
 			if (version_compare($wp_version, '3.9', '<=')) {
@@ -474,8 +475,6 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function footer(){
 			global $current_user;
 
-			delete_option( 'sk_just_activated' );
-
 			
 
 			$sk_config_data                   = new sk_config_data;
@@ -527,7 +526,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 				// WordPress
 				"embedded"      				=> false,
 				"embedPartner"  				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.5.2', // WordPress plugin version
+				"plugin_version"				=> '2.5.3', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -546,6 +545,8 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 			$sk_config['compatibilities'] = array_merge($sk_config['compatibilities'],$sk_config_data->get_framework());
 
 			$sk_config = apply_filters('sk_config',$sk_config);
+
+			delete_option( 'sk_just_activated' );
 
 			?>
 
@@ -569,21 +570,29 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 				$mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");
 				$domain = str_replace("http://","",$_SERVER["SERVER_NAME"]);
 
-				switch ($data['type']) {
-					case 'activate':
-						$mp->track("Activate - Plugin", array("domain" => $domain));
-					break;
+				if (isset($data['type'])) {
+					switch ($data['type']) {
+						case 'activate':
+							$mp->track("Activate - Plugin", array("domain" => $domain));
+						break;
 
-					case 'deactivate':
-						$mp->track("Deactivate - Plugin", array("domain" => $domain));
-					break;
+						case 'deactivate':
+							$mp->track("Deactivate - Plugin", array("domain" => $domain));
+						break;
 
-					default:
+						default:
+						if (isset($data['event'])) {
+							$mp->track($data['event'], array("domain" => $domain));
+						}
+						break;
+					}
+				} else {
 					if (isset($data['event'])) {
 						$mp->track($data['event'], array("domain" => $domain));
 					}
-					break;
 				}
+
+				
 			}
 
 			$response = wp_remote_post( SK_TRACKING_API . 'event', array(
@@ -623,7 +632,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.5.2');
+				$data = json_encode('2.5.3');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -816,7 +825,7 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
             }
         }
 
-        function track($event, $data) {
+        function track($event, $data = array()) {
             if (file_exists(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php')) {
                 require_once(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php');
                 $mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");
@@ -1575,17 +1584,17 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 
 			// Can't find a good method to clear cache for newly registered post types that fires once
 			// if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses' ) ) ) {
-				$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
-				$counts = $wpdb->get_results($query);
-				$result = array();
+			$query  = "SELECT post_type, post_status, count(distinct ID) as count from {$wpdb->prefix}posts group by post_type, post_status";
+			$counts = $wpdb->get_results($query);
+			$result = array();
 
-				foreach ($counts as $key => $type) {
-					$type->post_type   = str_replace('-', '_', $type->post_type);
-					$type->post_status = str_replace('-', '_', $type->post_status);
+			foreach ($counts as $key => $type) {
+				$type->post_type   = str_replace('-', '_', $type->post_type);
+				$type->post_status = str_replace('-', '_', $type->post_status);
 
-					$result["post_type_{$type->post_type}_{$type->post_status}"] = intval($type->count);
-				}
-				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses', $result, $this->cache_time );
+				$result["post_type_{$type->post_type}_{$type->post_status}"] = intval($type->count);
+			}
+			set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_post_types_and_statuses', $result, $this->cache_time );
 			// }
 
 			return $result;
@@ -1595,14 +1604,14 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 			global $wpdb;
 
 			// if ( false === ( $result = get_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies' ) ) ) {
-				$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
-				$counts = $wpdb->get_results($query);
+			$query  = "SELECT count(distinct term_taxonomy_id) as count, taxonomy from {$wpdb->prefix}term_taxonomy group by taxonomy";
+			$counts = $wpdb->get_results($query);
 
-				foreach ($counts as $key => $taxonomy) {
-					$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
-					$result["taxonomy_{$taxonomy->taxonomy}"] = intval($taxonomy->count);
-				}
-				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies', $result, $this->cache_time );
+			foreach ($counts as $key => $taxonomy) {
+				$taxonomy->taxonomy = str_replace('-', '_', $taxonomy->taxonomy);
+				$result["taxonomy_{$taxonomy->taxonomy}"] = intval($taxonomy->count);
+			}
+			set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_taxonomies', $result, $this->cache_time );
 			// }
 
 			return $result;
@@ -1668,12 +1677,12 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 			foreach ($frameworks as $framework) {
 				switch ($framework) {
 					case 'genesis':
-					if (function_exists( 'genesis' ) ) {
+					if (function_exists( 'genesis' ) ) { //
 						if (defined('PARENT_THEME_VERSION')) {
 							$result["theme_framework"] = array(
 								"name" => $framework, 
 								"version" => PARENT_THEME_VERSION 
-							);
+								);
 						}
 					}
 					break;
@@ -1729,16 +1738,42 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 						$data          = get_plugin_data( $plugin, false, false );
 						$slug          = explode('/',plugin_basename($plugin));
 						$slug          = str_replace('.php', '', $slug[1]);
-						$result[$slug] = $data['Version'];
+						if ($data['Version']) {
+							$result[$slug] = $data['Version'];
+						} else {							
+							$result[$slug] = '1.0.0';
+						}
 					}
 				}
 
 				if (is_array($mu_plugins)) {
 					foreach ($mu_plugins as $plugins_key => $plugin) {
-						$slug          = str_replace('.php', '', $plugins_key);
-						$result[$slug] = '1.0.0';
+						$data = get_plugin_data( WPMU_PLUGIN_DIR . '/' . $plugins_key, false, false );
+						$slug          = explode('/',plugin_basename($plugins_key));
+						$slug          = str_replace('.php', '', $slug[0]);
+						if ($data['Version']) {
+							$result[$slug] = $data['Version'];
+						} else {							
+							$result[$slug] = '1.0.0';
+						}
 					}
 				}
+
+
+				if ( is_multisite() ){
+					$plugins = get_site_option( 'active_sitewide_plugins');
+					foreach ($plugins as $plugins_key => $plugin) {
+						$data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugins_key, false, false );
+						$slug          = explode('/',plugin_basename($plugins_key));
+						$slug          = str_replace('.php', '', $slug[1]);
+						if ($data['Version']) {
+							$result[$slug] = $data['Version'];
+						} else {							
+							$result[$slug] = '1.0.0';
+						}
+					}
+				}
+
 				set_transient( 'sk_' . SK_CACHE_PREFIX . '_get_plugins', $result, $this->cache_time );
 			}
 
@@ -1746,7 +1781,9 @@ if (!$sidekick_active && !class_exists('sk_config_data')) {
 		}
 
 		function get_user_role(){
-			global $current_user, $wp_roles;
+			$wp_roles;
+
+			$current_user = wp_get_current_user();
 
 			if (is_super_admin($current_user->ID)) {
 				return 'administrator';
