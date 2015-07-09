@@ -474,6 +474,7 @@ if (!class_exists('sidekickMassActivator')) {
             $sk_hide_config_taskbar_button   = get_option('sk_hide_config_taskbar_button');
             $sk_hide_composer_upgrade_button = get_option('sk_hide_composer_upgrade_button');
             $is_ms_admin                     = true;
+            $affiliate_id                    = $this->getAffiliateId();
 
             $this->track(array('what' => 'Network Settings Page', 'where' => 'plugin'));
 
