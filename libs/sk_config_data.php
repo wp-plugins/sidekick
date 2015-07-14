@@ -276,13 +276,16 @@ if (!class_exists('sk_config_data')) {
 					return 'administrator';
 				}
 			}
-			foreach($wp_roles->role_names as $role => $Role) {
-				if (array_key_exists($role, $current_user->caps)){
-					$user_role = $role;
-					break;
+			if (isset($wp_roles) && $wp_roles) {
+				foreach($wp_roles->role_names as $role => $Role) {
+					if (array_key_exists($role, $current_user->caps)){
+						$user_role = $role;
+						break;
+					}
 				}
+				return $user_role;
 			}
-			return $user_role;
+			return 'n/a';
 		}
 
 	}

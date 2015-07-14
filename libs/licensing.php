@@ -88,6 +88,17 @@ if (!class_exists('sidekickMassActivator')) {
 
         }
 
+        function getAffiliateId(){
+            if (defined('SK_AFFILIATE_ID')) {
+                $affiliate_id = intval(SK_AFFILIATE_ID);
+            } else if (get_option( "sk_affiliate_id")){
+                $affiliate_id = intval(get_option( "sk_affiliate_id"));
+            } else {
+                $affiliate_id = '';
+            }
+            return $affiliate_id;
+        }
+
         function setup_super_admin_key($domainKey) {
                 // Use the super admin's site activation key if not set using last activation key
             if (!get_option('sk_activation_id')) {

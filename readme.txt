@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, tutorials,screencast, self-help, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 3.7
 Tested up to: 4.2
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,7 +145,10 @@ We read and respond to every piece of feedback we get.
 
 == Changelog ==
 
-= 2.5.3 = 
+= 2.5.4 =
+* Fixes to MultiSite saving setting (Thank You Gabe from justaddcontent.com)
+
+= 2.5.3 =
 * Add network activated plugins to compatibilities list
 * MU Plugins now have versions available for compatibility filtering
 * Optimize the multisite admin loading screen

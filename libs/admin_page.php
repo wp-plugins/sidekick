@@ -158,7 +158,7 @@
 						<li>Please help spread the word!</li>
 						<li><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://sidekick.pro" data-text="I use @sidekickhelps for the fastest and easiest way to learn WordPress." data-via="sidekickhelps" data-size="large">Tweet</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li>
 						<li>Like SIDEKICK? Please leave us a 5 star rating on <a href='http://WordPress.org' target='_blank'>WordPress.org</a></li>
-						<li><a href="http://www.sidekick.pro/plans/wordpress-basics/">Sign up for a full WordPress Basics package</a></li>
+						<li><a href="http://www.sidekick.pro/plans/wordpress-basics/<?php echo ($affiliate_id) ? '&ref=' . $affiliate_id : '' ?>">Sign up for a full WordPress Basics package</a></li>
 						<li><a href="http://support.sidekick.pro/collection/50-quick-start-guides" target="_blank"><strong>Visit the SIDEKICK Quick Start guides</strong></a>.</li>
 					</ul>
 				</div>
