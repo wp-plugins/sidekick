@@ -289,7 +289,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 			<div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Auto Start</h3>
+		<h3> echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Auto Start</h3>
 
 		<form method='post'>
 
@@ -298,7 +298,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 				<option value='0'>No Auto Start</option>
 			</select>
 			<input class='button button-primary' type='submit' value='Save'/>
-			<input type='hidden' name='is_ms_admin' value=' echo (isset($is_ms_admin)) ? $is_ms_admin : false ?>'/>
+			<input type='hidden' name='is_ms_admin' value='<?php echo (isset($is_ms_admin)) ? $is_ms_admin : false ?>'/>
 			<input type='hidden' name='sk_setting_autostart' value='true'/>
 
 			<?php wp_nonce_field( 'update_sk_settings' ); ?>
@@ -308,7 +308,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 <div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Other</h3>
+		<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Other</h3>
 
 		<form method="post">
 			<?php settings_fields('sk_license'); ?>
@@ -356,7 +356,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		<form method='post'>
 
 			<input class='top-right button button-primary alignright' type='submit' value='Save'/>
-			<h3>Configure - Turn Off Walkthroughs</h3>
+			<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Turn Off Walkthroughs</h3>
 
 			<p>Below you can turn off specific Walkthroughs for this website.</p>
 			<p>Please note, incompatible multisite walkthroughs will be disabled automatically on individual sites already. Here you're being show the raw unfiltered list of all available walkthroughs.</p>
@@ -1436,7 +1436,7 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 		<div class="wrapper_left">
 			<div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Auto Start</h3>
+		<h3> echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Auto Start</h3>
 
 		<form method='post'>
 
@@ -1445,7 +1445,7 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 				<option value='0'>No Auto Start</option>
 			</select>
 			<input class='button button-primary' type='submit' value='Save'/>
-			<input type='hidden' name='is_ms_admin' value=' echo (isset($is_ms_admin)) ? $is_ms_admin : false ?>'/>
+			<input type='hidden' name='is_ms_admin' value='<?php echo (isset($is_ms_admin)) ? $is_ms_admin : false ?>'/>
 			<input type='hidden' name='sk_setting_autostart' value='true'/>
 
 			<?php wp_nonce_field( 'update_sk_settings' ); ?>
@@ -1455,7 +1455,7 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 
 <div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Other</h3>
+		<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Other</h3>
 
 		<form method="post">
 			<?php settings_fields('sk_license'); ?>
@@ -1503,7 +1503,7 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 		<form method='post'>
 
 			<input class='top-right button button-primary alignright' type='submit' value='Save'/>
-			<h3>Configure - Turn Off Walkthroughs</h3>
+			<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Turn Off Walkthroughs</h3>
 
 			<p>Below you can turn off specific Walkthroughs for this website.</p>
 			<p>Please note, incompatible multisite walkthroughs will be disabled automatically on individual sites already. Here you're being show the raw unfiltered list of all available walkthroughs.</p>

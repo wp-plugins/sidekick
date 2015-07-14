@@ -1,6 +1,6 @@
 <div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Auto Start</h3>
+		<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Auto Start</h3>
 
 		<form method='post'>
 
@@ -19,7 +19,7 @@
 
 <div class="sk_box configure">
 	<div class="well">
-		<h3>Configure - Other</h3>
+		<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Other</h3>
 
 		<form method="post">
 			<?php settings_fields('sk_license'); ?>
@@ -67,7 +67,7 @@
 		<form method='post'>
 
 			<input class='top-right button button-primary alignright' type='submit' value='Save'/>
-			<h3>Configure - Turn Off Walkthroughs</h3>
+			<h3><?php echo (isset($is_ms_admin)) ? 'Network ' : '' ?>Configure - Turn Off Walkthroughs</h3>
 
 			<p>Below you can turn off specific Walkthroughs for this website.</p>
 			<p>Please note, incompatible multisite walkthroughs will be disabled automatically on individual sites already. Here you're being show the raw unfiltered list of all available walkthroughs.</p>
