@@ -204,7 +204,7 @@ function updateStatCounts(increment){
 
 function sk_populate(data){
 
-	// console.log('sk_populate %o',data);
+	console.log('sk_populate %o',data);
 
 	jQuery('.sk_walkthrough_list').html('');
 
@@ -247,7 +247,7 @@ function sk_populate(data){
 
 					// Clear out disabled wts so that compatibility doesn't screen out wts from this screen. Put it back after we're done.
 
-					// console.groupCollapsed('Checking Compatibilities');
+					console.groupCollapsed('Checking Compatibilities');
 
 					_.each(data.payload.buckets,function(bucket,key){
 
@@ -304,7 +304,7 @@ function sk_populate(data){
 
 					jQuery('.configure').show(); //
 
-					// console.groupEnd();//
+					console.groupEnd();//
 
 				} else { //
 					jQuery('#' + this.cacheId).remove();
@@ -382,6 +382,8 @@ function load_sk_library($key){
 		},
 		success: function(data){
 
+			console.log('%csuccess %o','color: green',data);
+
 			if (sk_config.library + 'domains/cache?domainKey=' + sk_config.activation_id == sk_url) {
 				if (!data.payload) {
 					jQuery('.sk_license_status').html('Invalid Key').css({color: 'red'});
@@ -391,6 +393,7 @@ function load_sk_library($key){
 			}
 
 			if (!data.payload) {
+				console.log('loading again');
 				load_sk_library();
 				return false;
 			}
@@ -406,6 +409,7 @@ function load_sk_library($key){
 }
 
 function setup_sk_admin(){
+	console.log('setup_sk_admin');
 	if (jQuery('.sidekick_admin').length === 0) {
 		return;
 	}
@@ -469,6 +473,7 @@ function setup_sk_admin(){
 	}
 }
 
-window.onload = function(){
-	setup_sk_admin();	
-}
+// window.onload = function(){
+	// console.log('init setup_sk_admin');
+	// setup_sk_admin();	
+// }

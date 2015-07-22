@@ -62,8 +62,6 @@ if (!class_exists('sidekickMassActivator')) {
                 update_option('sk_email', $email);
                 restore_current_blog();
 
-                $this->track('Mass Activate', array('domain' => $domain, 'email' => $email));
-
                 if (isset($checked_blogs['deactivated'][$blog_id])) {
                     $checked_blogs['active'][$blog_id] = $checked_blogs['deactivated'][$blog_id];
                     unset($checked_blogs['deactivated'][$blog_id]);
@@ -78,7 +76,6 @@ if (!class_exists('sidekickMassActivator')) {
                 delete_option('sk_auto_activation_error');
             } else {
 
-                $this->track('Mass Activate Error', array('domain' => $domain, 'message' => $result->message, 'email' => $email));
                 update_option('sk_auto_activation_error', $result->message);
                     // wp_mail( 'support@sidekick.pro', 'Failed Mass Domain Add', json_encode($result));
                 wp_mail('bart@sidekick.pro', 'Failed Mass Domain Add', json_encode($result));
@@ -103,16 +100,6 @@ if (!class_exists('sidekickMassActivator')) {
                 // Use the super admin's site activation key if not set using last activation key
             if (!get_option('sk_activation_id')) {
                 update_option('sk_activation_id', $domainKey);
-            }
-        }
-
-        function track($event, $data = array()) {
-            if (file_exists(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php')) {
-                require_once(realpath(dirname(__FILE__)) . '/mixpanel/Mixpanel.php');
-                $mp     = Mixpanel::getInstance("965556434c5ae652a44f24b85b442263");
-                $domain = str_replace("http://", "", $_SERVER["SERVER_NAME"]);
-
-                $mp->track($event, $data);
             }
         }
 
@@ -486,8 +473,6 @@ if (!class_exists('sidekickMassActivator')) {
             $sk_hide_composer_upgrade_button = get_option('sk_hide_composer_upgrade_button');
             $is_ms_admin                     = true;
             $affiliate_id                    = $this->getAffiliateId();
-
-            $this->track(array('what' => 'Network Settings Page', 'where' => 'plugin'));
 
             require_once('ms_admin_page.php');
         }
