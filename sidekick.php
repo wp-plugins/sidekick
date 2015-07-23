@@ -138,8 +138,6 @@ if (!class_exists('Sidekick')){
 					exit;
 				}
 
-				$_POST['disable_wts'] =  array_map("mysql_real_escape_string",$_POST['disable_wts']);
-
 				if (isset($_POST['disable_wts']) && $_POST['disable_wts']) {
 					update_option('sk_disabled_wts',json_encode($_POST['disable_wts']));
 					if (isset($_POST['is_ms_admin']) && $_POST['is_ms_admin']) {
