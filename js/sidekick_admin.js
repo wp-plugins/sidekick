@@ -1,14 +1,31 @@
 // Single Site
 
+'use strict';
+
 var currently_disabled_wts;
 var currently_disabled_network_wts;
 var lastTimeout;
 var loadCount         = 0;
 var lastLoadedStatus  = null;
 var loadOffset        = 0;
-var maxLoadOffset     = null;
 var activated         = 0;
 var unactivated_count = 0;
+
+
+function updateCounts(e){
+	jQuery('.site_list').html('');
+	jQuery('.pagination .start').html(loadOffset+1);
+	jQuery('.pagination .end').html(e.pages);
+	jQuery('.stats .unactivated h3').html(e.counts.unactivated);
+	jQuery('.stats .active h3').html(e.counts.active);
+	jQuery('.stats .deactivated h3').html(e.counts.deactivated);
+}
+
+function setup_buttons_deactivate(){
+	jQuery('.site button.deactivate').off('click').click(function(){
+		window.open('https://www.sidekick.pro/profile/#/overview','_blank');
+	});
+}
 
 function load_sites_by_status(status,target){
 
@@ -25,7 +42,7 @@ function load_sites_by_status(status,target){
 	jQuery('.sites h2 span').html(status + ' site list');
 
 	if (parseInt(jQuery(target).find('h3').html(),10) === 0) {
-		jQuery('.site_list').html('<div class="site">No Sites</div>');
+		jQuery('.site_list').html('<div class=\'site\'>No Sites</div>');
 		jQuery('.sites .action').hide();
 		return false;
 	} else {
@@ -38,28 +55,15 @@ function load_sites_by_status(status,target){
 		offset: (loadOffset) ? loadOffset : 0
 	};
 
-	// console.log('data %o', data);
 	jQuery('.site_list .site').fadeTo('fast',0.5);
-
 
 	jQuery.post(ajaxurl, data, function(e,msg){
 
-		// console.log('back %o', e);
-
-		jQuery('.site_list').html('');
-
-
-
-		jQuery('.pagination .start').html(loadOffset+1);
-		jQuery('.pagination .end').html(e.pages);
-
-		jQuery('.stats .unactivated h3').html(e.counts.unactivated);
-		jQuery('.stats .active h3').html(e.counts.active);
-		jQuery('.stats .deactivated h3').html(e.counts.deactivated);
+		updateCounts(e);
 
 		var button = '<button class="activate">Activate</button></div>';
 
-		if (lastLoadedStatus == 'active') {
+		if (lastLoadedStatus === 'active') {
 			button = '<button class="deactivate">Deactivate</button></div>';
 		}
 
@@ -71,30 +75,14 @@ function load_sites_by_status(status,target){
 			jQuery('.site_list').append('<div class="site">No Sites</div>');
 		}
 
-
 		setup_buttons();
 
 	},'json');
 }
 
-function setup_buttons(){
-	// console.log('setup_buttons');
-	setup_buttons_next_prev();
-	setup_buttons_activate();
-	setup_buttons_deactivate();
-	setup_buttons_activate_batch();
-}
-
-function setup_buttons_deactivate(){
-	jQuery('.site button.deactivate').off('click').click(function(){
-		window.open('https://www.sidekick.pro/profile/#/overview','_blank');
-	});
-}
-
 function setup_buttons_next_prev(){
 
 	jQuery('.pagination .next').off('click').click(function(){
-		// jQuery('.site_list').html('Loading...');
 		jQuery('.pagination .prev').show();
 
 		loadOffset = loadOffset + 1;
@@ -103,11 +91,9 @@ function setup_buttons_next_prev(){
 		if (loadOffset === parseInt(jQuery('.pagination .end').html(),10)-1) {
 			jQuery('.pagination .next').hide();
 		}
-
 	});
 
 	jQuery('.pagination .prev').off('click').click(function(){
-		// jQuery('.site_list').html('Loading...');
 		jQuery('.pagination .next').show();
 
 		loadOffset = loadOffset - 1;
@@ -117,6 +103,17 @@ function setup_buttons_next_prev(){
 			jQuery('.pagination .prev').hide();
 		}
 	});
+}
+
+function updateStatCounts(increment){
+
+	var default_increment = 1;
+	if (increment) {
+		default_increment = increment;
+	}
+
+	jQuery('h3','div.' + lastLoadedStatus).html(parseInt(jQuery('h3','div.' + lastLoadedStatus).html(),10)-default_increment);
+	jQuery('h3','div.active').html(parseInt(jQuery('h3','div.active').html(),10)+default_increment);
 }
 
 function setup_buttons_activate_batch(){
@@ -150,37 +147,11 @@ function setup_buttons_activate_batch(){
 	});
 }
 
-function setup_buttons_activate(){
-	jQuery('.site button.activate').off('click').click(function(){
-		// console.log('activate');
-
-		var data = {
-			action:  'sk_activate_single',
-			blog_id: jQuery(this).parent().data('blogid'),
-			user_id: jQuery(this).parent().data('userid'),
-			domain:  jQuery(this).parent().data('domain'),
-			path:    jQuery(this).parent().data('path')
-		};
-
-		jQuery(this).html('Activating...');
-		jQuery('.single_activation_error').html('').hide();
-
-		// console.log('data %o', data);
-
-
-		jQuery.post(ajaxurl, data, activateCallback(this),'json');
-
-	});
-}
-
 var activateCallback = function(button){
 	return function(e){
-
-		// console.log('activateCallback back e %o', e);
-
 		if (!e.success) {
 			jQuery(button).html('Error').addClass('red');
-			if (e.payload.message == 'Already Activated') {
+			if (e.payload.message === 'Already Activated') {
 				updateStatCounts();
 			}
 			jQuery('.single_activation_error').html(e.payload.message).show();
@@ -191,139 +162,182 @@ var activateCallback = function(button){
 	};
 };
 
-function updateStatCounts(increment){
+function setup_buttons_activate(){
+	jQuery('.site button.activate').off('click').click(function(){
+		var data = {
+			action:  'sk_activate_single',
+			blog_id: jQuery(this).parent().data('blogid'),
+			user_id: jQuery(this).parent().data('userid'),
+			domain:  jQuery(this).parent().data('domain'),
+			path:    jQuery(this).parent().data('path')
+		};
 
-	var default_increment = 1;
-	if (increment) {
-		default_increment = increment;
-	}
-
-	jQuery('h3','div.' + lastLoadedStatus).html(parseInt(jQuery('h3','div.' + lastLoadedStatus).html(),10)-default_increment);
-	jQuery('h3','div.active').html(parseInt(jQuery('h3','div.active').html(),10)+default_increment);
+		jQuery(this).html('Activating...');
+		jQuery('.single_activation_error').html('').hide();
+		jQuery.post(ajaxurl, data, activateCallback(this),'json');
+	});
 }
 
-function sk_populate(data){
+function setup_buttons(){
+	setup_buttons_next_prev();
+	setup_buttons_activate();
+	setup_buttons_deactivate();
+	setup_buttons_activate_batch();
+}
 
-	console.log('sk_populate %o',data);
+
+function drawProduct(product){
+
+	// console.log('drawProduct %o',product);
+	// console.log('this %o', this);
+
+	loadCount++;
+
+	if (product.payload && product.payload.buckets) {
+
+		// Clear out disabled wts so that compatibility doesn't screen out wts from this screen. Put it back after we're done.
+
+		console.groupCollapsed('Checking Compatibilities');
+
+		_.each(product.payload.buckets,function(bucket,key){
+			// console.log('this.cacheId %o', this.cacheId);
+
+			drawBuckets(this.cacheId,product,bucket,key,product.payload.walkthroughs);
+		},this); 
+
+		jQuery('.configure').show();
+
+		console.groupEnd();
+
+	} else { 
+		jQuery('#' + this.cacheId).remove();
+	}
+}
+
+function sk_populate(products){
+
+	// console.log('sk_populate %o',products);
 
 	jQuery('.sk_walkthrough_list').html('');
 
-	_.each(data,function(item,key){
 
-		if (!item.cacheId) {
+	if (typeof sk_config.disable_wts === 'string' && sk_config.disable_wts.indexOf(']') > -1) {
+		sk_config.disable_wts = JSON.parse(sk_config.disable_wts);
+	}
+
+	if (typeof sk_config.disable_network_wts === 'string' && sk_config.disable_network_wts.indexOf(']') > -1) {
+		sk_config.disable_network_wts = JSON.parse(sk_config.disable_network_wts);
+	}
+
+	if (sk_config.disable_wts) {
+		currently_disabled_wts = sk_config.disable_wts;
+		sk_config.disable_wts  = null;
+	}
+
+	if (sk_config.disable_network_wts) {
+		currently_disabled_network_wts = sk_config.disable_network_wts;
+		sk_config.disable_network_wts  = null;
+	}
+
+	_.each(products,function(product){
+
+		// Looping over products
+
+		if (!product.cacheId) {
 			return false;
 		}
 
-		jQuery('.sk_walkthrough_list').append('<div class="sk_product" id="' + item.cacheId + '"><b>' + item.name + '</b> (<span class="select_all">Toggle All</span>)</div>');
+		// console.log('LOAD PRODUCT -> %s', product.name);
 
-		if (typeof sk_config.disable_wts === "string" && sk_config.disable_wts.indexOf(']') > -1) {
-			sk_config.disable_wts = JSON.parse(sk_config.disable_wts);
-		};
-
-		if (typeof sk_config.disable_network_wts === "string" && sk_config.disable_network_wts.indexOf(']') > -1) {
-			sk_config.disable_network_wts = JSON.parse(sk_config.disable_network_wts);
-		};
-
-
-		if (sk_config.disable_wts) {
-			currently_disabled_wts = sk_config.disable_wts;
-			sk_config.disable_wts  = null;
-		}
-
-		if (sk_config.disable_network_wts) {
-			currently_disabled_network_wts = sk_config.disable_network_wts;
-			sk_config.disable_network_wts  = null;
-		}
+		jQuery('.sk_walkthrough_list').append('<div class="sk_product" id="' + product.cacheId + '"><b>' + product.name + '</b> (<span class="select_all">Toggle All</span>)</div>');
 
 		jQuery.ajax({
-			url:sk_config.library + 'products/cache?cacheId=' + item.cacheId,
-			cacheId: item.cacheId,
-			success: function(data,cacheId){
-
-				// console.log('SUCCESS %o',arguments);
-				loadCount++;
-
-				if (data.payload && data.payload.buckets) {
-
-					// Clear out disabled wts so that compatibility doesn't screen out wts from this screen. Put it back after we're done.
-
-					console.groupCollapsed('Checking Compatibilities');
-
-					_.each(data.payload.buckets,function(bucket,key){
-
-						clearTimeout(lastTimeout);
-						lastTimeout = setTimeout(function(){setup_events();},1000);
-
-						if (typeof sk_config.disable_wts_in_root_bucket_ids !== 'undefined' && jQuery.inArray( bucket.id, sk_config.disable_wts_in_root_bucket_ids ) > -1) {
-							// Don't draw root bucket
-							return false;
-						}
-
-						jQuery('#' + item.cacheId).append("<li class='sk_bucket' id='sk_bucket_" + bucket.id + "'>" + bucket.name + " (<span class=\"select_all\">Toggle All</span>)<ul></ul></li>");
-
-						var pass_data = {
-							bucket_id:        bucket.id,
-							all_walkthroughs: data.payload.walkthroughs
-						};
-
-						_.each(bucket.walkthroughs,function(walkthrough,key){
-
-							var pass = false;
-
-							if (typeof sk_ms_admin === 'undefined' || !sk_ms_admin && jQuery.inArray(parseInt(key,10),currently_disabled_network_wts) > -1) {
-								// If single site and network disabled walkthroughs then don't even show it.
-								return;
-							}
-
-							if (typeof sidekick !== 'undefined' && sidekick.compatibilityModel.check_compatiblity_array(this.all_walkthroughs[key]) || (typeof sk_ms_admin !== 'undefined' && sk_ms_admin)){
-								// Only check compatibilities for single sites not network admin page
-								pass = true;
-							}
-
-							if (pass){
-								var checked  = false;
-								var selected = false;
-
-								if (jQuery.inArray(parseInt(key,10),currently_disabled_wts) > -1 || jQuery.inArray(parseInt(key,10),currently_disabled_network_wts) > -1) {
-									checked = 'CHECKED';
-								}
-
-								if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id == parseInt(key,10)) {
-									selected = 'SELECTED';
-								}
-
-								jQuery('#sk_bucket_' + this.bucket_id).find('ul').append("<li class=\" sk_walkthrough\"><span><input type=\"checkbox\" " + checked + " value='" + key + "' name=\"disable_wts[]\"></span><span class='title'>" + this.all_walkthroughs[key].title + "</span></li>");
-								jQuery('[name="sk_autostart_walkthrough_id"]').append('<option ' + selected + ' value="' + key + '">' + this.all_walkthroughs[key].title + '</option>');
-
-							}
-							clearTimeout(lastTimeout);
-							lastTimeout = setTimeout(function(){setup_events();},1000);
-						},pass_data);
-
-					}); //
-
-					jQuery('.configure').show(); //
-
-					console.groupEnd();//
-
-				} else { //
-					jQuery('#' + this.cacheId).remove();
-				}
-
-			}
+			url:sk_config.library + 'products/cache?cacheId=' + product.cacheId,
+			cacheId: product.cacheId,
+			success: drawProduct
 		});
-}); 
-} 
+	}); 
+}
 
 
+function drawBuckets(cacheId,data,bucket,key,productWalkthroughs){
+
+	// console.log('drawBuckets %o', arguments);
+
+
+	clearTimeout(lastTimeout);
+	lastTimeout = setTimeout(function(){setup_events();},1000);
+
+	if (typeof sk_config.disable_wts_in_root_bucket_ids !== 'undefined' && jQuery.inArray( bucket.id, sk_config.disable_wts_in_root_bucket_ids ) > -1) {
+		// Don't draw root bucket
+		return false;
+	}
+
+	jQuery('#' + cacheId).append('<li class=\'sk_bucket\' id=\'sk_bucket_' + bucket.id + '\'>' + bucket.name + ' (<span class=\'select_all\'>Toggle All</span>)<ul></ul></li>');
+
+	var pass_data = {
+		bucket_id:           bucket.id,
+		productWalkthroughs: productWalkthroughs
+	};
+
+	_.each(bucket.walkthroughs,function(walkthrough){
+
+		// This is temporary for new walkthrough ordering
+		if (typeof walkthrough === 'object') {
+			walkthrough = productWalkthroughs[walkthrough.id];
+		} else {
+			walkthrough = productWalkthroughs[walkthrough];
+		}
+
+		drawWalkthrough(walkthrough,this.bucket_id);
+		
+	},pass_data);
+}
+
+function drawWalkthrough(walkthrough,bucket_id){
+
+	// console.log('drawWalkthrough %o', arguments);
+
+
+	var pass = false;
+
+	if (typeof window.sk_ms_admin === 'undefined' || !window.sk_ms_admin && jQuery.inArray(parseInt(walkthrough.id,10),currently_disabled_network_wts) > -1) {
+		// If single site and network disabled walkthroughs then don't even show it.
+		return;
+	}
+
+	if (typeof window.sidekick !== 'undefined' && window.sidekick.compatibilityModel.check_compatiblity_array(walkthrough) || (typeof window.sk_ms_admin !== 'undefined' && window.sk_ms_admin)){
+		// Only check compatibilities for single sites not network admin page
+		pass = true;
+	}
+
+	if (pass){
+		var checked  = false;
+		var selected = false;
+
+		if (jQuery.inArray(parseInt(walkthrough.id,10),currently_disabled_wts) > -1 || jQuery.inArray(parseInt(walkthrough.id,10),currently_disabled_network_wts) > -1) {
+			checked = 'CHECKED';
+		}
+
+		if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id === parseInt(walkthrough.id,10)) {
+			selected = 'SELECTED';
+		}
+
+		jQuery('#sk_bucket_' + bucket_id).find('ul').append('<li class="sk_walkthrough"><span><input type="checkbox" ' + checked + ' value=\'' + walkthrough.id + '\' name=\'disable_wts[]\'></span><span class=\'title\'>' + walkthrough.title + '</span></li>');
+		jQuery('[name="sk_autostart_walkthrough_id"]').append('<option ' + selected + ' value="' + walkthrough.id + '">' + walkthrough.title + '</option>');
+
+	}
+	clearTimeout(lastTimeout);
+	lastTimeout = setTimeout(function(){setup_events();},1000);
+}
 
 function setup_events(){
 
 	jQuery('.select_all').click(function(){
 		var checkBoxes = jQuery(this).parent().find('input[type="checkbox"]');
 
-		_.each(checkBoxes,function(item,key){
-			jQuery(item).attr("checked", !jQuery(item).attr("checked"));
+		_.each(checkBoxes,function(item){
+			jQuery(item).attr('checked', !jQuery(item).attr('checked'));
 		});
 	});
 
@@ -375,16 +389,16 @@ function load_sk_library($key){
 
 	jQuery.ajax({
 		url: sk_url,
-		error: function(data){
+		error: function(){
 			jQuery('.sk_license_status span').html('Invalid Key').css({color: 'red'});
 			jQuery('.sk_upgrade').show();
 			load_sk_library();
 		},
 		success: function(data){
 
-			console.log('%csuccess %o','color: green',data);
+			// console.log('%cload_sk_library success %o','color: green',data);
 
-			if (sk_config.library + 'domains/cache?domainKey=' + sk_config.activation_id == sk_url) {
+			if (sk_config.library + 'domains/cache?domainKey=' + sk_config.activation_id === sk_url) {
 				if (!data.payload) {
 					jQuery('.sk_license_status').html('Invalid Key').css({color: 'red'});
 				} else {
@@ -393,23 +407,23 @@ function load_sk_library($key){
 			}
 
 			if (!data.payload) {
-				console.log('loading again');
+				// console.log('loading again');
 				load_sk_library();
 				return false;
 			}
 
 			if (data.payload) {
 
-				sidekick.compatibilityModel.filter_products(data.payload.products);
+				window.sidekick.compatibilityModel.filter_products(data.payload.products);
 
-				sk_populate(sidekick.compatibilityModel.get('passed_products'));
+				sk_populate(window.sidekick.compatibilityModel.get('passed_products'));
 			}
 		}
 	});
 }
 
 function setup_sk_admin(){
-	console.log('setup_sk_admin');
+	// console.log('setup_sk_admin');
 	if (jQuery('.sidekick_admin').length === 0) {
 		return;
 	}
@@ -419,15 +433,15 @@ function setup_sk_admin(){
 		jQuery('#toggle_composer').trigger('click');
 	});
 
-	if (typeof sk_ms_admin !== 'undefined' && sk_ms_admin) {
+	if (typeof window.sk_ms_admin !== 'undefined' && window.sk_ms_admin) {
 
 		// Multisite
 		load_sites_by_status('unactivated');
 
 		var clicked_button;
 
-		if (typeof last_site_key !== 'undefined') {
-			load_sk_library(last_site_key);
+		if (typeof window.last_site_key !== 'undefined') {
+			load_sk_library(window.last_site_key);
 		} else {
 			jQuery('.sk_box.configure').html('Need to activate at least one site to configure walkthroughs').show();
 		}
@@ -472,8 +486,3 @@ function setup_sk_admin(){
 		});
 	}
 }
-
-// window.onload = function(){
-	// console.log('init setup_sk_admin');
-	// setup_sk_admin();	
-// }
