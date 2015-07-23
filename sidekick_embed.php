@@ -8,7 +8,7 @@ Description: Adds a real-time WordPress training walkthroughs right in your Dash
  We recommend not activating SIDEKICK automatically for people but via an Opt-In process when they configure your own theme or plugin.
 Requires at least: 4.0
 Tested up to: 4.1.1
-Version: 2.5.5
+Version: 2.5.6
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -30,7 +30,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','//apiv2.sidekick.pro/');
 			if (!defined('SK_TRACKING_API')) 	define('SK_TRACKING_API','//tracking.sidekick.pro/');			
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.5'));
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.6'));
 		}
 
 		function enqueue_required(){
@@ -54,6 +54,12 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 		function setup_menu(){
 			add_submenu_page( 'options-general.php', 'Sidekick', 'Sidekick', 'activate_plugins','sidekick', array(&$this,'admin_page'));
+		}
+
+		function activate($return = false){
+			if (isset($_POST['activation_id']) && current_user_can('install_plugins')) {
+				update_option('sk_activation_id',$_POST['activation_id']);
+			}
 		}
 
 		function admin_page(){
@@ -535,7 +541,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 
 				// WordPress
 				"embed_partner_id" 				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.5.5', // WordPress plugin version
+				"plugin_version"				=> '2.5.6', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -587,7 +593,7 @@ if (!$sidekick_active && !class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.5.5');
+				$data = json_encode('2.5.6');
 
 				if(array_key_exists('callback', $_GET)){
 
