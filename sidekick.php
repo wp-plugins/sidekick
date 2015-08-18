@@ -5,8 +5,8 @@ Plugin Name: Sidekick
 Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.0
-Tested up to: 4.1.1
-Version: 2.5.6
+Tested up to: 4.3
+Version: 2.6.0
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -23,9 +23,7 @@ if (!class_exists('Sidekick')){
 	class Sidekick{
 
 		function __construct(){
-			if (!defined('SK_API')) 			define('SK_API','//apiv2.sidekick.pro/');
-			if (!defined('SK_TRACKING_API')) 	define('SK_TRACKING_API','//tracking.sidekick.pro/');			
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.5.6'));
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.0'));
 		}
 
 		function enqueue_required(){
@@ -52,9 +50,22 @@ if (!class_exists('Sidekick')){
 		}
 
 		function activate($return = false){
+			mlog("activate");
 			if (isset($_POST['activation_id']) && current_user_can('install_plugins')) {
+				mlog("activate2");
 				update_option('sk_activation_id',$_POST['activation_id']);
+				return true;
 			}
+		}
+
+		function upgrade(){
+			mlog("upgrade");
+
+			if (!isset($_POST['authorization']) || !wp_verify_nonce($_POST['authorization'], 'sk_upgrade')) {
+				die('-1');
+			}
+
+			return $this->activate();
 		}
 
 		function admin_page(){
@@ -280,7 +291,7 @@ if (!class_exists('Sidekick')){
 
 				// WordPress
 				"embed_partner_id" 				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.5.6', // WordPress plugin version
+				"plugin_version"				=> '2.6.0', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -310,6 +321,10 @@ if (!class_exists('Sidekick')){
 					<?php echo json_encode($sk_config) ?>
 				</script>
 
+				<script type="text/javascript">
+					var sk_nonce_upgrade = '<?php echo wp_create_nonce('sk_upgrade'); ?>'
+				</script>
+
 			<?php endif ?>
 
 			<?php
@@ -332,7 +347,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.5.6');
+				$data = json_encode('2.6.0');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -422,6 +437,9 @@ if (!class_exists('Sidekick')){
 	add_action('admin_enqueue_scripts',                   array($sidekick,'enqueue_required'));
 	add_action('customize_controls_enqueue_scripts',      array($sidekick,'enqueue_required'),1000);
 
+	add_action('wp_ajax_sk_upgrade', array($sidekick,'upgrade'));
+	
+
 	// Reset Transient Cache
 
 	add_action('wp_update_comment_count',array($sidekick,'delete_sk_get_comments'));
@@ -449,3 +467,19 @@ if (!class_exists('Sidekick')){
 	}
 }
 
+
+
+function skSettingDevBranch($sk_config){
+	$sk_config['urls'] = array(
+		"api" => "//api.staging.sidekick.pro/",
+		"player" => array(
+			"base" => "https://player.sidekick.pro/",
+			"path" => "branch/dev/",
+			"js" => array(
+				"core" => "sidekick.js"
+				)
+			)			
+		);
+	return $sk_config;
+}
+add_filter('sk_config', 'skSettingDevBranch');
