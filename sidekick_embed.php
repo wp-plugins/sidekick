@@ -1497,21 +1497,6 @@ if (!$sidekick_active && !class_exists('sidekickMassActivator')) {
 }
 
 
-
-function skSettingDevBranch($sk_config){
-	$sk_config['urls'] = array(
-		"api" => "//api.staging.sidekick.pro/",
-		"player" => array(
-			"base" => "https://player.sidekick.pro/",
-			"path" => "branch/dev/",
-			"js" => array(
-				"core" => "sidekick.js"
-				)
-			)			
-		);
-	return $sk_config;
-}
-add_filter('sk_config', 'skSettingDevBranch');
 // sk_config_data.php
 
 if (!$sidekick_active && !class_exists('sk_config_data')) {
