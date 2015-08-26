@@ -146,13 +146,7 @@ if (!class_exists('sidekickMassActivator')) {
 
                 // var_dump("FUNCTION: send_request [$type] -> $end_point");
 
-            if (strpos($_SERVER['SERVER_PROTOCOL'], 'https') === false) {
-                $protocol = 'http:';
-            } else {
-                $protocol = 'https:';
-            }
-
-            $url      = $protocol . SK_API . $end_point;
+            $url      = SK_API . $end_point;
             $sk_token = get_transient('sk_token');
 
             if (!$sk_token && $end_point !== '/login') {
@@ -183,6 +177,13 @@ if (!class_exists('sidekickMassActivator')) {
             }
 
             $result = wp_remote_post($url, $args);
+
+            if ($end_point == '/login' && $result['response']['message'] == 'Unauthorized') {
+                // If tried to login and is unauthorized return;
+                update_option('sk_auto_activation_error', $result->message);
+                delete_transient('sk_token');
+                return array('error' => $result->message);
+            }
 
             if ($result['response']['message'] == 'Unauthorized' && !$second_attempt) {
                     // var_dump('Getting rid of token and trying again');
