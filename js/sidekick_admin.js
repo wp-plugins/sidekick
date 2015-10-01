@@ -422,6 +422,15 @@ function load_sk_library($key){
 	});
 }
 
+function setup_intro_welcome_button(){
+	jQuery('.sk_start_intro').on('click',function(){
+		sidekick.play_intro(true); 
+		Sidekick.Events.trigger('track_play_intro',{
+			location: 'welcome_header'
+		});
+	});
+}
+
 function setup_sk_admin(){
 	// console.log('setup_sk_admin');
 	if (jQuery('.sidekick_admin').length === 0) {
@@ -486,3 +495,7 @@ function setup_sk_admin(){
 		});
 	}
 }
+
+jQuery(document).ready(function($) {
+	setup_intro_welcome_button();
+});

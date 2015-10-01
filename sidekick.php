@@ -4,9 +4,9 @@
 Plugin Name: Sidekick
 Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
-Requires at least: 4.0
-Tested up to: 4.3
-Version: 2.6.1
+Requires at least: 4.1
+Tested up to: 4.3.1
+Version: 2.6.3
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -24,7 +24,7 @@ if (!class_exists('Sidekick')){
 
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','https: //apiv2.sidekick.pro');
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.1'));
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.3'));
 		}
 
 		function enqueue_required(){
@@ -292,7 +292,7 @@ if (!class_exists('Sidekick')){
 
 				// WordPress
 				"embed_partner_id" 				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.6.1', // WordPress plugin version
+				"plugin_version"				=> '2.6.3', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -348,7 +348,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.6.1');
+				$data = json_encode('2.6.3');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -379,9 +379,9 @@ if (!class_exists('Sidekick')){
 						<b>Need help with WordPress?</b> - You can always find help in the bottom left corner, just click the Help button.</b>
 					</p>
 					<p>
-						<a href="javascript: sidekick.play_intro(true); Sidekick.Events.trigger(\'track_play_intro\',{location: \'welcome_header\'})" class="sk_wp_primary button button-primary">
+						<button class="sk_start_intro sk_wp_primary button button-primary">
 							What\'s Sidekick? 
-						</a> 
+						</button> 
 						<a href="%1$s" class="button-secondary button skip">No Thanks</a>
 					</p>
 				</div>',

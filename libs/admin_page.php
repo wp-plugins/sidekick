@@ -113,36 +113,6 @@
 				</div>
 			</div>
 
-			<div class="sk_box advanced">
-				<div class="well">
-					<h3>Advanced</h3>
-					<form method="post">
-						<table class="form-table">
-							<tbody>
-								<tr valign="top">
-									<th scope="row" valign="top">API</th>
-									<td>
-										<select name='sk_api'>
-											<?php if (get_option('sk_api') == 'production'): ?>
-												<option value='production' SELECTED>Production</option>
-												<option value='staging'>Staging</option>
-											<?php else: ?>
-												<option value='production' >Production</option>
-												<option value='staging' SELECTED>Staging</option>
-											<?php endif ?>
-										</select>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-
-						<?php wp_nonce_field( 'update_sk_settings' ); ?>
-						<input class='button button-primary' type='submit' value='Save'/>
-					</form>
-
-				</div>
-			</div>
-
 		</div>
 	</div>
 
