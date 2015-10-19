@@ -319,7 +319,7 @@ function drawWalkthrough(walkthrough,bucket_id){
 			checked = 'CHECKED';
 		}
 
-		if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id === parseInt(walkthrough.id,10)) {
+		if (sk_config.autostart_walkthrough_id !== 'undefined' && parseInt(sk_config.autostart_walkthrough_id,10) === parseInt(walkthrough.id,10)) {
 			selected = 'SELECTED';
 		}
 
