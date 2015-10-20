@@ -85,6 +85,29 @@ if (!class_exists('sidekickMassActivator')) {
 
         }
 
+        function deactivate($blog_id) {
+            mlog("FUNCTION: deactivate [$blog_id]");
+
+            switch_to_blog($blog_id);
+            $sk_activation_id = get_option('sk_activation_id');
+            delete_option('sk_activation_id');
+            restore_current_blog();
+
+            $result = $this->send_request('delete', '/domains', array('domainKey' => $sk_activation_id));
+
+            mlog('$result',$result);
+
+            if (isset($result) && isset($result->success) && $result->success == true) {
+                delete_option('sk_auto_activation_error');
+            } else {
+                update_option('sk_auto_activation_error', $result->message);
+                wp_mail('bart@sidekick.pro', 'Failed Domain Deactivation', json_encode($result));
+            }
+
+            return $result;
+
+        }
+
         function getAffiliateId(){
             if (defined('SK_AFFILIATE_ID')) {
                 $affiliate_id = intval(SK_AFFILIATE_ID);
@@ -112,13 +135,21 @@ if (!class_exists('sidekickMassActivator')) {
                     if ($count == $this->sites_per_page) {
                         break;
                     }
-                    $this->activate($blog->blog_id, $blog->user_id, $blog->domain, $blog->path);
+                    mlog('$blog',$blog);
+
+                    $userId = null;
+                    if (isset($blog->user_id)) {
+                        $userId = $blog->user_id;
+                    }
+
+                    $this->activate($blog->blog_id, $userId, $blog->domain, $blog->path);
                     $count++;
                 }
             }
             //mlog('$checked_blogs',$checked_blogs);
 
             $result = array('activated_count' => $count, 'sites_per_page' => $this->sites_per_page, 'unactivated_count' => count($checked_blogs['unactivated']));
+            mlog('123$result',$result);
             die(json_encode($result));
         }
 
@@ -127,24 +158,52 @@ if (!class_exists('sidekickMassActivator')) {
             die(json_encode($result));
         }
 
+        function resetCacheAndClearActivationIDs(){
+            mlog('resetCacheAndClearActivationIDs');
+            $sites = wp_get_sites();
+
+            delete_option('sk_checked_blogs');
+
+            foreach ($sites as $sites_key => $site) {
+                $this->deactivate($site['blog_id']);
+            }
+
+            die('1');
+        }
+
         function deactivate_single() {
 
             $checked_blogs = get_option('sk_checked_blogs');
             $blog_id       = $_POST['blog_id'];
 
-            if (isset($checked_blogs['active'][$_POST['blog_id']])) {
-                $checked_blogs['deactivated'][$blog_id] = $checked_blogs['active'][$blog_id];
-                unset($checked_blogs['active'][$blog_id]);
-                update_option('sk_checked_blogs', $checked_blogs);
-                die('{"success":1}');
+            if (isset($checked_blogs['active'][$blog_id])) {
+
+                if ($this->deactivate($blog_id)){
+                    die('{"success":1}');
+                } else {
+                    die('{"payload":{"message":"Error #13a"}}');
+                }
+                
             } else {
-                die('{"payload":{"message":"Error #13"}}');
+                die('{"payload":{"message":"Error #13b"}}');
             }
+        }
+
+        function heartbeat_received($data){
+             // Make sure we only run our query if the edd_heartbeat key is present
+            mlog('$_POST',$_POST);
+            mlog('$_GET',$_GET);
+            if( $_POST['data']['sk_hb_data'] == 'removedSites' ) {
+
+                $response['bart'] = 'test';
+
+            }
+            return $response;
         }
 
         function send_request($type, $end_point, $data = null, $second_attempt = null) {
 
-                // var_dump("FUNCTION: send_request [$type] -> $end_point");
+            mlog("FUNCTION: send_request [$type] -> $end_point");
 
             $url      = SK_API . $end_point;
             $sk_token = get_transient('sk_token');
@@ -174,6 +233,9 @@ if (!class_exists('sidekickMassActivator')) {
             } else if (isset($type) && $type == 'get') {
                 $args['method'] = 'GET';
                 $args['body']   = $data;
+            } else if (isset($type) && $type == 'delete') {
+                $args['method'] = 'DELETE';
+                $url .= '?' . http_build_query($data);
             }
 
             $result = wp_remote_post($url, $args);
@@ -291,10 +353,10 @@ if (!class_exists('sidekickMassActivator')) {
 
             if (false === ($blogs = get_transient('sk_blog_list'))) {
                 $blogs = $wpdb->get_results($wpdb->prepare("SELECT *
-                 FROM $wpdb->blogs
-                 WHERE spam = '%d' AND deleted = '%d'
-                 "
-                 , 0, 0));
+                   FROM $wpdb->blogs
+                   WHERE spam = '%d' AND deleted = '%d'
+                   "
+                   , 0, 0));
                 set_transient('sk_blog_list', $blogs, 24 * HOUR_IN_SECONDS);
             }
 

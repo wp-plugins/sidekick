@@ -23,7 +23,19 @@ function updateCounts(e){
 
 function setup_buttons_deactivate(){
 	jQuery('.site button.deactivate').off('click').click(function(){
-		window.open('https://www.sidekick.pro/profile/#/overview','_blank');
+
+		var data = {
+			action:  'sk_deactivate_single',
+			blog_id: jQuery(this).parent().data('blogid'),
+			user_id: jQuery(this).parent().data('userid'),
+			domain:  jQuery(this).parent().data('domain'),
+			path:    jQuery(this).parent().data('path')
+		};
+
+		jQuery(this).html('Deactivating...');
+		jQuery('.single_activation_error').html('').hide();
+		jQuery.post(ajaxurl, data, deactivateCallback(this),'json');
+
 	});
 }
 
@@ -67,12 +79,19 @@ function load_sites_by_status(status,target){
 			button = '<button class="deactivate">Deactivate</button></div>';
 		}
 
-		if (e.sites) {
+		if (e.sites && e.sites.length > 0) {
+
+			if (e.sites.length < 25) {
+				jQuery('.action').hide();
+			}
+
 			_.each(e.sites,function(site,key){
 				jQuery('.site_list').append('<div class="site" data-path="' + site.path + '" data-domain="' + site.domain + '" data-userid="' + site.user_id + '" data-blogid="' + site.blog_id + '">' + site.domain + '/' + site.path + button);
 			});
 		} else {
 			jQuery('.site_list').append('<div class="site">No Sites</div>');
+			jQuery('.activate_all').hide();
+			jQuery('.action').hide();
 		}
 
 		setup_buttons();
@@ -139,12 +158,33 @@ function setup_buttons_activate_batch(){
 			if (parseInt(e.activated_count,10) === parseInt(e.sites_per_page,10)) {
 				jQuery('.activate_all').trigger('click');
 			} else {
-				jQuery(this).html('Done').removeClass('loading');
+				jQuery('.activate_all').html('Done').removeClass('loading');
+				window.location.reload();
 			}
 
 		},'json');
 
 	});
+
+	jQuery('.reset_all').off('click').click(function(){
+
+		var sure = confirm('This will reset all the activation keys. Are You Sure?');
+
+		if (sure) {
+			var data = {
+				action:  'sk_reset'
+			};
+
+			jQuery(this).html('Reseting...').addClass('loading');
+
+			jQuery.post(ajaxurl, data, function(){
+				jQuery('.reset_all').html('Done!').removeClass('loading');
+				window.location.reload();
+			},'json');
+		}
+
+	});
+
 }
 
 var activateCallback = function(button){
@@ -152,6 +192,22 @@ var activateCallback = function(button){
 		if (!e.success) {
 			jQuery(button).html('Error').addClass('red');
 			if (e.payload.message === 'Already Activated') {
+				updateStatCounts();
+			}
+			jQuery('.single_activation_error').html(e.payload.message).show();
+		} else if (e.success) {
+			updateStatCounts();
+			jQuery(button).html('Success').addClass('green');
+		}
+	};
+};
+
+
+var deactivateCallback = function(button){
+	return function(e){
+		if (!e.success) {
+			jQuery(button).html('Error').addClass('red');
+			if (e.payload.message === 'Already Deactivated') {
 				updateStatCounts();
 			}
 			jQuery('.single_activation_error').html(e.payload.message).show();
@@ -319,7 +375,7 @@ function drawWalkthrough(walkthrough,bucket_id){
 			checked = 'CHECKED';
 		}
 
-		if (sk_config.autostart_walkthrough_id !== 'undefined' && sk_config.autostart_walkthrough_id === parseInt(walkthrough.id,10)) {
+		if (sk_config.autostart_walkthrough_id !== 'undefined' && parseInt(sk_config.autostart_walkthrough_id,10) === parseInt(walkthrough.id,10)) {
 			selected = 'SELECTED';
 		}
 
@@ -351,13 +407,13 @@ function setup_events(){
 
 	});
 
-	jQuery('.activate_all').click(function(){
-		jQuery('.activate_sk').each(function(key,item){
-			setTimeout(function() {
-				jQuery(item).trigger('click');
-			}, key*1000);
-		});
-	});
+	// jQuery('.activate_all').click(function(){
+	// 	jQuery('.activate_sk').each(function(key,item){
+	// 		setTimeout(function() {
+	// 			jQuery(item).trigger('click');
+	// 		}, key*1000);
+	// 	});
+	// });
 
 	jQuery('.sk_bucket').not(':has(li)').remove();
 	jQuery('.sk_product').not(':has(li)').remove();
@@ -496,6 +552,31 @@ function setup_sk_admin(){
 	}
 }
 
+function setupSkHeartBeat(){
+	console.log('setupSkHeartBeat');
+	// Hook into the heartbeat-send
+	jQuery(document).on('heartbeat-send', function(e, data) {
+		console.log('hb send');
+		data['sk_hb_data'] = 'removedSites';
+	});
+
+	// Listen for the custom event "heartbeat-tick" on jQuery(document).
+	jQuery(document).on( 'heartbeat-tick', function(e, data) {
+
+		console.log('111 data %o', data);
+
+
+		// Only proceed if our EDD data is present
+		if ( ! data['edd-payment-count'] ){
+			return;
+		}
+
+		
+
+	});
+}
+
 jQuery(document).ready(function($) {
+	setupSkHeartBeat();
 	setup_intro_welcome_button();
 });

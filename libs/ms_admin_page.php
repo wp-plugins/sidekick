@@ -51,9 +51,7 @@
 				<div class="well">
 					<h3>Activate Sidekick Account</h3>
 					<p>Please keep this information <b>private</b>.</p>
-					<p>Once active every site create on this multisite installation will have Sidekick automatically activted.</p>
-					<p><b>Important - </b>Only WordPress basics and Enterprise plans are currently supported. <b>Custom Walkthrough</b> plans will be supported in the near future.</p>
-
+					
 					<form method="post">
 						<?php settings_fields('sk_license'); ?>
 						<table class="form-table">
@@ -82,6 +80,9 @@
 											<?php endif ?>
 											<option <?php echo ($sk_selected_library == -1) ? 'SELECTED' : '' ?> value='-1'>WordPress Basics Only</option>
 										</select>
+										<p>
+											Once your library is published, it will appear here for you to distribute.
+										</p>
 									</td>
 								</tr>
 
@@ -90,6 +91,8 @@
 									<th scope="row" valign="top">Enable Auto-Activations</th>
 									<td>
 										<input class='checkbox' type='checkbox' name='sk_auto_activations' <?php echo ($sk_auto_activations) ? 'CHECKED' : '' ?>>
+										<p>Once active, every site created on this multisite installation will have Sidekick automatically activted.</p>
+
 									</td>
 								</tr>
 
@@ -125,7 +128,9 @@
 								<?php endif ?>
 								<tr>
 									<th></th>
-									<td><?php submit_button('Update'); ?></td>
+									<td><?php submit_button('Update'); ?>
+									<p>**Please make sure you click the update button above before activating any network websites below.</p>
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -179,6 +184,8 @@
 					<div class="site_list">
 						Loading...
 					</div>
+
+					<button class='reset_all'>Reset All<div class="spinner"></div></button>
 
 				</div>
 			</div>

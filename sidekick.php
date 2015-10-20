@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.1
 Tested up to: 4.3.1
-Version: 2.6.3
+Version: 2.6.4
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -24,13 +24,14 @@ if (!class_exists('Sidekick')){
 
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','https: //apiv2.sidekick.pro');
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.3'));
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.4'));
 		}
 
 		function enqueue_required(){
 			wp_enqueue_script('jquery'                   , null );
 			wp_enqueue_script('underscore'               , null, array('underscore'));
 			wp_enqueue_script('backbone'                 , null, array('jquery','underscore'));
+			wp_enqueue_script('heartbeat');
 			wp_enqueue_script('jquery-ui-core'           , null, array('jquery') );
 			wp_enqueue_script('jquery-ui-position'       , null, array('jquery-ui-core') );
 			wp_enqueue_script('jquery-ui-draggable'      , null, array('jquery-ui-core') );
@@ -38,7 +39,7 @@ if (!class_exists('Sidekick')){
 			wp_enqueue_script('jquery-effects-scale'     , null, array('jquery-ui-core') );
 			wp_enqueue_script('jquery-effects-highlight' , null, array('jquery-ui-core') );
 			wp_enqueue_script('sidekick-admin'           , '//assets.sidekick.pro/plugin/tag/latest/js/sidekick_admin.js',array( 'jquery' ), null);
-			wp_enqueue_script('sidekick'   		,"//loader.sidekick.pro/platforms/d9993157-d972-4c49-93be-a0c684096961.js",	array('backbone','jquery','underscore','jquery-effects-highlight'),null,true);
+			wp_enqueue_script('sidekick'                 ,"//loader.sidekick.pro/platforms/d9993157-d972-4c49-93be-a0c684096961.js",	array('backbone','jquery','underscore','jquery-effects-highlight'),null,true);
 			wp_enqueue_style('wp-pointer');
 			wp_enqueue_script('wp-pointer');
 
@@ -292,7 +293,7 @@ if (!class_exists('Sidekick')){
 
 				// WordPress
 				"embed_partner_id" 				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.6.3', // WordPress plugin version
+				"plugin_version"				=> '2.6.4', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -348,7 +349,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.6.3');
+				$data = json_encode('2.6.4');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -452,13 +453,16 @@ if (!class_exists('Sidekick')){
 	// Multisite Licensing
 
 	if (is_multisite()) {
+
 		require_once('libs/licensing.php');
 		$sidekickMassActivator = new sidekickMassActivator;
 
 		add_action('network_admin_menu', array($sidekickMassActivator,'setup_menu'));
 		add_action('wp_ajax_sk_activate_single', array($sidekickMassActivator,'activate_single'));
+		add_action('wp_ajax_sk_deactivate_single', array($sidekickMassActivator,'deactivate_single'));
 		add_action('wp_ajax_sk_activate_batch', array($sidekickMassActivator,'activate_batch'));
 		add_action('wp_ajax_sk_load_sites_by_status', array($sidekickMassActivator,'load_sites_by_status'));
+		add_action('wp_ajax_sk_reset', array($sidekickMassActivator,'resetCacheAndClearActivationIDs'));
 
 		$sk_auto_activations = get_option( 'sk_auto_activations');
 		if ($sk_auto_activations) {
