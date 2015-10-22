@@ -6,7 +6,7 @@ Plugin URL: http://wordpress.org/plugins/sidekick/
 Description: Adds a real-time WordPress training walkthroughs right in your Dashboard
 Requires at least: 4.1
 Tested up to: 4.3.1
-Version: 2.6.4
+Version: 2.6.5
 Author: Sidekick.pro
 Author URI: http://www.sidekick.pro
 */
@@ -24,7 +24,7 @@ if (!class_exists('Sidekick')){
 
 		function __construct(){
 			if (!defined('SK_API')) 			define('SK_API','https: //apiv2.sidekick.pro');
-			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.4'));
+			if (!defined('SK_CACHE_PREFIX')) 	define('SK_CACHE_PREFIX',str_replace('.', '_', '2.6.5'));
 		}
 
 		function enqueue_required(){
@@ -52,16 +52,16 @@ if (!class_exists('Sidekick')){
 		}
 
 		function activate($return = false){
-			mlog("activate");
+			// mlog("activate");
 			if (isset($_POST['activation_id']) && current_user_can('install_plugins')) {
-				mlog("activate2");
+				// mlog("activate2");
 				update_option('sk_activation_id',$_POST['activation_id']);
 				return true;
 			}
 		}
 
 		function upgrade(){
-			mlog("upgrade");
+			// mlog("upgrade");
 
 			if (!isset($_POST['authorization']) || !wp_verify_nonce($_POST['authorization'], 'sk_upgrade')) {
 				die('-1');
@@ -293,7 +293,7 @@ if (!class_exists('Sidekick')){
 
 				// WordPress
 				"embed_partner_id" 				=> SK_EMBEDDED_PARTNER, // for tracking purposes if sidekick has been embeded in another WordPress plugin or theme
-				"plugin_version"				=> '2.6.4', // WordPress plugin version
+				"plugin_version"				=> '2.6.5', // WordPress plugin version
 				"site_url"      				=> $sk_config_data->get_domain(),
 				"domain"        				=> str_replace("http://","",$_SERVER["SERVER_NAME"]),
 				"plugin_url"    				=> admin_url("admin.php?page=sidekick"),
@@ -349,7 +349,7 @@ if (!class_exists('Sidekick')){
 		function check_ver(){
 
 			if (isset($_GET['sk_ver_check'])){
-				$data = json_encode('2.6.4');
+				$data = json_encode('2.6.5');
 
 				if(array_key_exists('callback', $_GET)){
 
@@ -461,13 +461,11 @@ if (!class_exists('Sidekick')){
 		add_action('wp_ajax_sk_activate_single', array($sidekickMassActivator,'activate_single'));
 		add_action('wp_ajax_sk_deactivate_single', array($sidekickMassActivator,'deactivate_single'));
 		add_action('wp_ajax_sk_activate_batch', array($sidekickMassActivator,'activate_batch'));
-		add_action('wp_ajax_sk_load_sites_by_status', array($sidekickMassActivator,'load_sites_by_status'));
-		add_action('wp_ajax_sk_reset', array($sidekickMassActivator,'resetCacheAndClearActivationIDs'));
+		add_action('wp_ajax_sk_check_batch_status', array($sidekickMassActivator,'check_batch_status'));
 
 		$sk_auto_activations = get_option( 'sk_auto_activations');
 		if ($sk_auto_activations) {
 			add_action('wpmu_new_blog',array($sidekickMassActivator,'activate'),10,6);
-			add_action('sk_hourly_event',array($sidekickMassActivator,'schedule'),10,6);
 		}
 	}
 }

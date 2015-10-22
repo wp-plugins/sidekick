@@ -4,7 +4,7 @@ Donate link: http://www.sidekick.pro
 Tags: help, tutorial, tutorials,screencast, self-help, training, learn, learning, sidekick, guide, teach, video, manual, videos, wphelp, support, instructions, question, questions, answers, answer, clippy, q&a, wpuniversity, helper, walkthrough
 Requires at least: 4.1
 Tested up to: 4.3.1
-Stable tag: 2.6.4
+Stable tag: 2.6.5
 License: GNU Version 2 or Any Later Version
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -148,6 +148,9 @@ We read and respond to every piece of feedback we get.
 4. Yet another action requirement by the user is previewed here.
 
 == Changelog ==
+
+= 2.6.5 = 
+* Performance improvements to multisite activation screens (Thank You Michael @mgyura)
 
 = 2.6.4 = 
 * Added ability to reset activation keys for a full multisite network

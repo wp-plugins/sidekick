@@ -13,7 +13,7 @@ var unactivated_count = 0;
 
 
 function updateCounts(e){
-	jQuery('.site_list').html('');
+	// jQuery('.site_list').html('');
 	jQuery('.pagination .start').html(loadOffset+1);
 	jQuery('.pagination .end').html(e.pages);
 	jQuery('.stats .unactivated h3').html(e.counts.unactivated);
@@ -39,101 +39,56 @@ function setup_buttons_deactivate(){
 	});
 }
 
-function load_sites_by_status(status,target){
-
-	activated = 0;
-
-	if (status) {
-		lastLoadedStatus = status;
-	} else {
-		status = lastLoadedStatus;
-	}
-
-	jQuery('.stats>div').removeClass('selected');
-	jQuery('.stats .' + status).addClass('selected');
-	jQuery('.sites h2 span').html(status + ' site list');
-
-	if (parseInt(jQuery(target).find('h3').html(),10) === 0) {
-		jQuery('.site_list').html('<div class=\'site\'>No Sites</div>');
-		jQuery('.sites .action').hide();
-		return false;
-	} else {
-		jQuery('.sites .action').show();
-	}
-
-	var data = {
-		action:  'sk_load_sites_by_status',
-		status: status,
-		offset: (loadOffset) ? loadOffset : 0
-	};
-
-	jQuery('.site_list .site').fadeTo('fast',0.5);
-
-	jQuery.post(ajaxurl, data, function(e,msg){
-
-		updateCounts(e);
-
-		var button = '<button class="activate">Activate</button></div>';
-
-		if (lastLoadedStatus === 'active') {
-			button = '<button class="deactivate">Deactivate</button></div>';
-		}
-
-		if (e.sites && e.sites.length > 0) {
-
-			if (e.sites.length < 25) {
-				jQuery('.action').hide();
-			}
-
-			_.each(e.sites,function(site,key){
-				jQuery('.site_list').append('<div class="site" data-path="' + site.path + '" data-domain="' + site.domain + '" data-userid="' + site.user_id + '" data-blogid="' + site.blog_id + '">' + site.domain + '/' + site.path + button);
-			});
-		} else {
-			jQuery('.site_list').append('<div class="site">No Sites</div>');
-			jQuery('.activate_all').hide();
-			jQuery('.action').hide();
-		}
-
-		setup_buttons();
-
-	},'json');
-}
-
 function setup_buttons_next_prev(){
 
-	jQuery('.pagination .next').off('click').click(function(){
+	jQuery('.pagination .next').off('click').click(function(e){
+		e.preventDefault();
+
 		jQuery('.pagination .prev').show();
 
-		loadOffset = loadOffset + 1;
-		load_sites_by_status(null,loadOffset);
+		var lastVisibleIndex = jQuery('.site_list .site:visible:last').index();
 
-		if (loadOffset === parseInt(jQuery('.pagination .end').html(),10)-1) {
+		var start = lastVisibleIndex+1;
+		var end = lastVisibleIndex+1+paginationSize;
+
+		var oldSites = jQuery('.site_list .site:visible').addClass('hidden');
+		var newSites = jQuery('.site_list .site').slice(start,end).removeClass('hidden');
+
+		console.log('showing %s to %s', start,end);
+
+		var visibleCount = jQuery('.site_list .site:visible').length;
+
+		if (jQuery('.site_list .site:last:visible').length > 0) {
 			jQuery('.pagination .next').hide();
 		}
+		checkStatusOfVisibleButtons();
 	});
 
-	jQuery('.pagination .prev').off('click').click(function(){
+	jQuery('.pagination .prev').off('click').click(function(e){
+		e.preventDefault();
+
 		jQuery('.pagination .next').show();
 
-		loadOffset = loadOffset - 1;
-		load_sites_by_status(null,loadOffset);
+		var firstVisibleSiteIndex = jQuery('.site_list .site:visible:first').index();
+		var start = firstVisibleSiteIndex  - paginationSize - 1;
+		var end = firstVisibleSiteIndex;
+		if (start < 0){
+			start = 0;
+			end = paginationSize;
+		}
+		var oldSites = jQuery('.site_list .site:visible').addClass('hidden');
+		var newSites = jQuery('.site_list .site').slice(start,end).removeClass('hidden');
 
-		if (loadOffset === 0) {
+		console.log('showing %s to %s', start,end);
+
+		if (jQuery('.site_list .site:first:visible').length > 0) {
 			jQuery('.pagination .prev').hide();
 		}
+
+		checkStatusOfVisibleButtons();
 	});
 }
 
-function updateStatCounts(increment){
-
-	var default_increment = 1;
-	if (increment) {
-		default_increment = increment;
-	}
-
-	jQuery('h3','div.' + lastLoadedStatus).html(parseInt(jQuery('h3','div.' + lastLoadedStatus).html(),10)-default_increment);
-	jQuery('h3','div.active').html(parseInt(jQuery('h3','div.active').html(),10)+default_increment);
-}
 
 function setup_buttons_activate_batch(){
 	jQuery('.activate_all').off('click').click(function(){
@@ -142,84 +97,65 @@ function setup_buttons_activate_batch(){
 			action:  'sk_activate_batch'
 		};
 
-		if (activated > 0) {
-			var activated_perc = Math.round((activated/unactivated_count)*100,0);
-			jQuery(this).html('Activating... ' + activated_perc + '%').addClass('loading');
-		} else {
-			jQuery(this).html('Activating...').addClass('loading');
-		}
+		jQuery('.activate_all').html('Activating...').addClass('loading');
 
-		jQuery.post(ajaxurl, data, function(e){
+		jQuery('.site_list .site').removeClass('hidden');
 
-			activated += parseInt(e.activated_count,10);
-			unactivated_count = parseInt(e.unactivated_count,10);
-
-			updateStatCounts(parseInt(e.activated_count,10));
-			if (parseInt(e.activated_count,10) === parseInt(e.sites_per_page,10)) {
-				jQuery('.activate_all').trigger('click');
-			} else {
-				jQuery('.activate_all').html('Done').removeClass('loading');
-				window.location.reload();
-			}
-
-		},'json');
+		checkStatusOfVisibleButtons(triggerAllActivations)
+		.done(function(){
+			jQuery('.activate_all').html('Done').removeClass('loading');
+		});
 
 	});
-
-	jQuery('.reset_all').off('click').click(function(){
-
-		var sure = confirm('This will reset all the activation keys. Are You Sure?');
-
-		if (sure) {
-			var data = {
-				action:  'sk_reset'
-			};
-
-			jQuery(this).html('Reseting...').addClass('loading');
-
-			jQuery.post(ajaxurl, data, function(){
-				jQuery('.reset_all').html('Done!').removeClass('loading');
-				window.location.reload();
-			},'json');
-		}
-
-	});
-
 }
 
-var activateCallback = function(button){
+function triggerAllActivations(){
+	var activateTotal = jQuery('.site .activate').length;
+	jQuery.each(jQuery('.site .activate'), function(i, el){
+		if (activateTotal-1 == i) {
+			jQuery('.activate_all').hide().html('Activate All');
+		};
+		setTimeout(function(){
+			jQuery('html, body').animate({scrollTop: jQuery(el).offset().top - 100}, 200);
+
+			jQuery(el).trigger('click');
+		},500 + ( i * 500 ));
+
+	});
+}
+
+var changeStatusCallback = function(button){
+	console.log('changeStatusCallback');
 	return function(e){
+
 		if (!e.success) {
 			jQuery(button).html('Error').addClass('red');
-			if (e.payload.message === 'Already Activated') {
-				updateStatCounts();
-			}
 			jQuery('.single_activation_error').html(e.payload.message).show();
 		} else if (e.success) {
-			updateStatCounts();
-			jQuery(button).html('Success').addClass('green');
-		}
-	};
-};
 
+			var newButtonClass = 'deactivate';
+			var newButtonName = 'Deactivate';
+			var prevButtonClass = 'activate';
 
-var deactivateCallback = function(button){
-	return function(e){
-		if (!e.success) {
-			jQuery(button).html('Error').addClass('red');
-			if (e.payload.message === 'Already Deactivated') {
-				updateStatCounts();
+			if (jQuery(button).hasClass('deactivate')) {
+				newButtonClass = 'activate';
+				newButtonName  = 'Activate';
+				prevButtonClass = 'deactivate';
 			}
-			jQuery('.single_activation_error').html(e.payload.message).show();
-		} else if (e.success) {
-			updateStatCounts();
-			jQuery(button).html('Success').addClass('green');
+
+			jQuery(button).html('Success').addClass('green').delay(1000).queue(function(next){
+				jQuery(this).html(newButtonName).removeClass(prevButtonClass).removeClass('green').addClass(newButtonClass);
+				next();
+			});
+
 		}
 	};
 };
 
 function setup_buttons_activate(){
-	jQuery('.site button.activate').off('click').click(function(){
+	console.log('setup_buttons_activate');
+	jQuery('.site_list button').off('click').click(function(){
+		console.log('click');
 		var data = {
 			action:  'sk_activate_single',
 			blog_id: jQuery(this).parent().data('blogid'),
@@ -228,16 +164,22 @@ function setup_buttons_activate(){
 			path:    jQuery(this).parent().data('path')
 		};
 
-		jQuery(this).html('Activating...');
+		if (jQuery(this).hasClass('deactivate')) {
+			data.action = 'sk_deactivate_single';
+			jQuery(this).html('Deactivating...');
+		} else {
+			jQuery(this).html('Activating...');
+		}
+
+		
 		jQuery('.single_activation_error').html('').hide();
-		jQuery.post(ajaxurl, data, activateCallback(this),'json');
+		jQuery.post(ajaxurl, data, changeStatusCallback(this),'json');
 	});
 }
 
 function setup_buttons(){
 	setup_buttons_next_prev();
 	setup_buttons_activate();
-	setup_buttons_deactivate();
 	setup_buttons_activate_batch();
 }
 
@@ -415,8 +357,8 @@ function setup_events(){
 	// 	});
 	// });
 
-	jQuery('.sk_bucket').not(':has(li)').remove();
-	jQuery('.sk_product').not(':has(li)').remove();
+jQuery('.sk_bucket').not(':has(li)').remove();
+jQuery('.sk_product').not(':has(li)').remove();
 
 	// Set the disable_wts back to original state
 	sk_config.disable_wts         = currently_disabled_wts;
@@ -487,6 +429,32 @@ function setup_intro_welcome_button(){
 	});
 }
 
+function checkStatusOfVisibleButtons(callback){
+	
+
+	var blogIdList = jQuery('button.checking:visible').closest('.site').map(function(){
+		return jQuery(this).data('blogid');
+	}).get();
+
+	var data = {
+		action:     'sk_check_batch_status',
+		blogIdList: blogIdList
+	};
+
+	return jQuery.post(ajaxurl, data, function(e){
+
+		jQuery.each(e,function(key,blogId){
+			jQuery('div[data-blogid="' + blogId + '"] button').removeClass('checking').addClass('deactivate').html('Deactivate');
+		});
+		jQuery('button.checking:visible').removeClass('checking').addClass('activate').html('Activate');
+		if (callback) {
+			callback();
+		};
+
+	},'json');
+
+}
+
 function setup_sk_admin(){
 	// console.log('setup_sk_admin');
 	if (jQuery('.sidekick_admin').length === 0) {
@@ -501,7 +469,7 @@ function setup_sk_admin(){
 	if (typeof window.sk_ms_admin !== 'undefined' && window.sk_ms_admin) {
 
 		// Multisite
-		load_sites_by_status('unactivated');
+		checkStatusOfVisibleButtons();
 
 		var clicked_button;
 
@@ -552,31 +520,7 @@ function setup_sk_admin(){
 	}
 }
 
-function setupSkHeartBeat(){
-	console.log('setupSkHeartBeat');
-	// Hook into the heartbeat-send
-	jQuery(document).on('heartbeat-send', function(e, data) {
-		console.log('hb send');
-		data['sk_hb_data'] = 'removedSites';
-	});
-
-	// Listen for the custom event "heartbeat-tick" on jQuery(document).
-	jQuery(document).on( 'heartbeat-tick', function(e, data) {
-
-		console.log('111 data %o', data);
-
-
-		// Only proceed if our EDD data is present
-		if ( ! data['edd-payment-count'] ){
-			return;
-		}
-
-		
-
-	});
-}
-
 jQuery(document).ready(function($) {
-	setupSkHeartBeat();
+	setup_buttons();
 	setup_intro_welcome_button();
 });
